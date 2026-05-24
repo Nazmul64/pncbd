@@ -718,124 +718,152 @@
             {{-- Tool 4: Stamp --}}
             <button class="tool-card tool-card-orange" data-bs-toggle="modal" data-bs-target="#stampModal">
                 <i class="fa-solid fa-stamp"></i>
-                <span>স্ট্যাম্প</span>
+                <span>ঋণ চুক্তিপত্র</span>
             </button>
         </div>
     </div>
-</div>
 
-{{-- ========================================== --}}
-{{-- MODALS FOR INTERACTIVE PREMIUM TOOLS --}}
-{{-- ========================================== --}}
-
-{{-- 1. Loan Calculator Modal --}}
-<div class="modal fade" id="loanCalcModal" tabindex="-1" aria-labelledby="loanCalcModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered modal-lg">
-        <div class="modal-content" style="border-radius: 20px; overflow: hidden; border: none; box-shadow: 0 20px 40px rgba(0,0,0,0.15); font-family: 'Hind Siliguri', sans-serif;">
-            <div class="modal-header" style="background:#ffffff; color:#0f172a; border-bottom: 1px solid #e2e8f0; padding:20px 24px;">
-                <div class="w-100 text-center">
-                    <div class="d-inline-flex align-items-center justify-content-center" style="width: 48px; height: 48px; background: rgba(59,130,246,0.1); color: #2563eb; border-radius: 12px; font-size: 24px; margin-bottom: 8px;">
-                        <i class="fa-solid fa-calculator"></i>
+    {{-- 1. Loan Calculator Modal --}}
+    <div class="modal fade" id="loanCalcModal" tabindex="-1" aria-labelledby="loanCalcModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-xl">
+            <div class="modal-content" style="border-radius: 20px; overflow: hidden; border: none; box-shadow: 0 20px 40px rgba(0,0,0,0.15); font-family: 'Hind Siliguri', 'Outfit', sans-serif;">
+                <div class="modal-header" style="background:#ffffff; color:#0f172a; border-bottom: 1px solid #e2e8f0; padding:20px 24px; position: relative;">
+                    <div class="w-100 text-center">
+                        <div class="d-inline-flex align-items-center justify-content-center" style="width: 56px; height: 56px; background: rgba(37,99,235,0.08); color: #2563eb; border-radius: 16px; font-size: 28px; margin-bottom: 8px;">
+                            <i class="fa-solid fa-calculator"></i>
+                        </div>
+                        <h5 class="modal-title fw-bold" style="font-size: 26px; color: #0f172a; margin: 0; font-family: 'Hind Siliguri';">ঋণ ক্যালকুলেটর</h5>
+                        <p class="text-muted small" style="margin: 4px 0 0 0; font-size: 14px; font-family: 'Hind Siliguri';">সহজে ঋণের হিসাব করুন</p>
                     </div>
-                    <h5 class="modal-title fw-bold" style="font-size: 24px; color: #0f172a; margin: 0;">ঋণ ক্যালকুলেটর</h5>
-                    <p class="text-muted small" style="margin: 4px 0 0 0; font-size: 13px;">সহজে ঋণের হিসাব করুন</p>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" style="position: absolute; right: 24px; top: 24px;"></button>
                 </div>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" style="position: absolute; right: 24px; top: 24px;"></button>
-            </div>
-            
-            <div class="modal-body" style="padding: 32px; background: #ffffff;">
-                <div class="row g-4">
-                    {{-- Left Side: Input Form --}}
-                    <div class="col-md-6 border-end" style="border-color: #f1f5f9 !important; padding-right: 24px;">
-                        <h4 style="font-size: 18px; font-weight: 700; color: #0f172a; margin-bottom: 24px;">হিসাব করুন</h4>
-                        
-                        {{-- Amount --}}
-                        <div class="mb-4">
-                            <label class="form-label" style="font-weight: 600; color: #334155; font-size: 14px; margin-bottom: 8px; display: flex; align-items: center; gap: 8px;">
-                                <i class="fa-solid fa-money-bill-wave text-secondary"></i> ঋণের পরিমাণ (টাকা)
-                            </label>
-                            <input type="number" id="deedAmount" class="form-control" placeholder="যেমন: 100000" style="border-radius: 10px; border: 1.5px solid #cbd5e1; padding: 10px 14px; font-size: 14px;" oninput="clearCalculationResult()">
+                
+                <div class="modal-body" style="padding: 32px; background: #ffffff;">
+                    <div class="row g-4">
+                        {{-- Left Side: Input Form --}}
+                        <div class="col-md-6 border-end" style="border-color: #f1f5f9 !important; padding-right: 24px;">
+                            <h4 style="font-size: 18px; font-weight: 700; color: #0f172a; margin-bottom: 24px;">হিসাব করুন</h4>
                             
-                            {{-- Quick buttons --}}
-                            <div class="d-flex gap-2 mt-2 flex-wrap">
-                                <button type="button" class="btn btn-sm btn-light" onclick="setDeedAmount(50000)" style="font-size: 12px; font-weight: 600; border-radius: 6px; padding: 4px 10px; background: #f1f5f9; border: 1px solid #e2e8f0; color: #475569;">৫০,০০০</button>
-                                <button type="button" class="btn btn-sm btn-light" onclick="setDeedAmount(100000)" style="font-size: 12px; font-weight: 600; border-radius: 6px; padding: 4px 10px; background: #f1f5f9; border: 1px solid #e2e8f0; color: #475569;">১,০০,০০০</button>
-                                <button type="button" class="btn btn-sm btn-light" onclick="setDeedAmount(200000)" style="font-size: 12px; font-weight: 600; border-radius: 6px; padding: 4px 10px; background: #f1f5f9; border: 1px solid #e2e8f0; color: #475569;">২,০০,০০০</button>
-                                <button type="button" class="btn btn-sm btn-light" onclick="setDeedAmount(500000)" style="font-size: 12px; font-weight: 600; border-radius: 6px; padding: 4px 10px; background: #f1f5f9; border: 1px solid #e2e8f0; color: #475569;">৫,০০,০০০</button>
+                            {{-- Amount --}}
+                            <div class="mb-4">
+                                <label class="form-label" style="font-weight: 600; color: #334155; font-size: 14px; margin-bottom: 8px; display: flex; align-items: center; gap: 8px;">
+                                    <i class="fa-solid fa-money-bill-wave text-secondary"></i> ঋণের পরিমাণ (টাকা)
+                                </label>
+                                <input type="number" id="deedAmount" class="form-control" placeholder="যেমন: 50000" style="border-radius: 8px; border: 1.5px solid #cbd5e1; padding: 12px 16px; font-size: 15px; font-weight: 500;" value="50000" oninput="performDeedCalculation()">
+                                
+                                {{-- Quick buttons --}}
+                                <div class="d-flex gap-2 mt-2 flex-wrap" style="justify-content: space-between;">
+                                    <button type="button" class="btn btn-sm" onclick="setDeedAmount(50000)" style="flex: 1; min-width: 70px; font-size: 12px; font-weight: 600; border-radius: 6px; padding: 6px 10px; background: #f1f5f9; border: 1px solid #e2e8f0; color: #475569; transition: all 0.2s;">৫০,০০০</button>
+                                    <button type="button" class="btn btn-sm" onclick="setDeedAmount(100000)" style="flex: 1; min-width: 70px; font-size: 12px; font-weight: 600; border-radius: 6px; padding: 6px 10px; background: #f1f5f9; border: 1px solid #e2e8f0; color: #475569; transition: all 0.2s;">১,০০,০০০</button>
+                                    <button type="button" class="btn btn-sm" onclick="setDeedAmount(200000)" style="flex: 1; min-width: 70px; font-size: 12px; font-weight: 600; border-radius: 6px; padding: 6px 10px; background: #f1f5f9; border: 1px solid #e2e8f0; color: #475569; transition: all 0.2s;">২,০০,০০০</button>
+                                    <button type="button" class="btn btn-sm" onclick="setDeedAmount(500000)" style="flex: 1; min-width: 70px; font-size: 12px; font-weight: 600; border-radius: 6px; padding: 6px 10px; background: #f1f5f9; border: 1px solid #e2e8f0; color: #475569; transition: all 0.2s;">৫,০০,০০০</button>
+                                </div>
+                            </div>
+
+                            {{-- Tenure --}}
+                            <div class="mb-4">
+                                <label class="form-label" style="font-weight: 600; color: #334155; font-size: 14px; margin-bottom: 8px; display: flex; align-items: center; gap: 8px;">
+                                    <i class="fa-solid fa-calendar-days text-secondary"></i> মেয়াদ (মাস)
+                                </label>
+                                <input type="number" id="deedTenure" class="form-control" placeholder="যেমন: 24" style="border-radius: 8px; border: 1.5px solid #cbd5e1; padding: 12px 16px; font-size: 15px; font-weight: 500;" value="24" oninput="performDeedCalculation()">
+                                
+                                {{-- Quick buttons --}}
+                                <div class="d-flex gap-2 mt-2 flex-wrap" style="justify-content: space-between;">
+                                    <button type="button" class="btn btn-sm" onclick="setDeedTenure(12)" style="flex: 1; min-width: 70px; font-size: 12px; font-weight: 600; border-radius: 6px; padding: 6px 10px; background: #f1f5f9; border: 1px solid #e2e8f0; color: #475569; transition: all 0.2s;">১২ মাস</button>
+                                    <button type="button" class="btn btn-sm" onclick="setDeedTenure(24)" style="flex: 1; min-width: 70px; font-size: 12px; font-weight: 600; border-radius: 6px; padding: 6px 10px; background: #f1f5f9; border: 1px solid #e2e8f0; color: #475569; transition: all 0.2s;">২৪ মাস</button>
+                                    <button type="button" class="btn btn-sm" onclick="setDeedTenure(36)" style="flex: 1; min-width: 70px; font-size: 12px; font-weight: 600; border-radius: 6px; padding: 6px 10px; background: #f1f5f9; border: 1px solid #e2e8f0; color: #475569; transition: all 0.2s;">৩৬ মাস</button>
+                                    <button type="button" class="btn btn-sm" onclick="setDeedTenure(48)" style="flex: 1; min-width: 70px; font-size: 12px; font-weight: 600; border-radius: 6px; padding: 6px 10px; background: #f1f5f9; border: 1px solid #e2e8f0; color: #475569; transition: all 0.2s;">৪৮ মাস</button>
+                                </div>
+                            </div>
+
+                            {{-- Interest Rate --}}
+                            <div class="mb-4">
+                                <label class="form-label" style="font-weight: 600; color: #334155; font-size: 14px; margin-bottom: 8px; display: flex; align-items: center; gap: 8px;">
+                                    <i class="fa-solid fa-percent text-secondary"></i> সুদের হার (বার্ষিক %)
+                                </label>
+                                <input type="text" id="deedRate" class="form-control" value="2.4" style="border-radius: 8px; border: 1.5px solid #cbd5e1; padding: 12px 16px; font-size: 15px; font-weight: 500;" oninput="performDeedCalculation()">
+                            </div>
+
+                            {{-- Calculation Submit --}}
+                            <button type="button" class="btn btn-primary w-100" onclick="performDeedCalculation()" style="background:#2563eb; border:none; padding:14px; border-radius:8px; font-weight:700; font-size:16px; display:flex; align-items:center; justify-content:center; gap:8px; box-shadow: 0 4px 12px rgba(37,99,235,0.15);">
+                                <i class="fa-solid fa-calculator"></i> হিসাব করুন
+                            </button>
+                        </div>
+
+                        {{-- Right Side: Result Column --}}
+                        <div class="col-md-6" style="padding-left: 24px;">
+                            <h4 class="text-center mb-4" style="font-size: 18px; font-weight: 700; color: #0f172a;">ফলাফল</h4>
+                            
+                            <div id="calcResultState">
+                                {{-- Result Cards Grid --}}
+                                <div class="d-flex flex-column gap-2 mb-3">
+                                    {{-- Card 1: Principal --}}
+                                    <div style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 16px 20px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.02), 0 2px 4px -1px rgba(0,0,0,0.02);">
+                                        <div style="font-size: 13px; font-weight: 600; color: #64748b; margin-bottom: 4px;">মূল ঋণ</div>
+                                        <div style="font-size: 26px; font-weight: 800; color: #2563eb;">৳<span id="resPrincipalDeed">50,000</span></div>
+                                    </div>
+
+                                    {{-- Card 2: Interest --}}
+                                    <div style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 16px 20px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.02), 0 2px 4px -1px rgba(0,0,0,0.02);">
+                                        <div style="font-size: 13px; font-weight: 600; color: #64748b; margin-bottom: 4px;">সুদ (<span id="resInterestRateLabel">2.4</span>%)</div>
+                                        <div style="font-size: 26px; font-weight: 800; color: #ea580c;">৳<span id="resInterestDeed">2,400.00</span></div>
+                                    </div>
+
+                                    {{-- Card 3: Tenure --}}
+                                    <div style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 16px 20px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.02), 0 2px 4px -1px rgba(0,0,0,0.02);">
+                                        <div style="font-size: 13px; font-weight: 600; color: #64748b; margin-bottom: 4px;">মেয়াদ</div>
+                                        <div style="font-size: 26px; font-weight: 800; color: #7c3aed;"><span id="resTenureDeed">24</span> মাস</div>
+                                    </div>
+
+                                    {{-- Card 4: Total Payable --}}
+                                    <div style="background: #10b981; border: none; border-radius: 12px; padding: 16px 20px; color: #ffffff; box-shadow: 0 4px 12px rgba(16,185,129,0.2);">
+                                        <div style="font-size: 13px; font-weight: 600; opacity: 0.9; margin-bottom: 4px;">মোট পরিশোধযোগ্য</div>
+                                        <div style="font-size: 28px; font-weight: 800;">৳<span id="resTotalDeed">52,400.00</span></div>
+                                    </div>
+
+                                    {{-- Card 5: Monthly EMI --}}
+                                    <div style="background: #2563eb; border: none; border-radius: 12px; padding: 16px 20px; color: #ffffff; box-shadow: 0 4px 12px rgba(37,99,235,0.2);">
+                                        <div style="font-size: 13px; font-weight: 600; opacity: 0.9; margin-bottom: 4px;">মাসিক কিস্তি (EMI)</div>
+                                        <div style="font-size: 28px; font-weight: 800;">৳<span id="resEMIDeed">2,183.333</span></div>
+                                    </div>
+                                </div>
+
+                                {{-- Bottom Info Box --}}
+                                <div style="background: #fffbeb; border-left: 4px solid #f59e0b; border-radius: 8px; padding: 12px 16px; color: #78350f; font-size: 13.5px; font-weight: 600; text-align: left; display: flex; align-items: center; gap: 8px; margin-top: 12px;">
+                                    <i class="fa-solid fa-circle-info" style="color: #f59e0b; font-size: 16px;"></i>
+                                    <span>প্রতি মাসে ৳<span id="infoEMI">2,183.333</span> করে <span id="infoTenure">24</span> মাসে পরিশোধ করতে হবে।</span>
+                                </div>
                             </div>
                         </div>
-
-                        {{-- Tenure --}}
-                        <div class="mb-4">
-                            <label class="form-label" style="font-weight: 600; color: #334155; font-size: 14px; margin-bottom: 8px; display: flex; align-items: center; gap: 8px;">
-                                <i class="fa-solid fa-calendar-days text-secondary"></i> মেয়াদ (মাস)
-                            </label>
-                            <input type="number" id="deedTenure" class="form-control" placeholder="যেমন: 12" style="border-radius: 10px; border: 1.5px solid #cbd5e1; padding: 10px 14px; font-size: 14px;" oninput="clearCalculationResult()">
-                            
-                            {{-- Quick buttons --}}
-                            <div class="d-flex gap-2 mt-2 flex-wrap">
-                                <button type="button" class="btn btn-sm btn-light" onclick="setDeedTenure(12)" style="font-size: 12px; font-weight: 600; border-radius: 6px; padding: 4px 10px; background: #f1f5f9; border: 1px solid #e2e8f0; color: #475569;">১২ মাস</button>
-                                <button type="button" class="btn btn-sm btn-light" onclick="setDeedTenure(24)" style="font-size: 12px; font-weight: 600; border-radius: 6px; padding: 4px 10px; background: #f1f5f9; border: 1px solid #e2e8f0; color: #475569;">২৪ মাস</button>
-                                <button type="button" class="btn btn-sm btn-light" onclick="setDeedTenure(36)" style="font-size: 12px; font-weight: 600; border-radius: 6px; padding: 4px 10px; background: #f1f5f9; border: 1px solid #e2e8f0; color: #475569;">৩৬ মাস</button>
-                                <button type="button" class="btn btn-sm btn-light" onclick="setDeedTenure(48)" style="font-size: 12px; font-weight: 600; border-radius: 6px; padding: 4px 10px; background: #f1f5f9; border: 1px solid #e2e8f0; color: #475569;">৪৮ মাস</button>
-                            </div>
-                        </div>
-
-                        {{-- Interest Rate --}}
-                        <div class="mb-4">
-                            <label class="form-label" style="font-weight: 600; color: #334155; font-size: 14px; margin-bottom: 8px; display: flex; align-items: center; gap: 8px;">
-                                <i class="fa-solid fa-percent text-secondary"></i> সুদের হার (বার্ষিক %)
-                            </label>
-                            <input type="text" id="deedRate" class="form-control" value="2.4" style="border-radius: 10px; border: 1.5px solid #cbd5e1; padding: 10px 14px; font-size: 14px;" oninput="clearCalculationResult()">
-                        </div>
-
-                        {{-- Calculation Submit --}}
-                        <button type="button" class="btn btn-primary w-100" onclick="performDeedCalculation()" style="background:#2563eb; border:none; padding:12px; border-radius:10px; font-weight:700; font-size:15px; display:flex; align-items:center; justify-content:center; gap:8px; box-shadow: 0 4px 12px rgba(37,99,235,0.2);">
-                            <i class="fa-solid fa-calculator"></i> হিসাব করুন
-                        </button>
                     </div>
 
-                    {{-- Right Side: Result Column --}}
-                    <div class="col-md-6 d-flex flex-column justify-content-center" style="padding-left: 24px; min-height: 300px; background: #fafafa; border-radius: 16px; border: 1px solid #f1f5f9;">
-                        <div id="calcDefaultState" class="text-center py-5">
-                            <div style="font-size: 64px; color: #cbd5e1; margin-bottom: 16px;">
-                                <i class="fa-solid fa-chart-line"></i>
-                            </div>
-                            <h5 style="font-size: 18px; font-weight: 700; color: #475569; margin: 0 0 6px 0;">ফলাফল</h5>
-                            <p class="text-muted small" style="margin: 0; font-size: 13px;">তথ্য দিয়ে হিসাব করুন</p>
-                        </div>
-
-                        <div id="calcResultState" style="display: none; padding: 16px;">
-                            <h4 class="text-center mb-4" style="font-size: 18px; font-weight: 700; color: #0f172a; border-bottom: 1.5px solid #f1f5f9; padding-bottom: 12px;">ফলাফল বিশ্লেষণ</h4>
-                            <div class="calc-result-list" style="background:#ffffff; border-radius:12px; border:1px solid #e2e8f0; overflow:hidden;">
-                                <div class="calc-result-item" style="display:flex; justify-content:space-between; padding:12px 18px; border-bottom:1px solid #f1f5f9; font-size:14px;">
-                                    <span style="font-weight:600; color:#475569;">ঋণের মূল পরিমাণ:</span>
-                                    <span style="font-weight:700; color:#0f172a;"><span id="resPrincipalDeed">0</span> ৳</span>
-                                </div>
-                                <div class="calc-result-item" style="display:flex; justify-content:space-between; padding:12px 18px; border-bottom:1px solid #f1f5f9; font-size:14px;">
-                                    <span style="font-weight:600; color:#475569;">সুদের হার (বার্ষিক %):</span>
-                                    <span style="font-weight:700; color:#0f172a;"><span id="resRateDeed">0</span>%</span>
-                                </div>
-                                <div class="calc-result-item" style="display:flex; justify-content:space-between; padding:12px 18px; border-bottom:1px solid #f1f5f9; font-size:14px;">
-                                    <span style="font-weight:600; color:#475569;">মোট সুদের পরিমাণ:</span>
-                                    <span style="font-weight:700; color:#ef4444;"><span id="resInterestDeed">0</span> ৳</span>
-                                </div>
-                                <div class="calc-result-item" style="display:flex; justify-content:space-between; padding:12px 18px; border-bottom:1px solid #f1f5f9; font-size:14px; background:#eff6ff;">
-                                    <span style="font-weight:600; color:#2563eb;">সর্বমোট পরিশোধযোগ্য পরিমাণ:</span>
-                                    <span style="font-weight:700; color:#1e40af;"><span id="resTotalDeed">0</span> ৳</span>
-                                </div>
-                                <div class="calc-result-item" style="display:flex; justify-content:space-between; padding:12px 18px; border-bottom:none; font-size:14px; background:#ecfdf5;">
-                                    <span style="font-weight:600; color:#059669;">মাসিক কিস্তির পরিমাণ:</span>
-                                    <span style="font-weight:700; color:#065f46; font-size:16px;"><span id="resEMIDeed">0</span> ৳</span>
-                                </div>
-                            </div>
+                    {{-- Installment Amortization Table --}}
+                    <div id="installmentListSection" class="mt-5 pt-4 border-top" style="border-color: #e2e8f0 !important;">
+                        <h5 class="fw-bold mb-3" style="font-size: 20px; color: #0f172a; display: flex; align-items: center; gap: 8px;">
+                            <i class="fa-solid fa-table-list"></i> কিস্তি তালিকা
+                        </h5>
+                        <div class="table-responsive" style="max-height: 450px; overflow-y: auto; border: 1px solid #e2e8f0; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.02);">
+                            <table class="table table-hover mb-0" style="font-size: 14px; vertical-align: middle;">
+                                <thead class="table-light" style="position: sticky; top: 0; z-index: 10; background: #f8fafc;">
+                                    <tr>
+                                        <th style="font-weight:700; color:#475569; padding:14px 16px; border-bottom: 2px solid #e2e8f0;">মাস</th>
+                                        <th style="font-weight:700; color:#475569; padding:14px 16px; border-bottom: 2px solid #e2e8f0;">মাসিক কিস্তি</th>
+                                        <th style="font-weight:700; color:#475569; padding:14px 16px; border-bottom: 2px solid #e2e8f0;">মূল অর্থ</th>
+                                        <th style="font-weight:700; color:#475569; padding:14px 16px; border-bottom: 2px solid #e2e8f0;">সুদ</th>
+                                        <th style="font-weight:700; color:#475569; padding:14px 16px; border-bottom: 2px solid #e2e8f0;">বাকি</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="installmentTableBody">
+                                    {{-- Dynamic rows --}}
+                                </tbody>
+                            </table>
                         </div>
                     </div>
+
                 </div>
             </div>
         </div>
     </div>
-</div>
 
 {{-- 2. Certificate Modal --}}
 <div class="modal fade" id="certificateModal" tabindex="-1" aria-labelledby="certificateModalLabel" aria-hidden="true">
@@ -986,41 +1014,77 @@
         performDeedCalculation();
     }
 
-    function clearCalculationResult() {
-        document.getElementById('calcDefaultState').style.display = 'block';
-        document.getElementById('calcResultState').style.display = 'none';
-    }
-
     // Perform Deed calculation logic matching exact screenshot formula
     function performDeedCalculation() {
         const amountEl = document.getElementById('deedAmount');
         const tenureEl = document.getElementById('deedTenure');
         const rateEl   = document.getElementById('deedRate');
 
-        const amount = parseFloat(amountEl.value);
-        const tenure = parseFloat(tenureEl.value);
-        const rate   = parseFloat(rateEl.value);
+        let amount = parseFloat(amountEl.value);
+        let tenure = parseFloat(tenureEl.value);
+        let rate   = parseFloat(rateEl.value);
 
-        if (isNaN(amount) || isNaN(tenure) || isNaN(rate) || amount <= 0 || tenure <= 0) {
-            clearCalculationResult();
-            return;
-        }
+        if (isNaN(amount) || amount < 0) amount = 0;
+        if (isNaN(tenure) || tenure <= 0) tenure = 1;
+        if (isNaN(rate) || rate < 0) rate = 0;
 
-        // Calculation: barshik flat rate
+        // 1. Calculation: barshik flat rate
         const interestAmount = Math.round(amount * (rate / 100) * (tenure / 12));
         const totalPayable    = amount + interestAmount;
-        const monthlyEMI      = Math.round(totalPayable / tenure);
+        const monthlyEMI      = Math.round((totalPayable / tenure) * 1000) / 1000; // 3 decimals precision
 
-        // Update output text
-        document.getElementById('resPrincipalDeed').textContent = amount.toLocaleString('bn-BD');
-        document.getElementById('resRateDeed').textContent = rate;
-        document.getElementById('resInterestDeed').textContent = interestAmount.toLocaleString('bn-BD');
-        document.getElementById('resTotalDeed').textContent = totalPayable.toLocaleString('bn-BD');
-        document.getElementById('resEMIDeed').textContent = monthlyEMI.toLocaleString('bn-BD');
+        // 2. Update output text on cards
+        document.getElementById('resPrincipalDeed').textContent = amount.toLocaleString('en-US');
+        document.getElementById('resInterestRateLabel').textContent = rate;
+        document.getElementById('resInterestDeed').textContent = (Math.round(interestAmount * 100) / 100).toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+        document.getElementById('resTenureDeed').textContent = tenure;
+        document.getElementById('resTotalDeed').textContent = (Math.round(totalPayable * 100) / 100).toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+        document.getElementById('resEMIDeed').textContent = monthlyEMI.toLocaleString('en-US', {minimumFractionDigits: 3, maximumFractionDigits: 3});
+        
+        // 3. Update bottom alert box values
+        document.getElementById('infoEMI').textContent = monthlyEMI.toLocaleString('en-US', {minimumFractionDigits: 3, maximumFractionDigits: 3});
+        document.getElementById('infoTenure').textContent = tenure;
 
-        // Toggle state view
-        document.getElementById('calcDefaultState').style.display = 'none';
-        document.getElementById('calcResultState').style.display = 'block';
+        // 4. Generate Amortization Installment List Table Rows
+        const tbody = document.getElementById('installmentTableBody');
+        tbody.innerHTML = ''; // reset
+
+        const principalPerMonth = amount / tenure;
+        const interestPerMonth  = interestAmount / tenure;
+
+        for (let m = 1; m <= tenure; m++) {
+            const remainingBalance = Math.max(0, amount - (m * principalPerMonth));
+
+            // Create row
+            const tr = document.createElement('tr');
+            
+            // Format numbers
+            const fEMI = monthlyEMI.toLocaleString('en-US', {minimumFractionDigits: 3, maximumFractionDigits: 3});
+            const fPrincipal = principalPerMonth.toLocaleString('en-US', {minimumFractionDigits: 3, maximumFractionDigits: 3});
+            const fInterest = interestPerMonth.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+            const fRemaining = remainingBalance.toLocaleString('en-US', {minimumFractionDigits: 3, maximumFractionDigits: 3});
+
+            tr.innerHTML = `
+                <td style="padding:14px 16px; font-weight:700; color:#1e293b;">${m}</td>
+                <td style="padding:14px 16px; font-weight:700; color:#2563eb; text-decoration: underline;">৳${fEMI}</td>
+                <td style="padding:14px 16px; color:#475569; font-weight:500;">৳${fPrincipal}</td>
+                <td style="padding:14px 16px; color:#475569; font-weight:500;">৳${fInterest}</td>
+                <td style="padding:14px 16px; font-weight:700; color:#10b981;">৳${fRemaining}</td>
+            `;
+            tbody.appendChild(tr);
+        }
     }
+
+    // Auto-calculate on load and when modal is shown
+    document.addEventListener('DOMContentLoaded', function() {
+        performDeedCalculation();
+        
+        var modalEl = document.getElementById('loanCalcModal');
+        if (modalEl) {
+            modalEl.addEventListener('shown.bs.modal', function () {
+                performDeedCalculation();
+            });
+        }
+    });
 </script>
 @endsection
