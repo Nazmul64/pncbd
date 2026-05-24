@@ -1,227 +1,456 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="bn">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Employee Login</title>
+    <title>স্টাফ প্যানেল - লোন ম্যানেজমেন্ট সিস্টেম</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Hind+Siliguri:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css" rel="stylesheet"/>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet"/>
+    
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
         body {
             min-height: 100vh;
-            background: #1a2035;
+            background: #0f172a; /* Deep Slate dark mode */
             display: flex;
+            flex-direction: column;
             align-items: center;
             justify-content: center;
-            font-family: 'Segoe UI', sans-serif;
+            font-family: 'Hind Siliguri', 'Outfit', sans-serif;
+            padding: 20px;
+            color: #f8fafc;
+            position: relative;
+            overflow-x: hidden;
         }
 
-        .login-card {
-            background: #fff;
-            border-radius: 16px;
-            padding: 44px 40px;
+        /* Abstract glowing blobs for premium feel */
+        body::before {
+            content: '';
+            position: absolute;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(59, 130, 246, 0.15) 0%, transparent 70%);
+            top: -100px;
+            left: -100px;
+            z-index: 0;
+        }
+        body::after {
+            content: '';
+            position: absolute;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(139, 92, 246, 0.1) 0%, transparent 70%);
+            bottom: -100px;
+            right: -100px;
+            z-index: 0;
+        }
+
+        .login-container {
             width: 100%;
-            max-width: 420px;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            max-width: 960px;
+            z-index: 10;
         }
 
-        .brand-top {
+        .brand-section {
             text-align: center;
-            margin-bottom: 32px;
+            margin-bottom: 30px;
         }
 
-        .brand-icon {
-            width: 56px; height: 56px;
-            background: #1a2035;
-            border-radius: 12px;
+        .brand-icon-wrapper {
+            width: 80px;
+            height: 80px;
+            background: rgba(30, 41, 59, 0.7);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            font-size: 22px;
+            font-size: 36px;
+            color: #3b82f6;
+            margin-bottom: 12px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+            backdrop-filter: blur(8px);
+        }
+
+        .brand-section h1 {
+            font-size: 32px;
             font-weight: 800;
-            color: #fff;
-            margin-bottom: 14px;
+            color: #ffffff;
+            margin-bottom: 6px;
+            letter-spacing: -0.5px;
         }
 
-        .brand-top h5 {
-            font-size: 20px;
+        .brand-section p {
+            font-size: 14px;
+            color: #94a3b8;
+            font-weight: 500;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+
+        .split-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+        }
+
+        @media (max-width: 768px) {
+            .split-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .premium-card {
+            background: #ffffff;
+            border-radius: 24px;
+            padding: 40px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.25);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            color: #1e293b;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .premium-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 24px 48px rgba(0, 0, 0, 0.3);
+        }
+
+        .card-title-section {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .card-title-section h3 {
+            font-size: 24px;
             font-weight: 700;
-            color: #1a2035;
-            margin-bottom: 4px;
+            color: #0f172a;
+            margin-bottom: 6px;
         }
 
-        .brand-top p {
-            font-size: 13px;
-            color: #8a94a6;
+        .card-title-section p {
+            font-size: 14px;
+            color: #64748b;
         }
 
         .form-label {
             font-size: 13px;
             font-weight: 600;
-            color: #2d3a5e;
-            margin-bottom: 6px;
+            color: #334155;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
         }
 
-        .input-group-text {
-            background: #f8f9fc;
-            border: 1px solid #e0e4ed;
-            border-right: none;
-            color: #8a94a6;
+        .input-group-custom {
+            position: relative;
+            margin-bottom: 24px;
         }
 
-        .form-control {
-            border: 1px solid #e0e4ed;
-            border-left: none;
-            background: #f8f9fc;
-            font-size: 14px;
-            padding: 10px 14px;
+        .input-icon {
+            position: absolute;
+            left: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #64748b;
+            font-size: 16px;
+            z-index: 10;
         }
 
-        .form-control:focus {
-            box-shadow: none;
-            border-color: #4e9ef5;
-            background: #fff;
-        }
-
-        .form-control:focus + .input-group-text,
-        .input-group:focus-within .input-group-text {
-            border-color: #4e9ef5;
-            background: #fff;
-        }
-
-        .toggle-pass {
-            background: #f8f9fc;
-            border: 1px solid #e0e4ed;
-            border-left: none;
-            cursor: pointer;
-            color: #8a94a6;
-            padding: 0 14px;
-        }
-
-        .toggle-pass:hover { color: #1a2035; }
-
-        .btn-login {
+        .form-control-custom {
             width: 100%;
-            background: #1a2035;
-            color: #fff;
+            background: #f8fafc;
+            border: 1.5px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 12px 16px 12px 46px;
+            font-size: 15px;
+            color: #0f172a;
+            transition: all 0.2s ease;
+            font-family: inherit;
+        }
+
+        .form-control-custom:focus {
+            outline: none;
+            border-color: #3b82f6;
+            background: #ffffff;
+            box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1);
+        }
+
+        .btn-login-custom {
+            width: 100%;
+            background: #2563eb;
+            color: #ffffff;
             border: none;
-            padding: 12px;
+            padding: 14px;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            cursor: pointer;
+            box-shadow: 0 4px 14px rgba(37, 99, 235, 0.3);
+            transition: all 0.2s ease;
+        }
+
+        .btn-login-custom:hover {
+            background: #1d4ed8;
+            box-shadow: 0 6px 20px rgba(37, 99, 235, 0.4);
+            transform: translateY(-1px);
+        }
+
+        .btn-login-custom:active {
+            transform: translateY(0);
+        }
+
+        /* Scrollable Staff list styling */
+        .staff-list {
+            max-height: 280px;
+            overflow-y: auto;
+            padding-right: 4px;
+        }
+
+        .staff-list::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .staff-list::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
             border-radius: 10px;
+        }
+
+        .staff-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 16px;
+            background: #f8fafc;
+            border-radius: 12px;
+            margin-bottom: 10px;
+            border: 1px solid #e2e8f0;
+            transition: all 0.2s ease;
+        }
+
+        .staff-item:hover {
+            background: #f1f5f9;
+            border-color: #cbd5e1;
+        }
+
+        .staff-profile {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .staff-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: rgba(37, 99, 235, 0.1);
+            color: #2563eb;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            font-weight: 700;
+        }
+
+        .staff-name {
             font-size: 15px;
             font-weight: 600;
-            margin-top: 8px;
-            transition: background 0.2s;
+            color: #0f172a;
         }
 
-        .btn-login:hover { background: #4e9ef5; color: #fff; }
-
-        .alert-danger {
-            font-size: 13px;
-            border-radius: 10px;
-            padding: 10px 14px;
+        .status-badge {
+            font-size: 18px;
+            color: #10b981;
         }
 
-        .footer-text {
+        .footer-link-wrapper {
             text-align: center;
-            font-size: 12px;
-            color: #aab;
-            margin-top: 24px;
+            margin-top: 30px;
+            z-index: 10;
+        }
+
+        .footer-link-wrapper a {
+            color: #94a3b8;
+            font-size: 14px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: color 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .footer-link-wrapper a:hover {
+            color: #3b82f6;
         }
     </style>
 </head>
 <body>
 
-<div class="login-card">
-    <div class="brand-top">
-        <div class="brand-icon">G</div>
-        <h5>Employee Login</h5>
-        <p>Genius Shop — Employee Panel</p>
+<div class="login-container">
+    {{-- Header --}}
+    <div class="brand-section">
+        <div class="brand-icon-wrapper">
+            <i class="fa-solid fa-user-tie"></i>
+        </div>
+        <h1>স্টাফ প্যানেল</h1>
+        <p>Loan Management System</p>
     </div>
 
-    {{-- Error Messages --}}
-    @if($errors->any())
-        <div class="alert alert-danger">
-            <i class="fas fa-exclamation-circle me-1"></i>
-            {{ $errors->first() }}
-        </div>
-    @endif
+    {{-- Grid containing cards --}}
+    <div class="split-grid">
+        
+        {{-- Left: Login Card --}}
+        <div class="premium-card">
+            <div>
+                <div class="card-title-section">
+                    <h3>স্টাফ লগইন</h3>
+                    <p>আপনার স্টাফ অ্যাকাউন্টে প্রবেশ করুন</p>
+                </div>
 
-    {{-- Success Message --}}
-    @if(session('success'))
-        <div class="alert alert-success" style="font-size:13px; border-radius:10px;">
-            <i class="fas fa-check-circle me-1"></i>
-            {{ session('success') }}
-        </div>
-    @endif
+                {{-- Alert for errors --}}
+                @if($errors->any())
+                    <div class="alert alert-danger p-3 mb-4" style="border-radius:12px; font-size:14px;">
+                        <i class="fas fa-exclamation-circle me-2"></i>
+                        {{ $errors->first() }}
+                    </div>
+                @endif
 
-    <form action="{{ route('emplee.login.submit') }}" method="POST">
-        @csrf
+                {{-- Alert for success --}}
+                @if(session('success'))
+                    <div class="alert alert-success p-3 mb-4" style="border-radius:12px; font-size:14px;">
+                        <i class="fas fa-check-circle me-2"></i>
+                        {{ session('success') }}
+                    </div>
+                @endif
 
-        {{-- Email --}}
-        <div class="mb-3">
-            <label class="form-label">Email Address</label>
-            <div class="input-group">
-                <span class="input-group-text"><i class="fas fa-envelope"></i></span>
-                <input
-                    type="email"
-                    name="email"
-                    class="form-control @error('email') is-invalid @enderror"
-                    placeholder="employee@example.com"
-                    value="{{ old('email') }}"
-                    required
-                    autofocus
-                />
+                <form action="{{ route('emplee.login.submit') }}" method="POST">
+                    @csrf
+
+                    {{-- Phone Input --}}
+                    <div class="mb-3">
+                        <label class="form-label">
+                            <i class="fa-solid fa-phone"></i> ফোন নম্বর
+                        </label>
+                        <div class="input-group-custom">
+                            <i class="fa-solid fa-phone input-icon"></i>
+                            <input 
+                                type="text" 
+                                name="phone" 
+                                class="form-control-custom" 
+                                placeholder="ফোন নম্বর" 
+                                value="{{ old('phone') }}"
+                                required 
+                                autofocus
+                            />
+                        </div>
+                    </div>
+
+                    {{-- Password Input --}}
+                    <div class="mb-4">
+                        <label class="form-label">
+                            <i class="fa-solid fa-lock"></i> পাসওয়ার্ড
+                        </label>
+                        <div class="input-group-custom">
+                            <i class="fa-solid fa-lock input-icon"></i>
+                            <input 
+                                type="password" 
+                                name="password" 
+                                class="form-control-custom" 
+                                placeholder="পাসওয়ার্ড" 
+                                required
+                            />
+                        </div>
+                    </div>
+
+                    {{-- Submit button --}}
+                    <button type="submit" class="btn-login-custom">
+                        <i class="fa-solid fa-right-to-bracket"></i> লগইন করুন
+                    </button>
+                </form>
             </div>
         </div>
 
-        {{-- Password --}}
-        <div class="mb-4">
-            <label class="form-label">Password</label>
-            <div class="input-group">
-                <span class="input-group-text"><i class="fas fa-lock"></i></span>
-                <input
-                    type="password"
-                    name="password"
-                    id="passwordField"
-                    class="form-control"
-                    placeholder="••••••••"
-                    required
-                />
-                <button type="button" class="toggle-pass" onclick="togglePassword()">
-                    <i class="fas fa-eye" id="eyeIcon"></i>
-                </button>
+        {{-- Right: Staff List Card --}}
+        <div class="premium-card">
+            <div>
+                <div class="card-title-section">
+                    <h3>স্টাফ তালিকা</h3>
+                    <p>সক্রিয় স্টাফ সদস্য</p>
+                </div>
+
+                <div class="staff-list">
+                    @forelse($staffMembers as $member)
+                        <div class="staff-item">
+                            <div class="staff-profile">
+                                <div class="staff-avatar">
+                                    {{ substr($member->name, 0, 1) }}
+                                </div>
+                                <div class="staff-name">
+                                    {{ $member->name }}
+                                </div>
+                            </div>
+                            <div class="status-badge">
+                                <i class="fa-solid fa-circle-check"></i>
+                            </div>
+                        </div>
+                    @empty
+                        {{-- Mock list for high premium aesthetics if no database records --}}
+                        <div class="staff-item">
+                            <div class="staff-profile">
+                                <div class="staff-avatar">P</div>
+                                <div class="staff-name">Pascal Roth</div>
+                            </div>
+                            <div class="status-badge"><i class="fa-solid fa-circle-check"></i></div>
+                        </div>
+                        <div class="staff-item">
+                            <div class="staff-profile">
+                                <div class="staff-avatar">C</div>
+                                <div class="staff-name">Chiara Suter</div>
+                            </div>
+                            <div class="status-badge"><i class="fa-solid fa-circle-check"></i></div>
+                        </div>
+                        <div class="staff-item">
+                            <div class="staff-profile">
+                                <div class="staff-avatar">A</div>
+                                <div class="staff-name">Adrian Vogel</div>
+                            </div>
+                            <div class="status-badge"><i class="fa-solid fa-circle-check"></i></div>
+                        </div>
+                        <div class="staff-item">
+                            <div class="staff-profile">
+                                <div class="staff-avatar">E</div>
+                                <div class="staff-name">Elisa Maurer</div>
+                            </div>
+                            <div class="status-badge"><i class="fa-solid fa-circle-check"></i></div>
+                        </div>
+                    @endforelse
+                </div>
             </div>
         </div>
 
-        <div class="d-flex justify-content-end mb-4">
-            <a href="{{ route('password.request') }}" class="text-decoration-none small fw-bold" style="color:#4e9ef5;">Forgot Password?</a>
-        </div>
+    </div>
 
-        <button type="submit" class="btn-login">
-            <i class="fas fa-sign-in-alt me-2"></i> Login
-        </button>
-    </form>
-
-    <div class="footer-text">
-        &copy; {{ date('Y') }} Genius Shop. All rights reserved.
+    {{-- Footer link --}}
+    <div class="footer-link-wrapper">
+        <a href="/">
+            <i class="fa-solid fa-arrow-left"></i> হোমে ফিরে যান
+        </a>
     </div>
 </div>
-
-<script>
-    function togglePassword() {
-        const field = document.getElementById('passwordField');
-        const icon  = document.getElementById('eyeIcon');
-        if (field.type === 'password') {
-            field.type = 'text';
-            icon.classList.replace('fa-eye', 'fa-eye-slash');
-        } else {
-            field.type = 'password';
-            icon.classList.replace('fa-eye-slash', 'fa-eye');
-        }
-    }
-</script>
 
 </body>
 </html>

@@ -32,6 +32,7 @@ class AdminUserController extends Controller
         $request->validate([
             'name'     => 'required|string|max:100',
             'email'    => 'required|email|unique:users,email',
+            'phone'    => 'required|string|unique:users,phone',
             'password' => 'required|string|min:8|confirmed',
             'roles'    => 'nullable|array',
             'roles.*'  => 'exists:roles,id',
@@ -41,6 +42,7 @@ class AdminUserController extends Controller
         $user = User::create([
             'name'     => $request->name,
             'email'    => $request->email,
+            'phone'    => $request->phone,
             'password' => Hash::make($request->password),
             'status'   => $request->status ?? 'active',
         ]);
@@ -86,6 +88,7 @@ class AdminUserController extends Controller
         $request->validate([
             'name'     => 'sometimes|required|string|max:100',
             'email'    => 'sometimes|required|email|unique:users,email,' . $user->id,
+            'phone'    => 'sometimes|required|string|unique:users,phone,' . $user->id,
             'password' => 'nullable|string|min:8|confirmed',
             'roles'    => 'nullable|array',
             'roles.*'  => 'exists:roles,id',
@@ -96,6 +99,7 @@ class AdminUserController extends Controller
         $fillable = array_filter([
             'name'   => $request->name,
             'email'  => $request->email,
+            'phone'  => $request->phone,
             'status' => $request->status,
         ]);
 

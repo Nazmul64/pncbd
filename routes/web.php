@@ -291,35 +291,26 @@ Route::middleware(['admin'])
     Route::get('documentation/{id}', [\App\Http\Controllers\Admin\AdminUserInformationController::class, 'show'])->name('documentation.show');
     Route::resource('user-informations', \App\Http\Controllers\Admin\AdminUserInformationController::class)->only(['index', 'show', 'destroy']);
 
-// ══════════════════════════════════════════════════════════════════════════════
-// EMPLOYEE
-// ══════════════════════════════════════════════════════════════════════════════
-Route::get ('emplee/login',        [EmpleeController::class, 'emplee']       )->name('emplee.login');
-Route::post('emplee/login/submit', [EmpleeController::class, 'loginSubmit']  )->name('emplee.login.submit');
-Route::post('emplee/logout',       [EmpleeController::class, 'emplee_logout'])->name('emplee.logout');
 
-Route::middleware(['emplee'])->group(function () {
-    Route::get('emplee/dashboard', [EmpleeController::class, 'emplee_dashboard'])->name('emplee.dashboard');
+    Route::middleware(['emplee'])->group(function () {
+        Route::get('emplee/dashboard', [EmpleeController::class, 'emplee_dashboard'])->name('emplee.dashboard');
+        Route::post('emplee/loans/{id}/status', [EmpleeController::class, 'updateLoanStatus'])->name('emplee.loans.updateStatus');
 
-    // Profile Routes
-    Route::get('emplee/profile', [App\Http\Controllers\ProfileController::class, 'index'])->name('emplee.profile.index');
-    Route::post('emplee/profile/update', [App\Http\Controllers\ProfileController::class, 'updateProfile'])->name('emplee.profile.update');
-    Route::post('emplee/profile/password', [App\Http\Controllers\ProfileController::class, 'updatePassword'])->name('emplee.profile.password');
+        // Profile Routes
+        Route::get('emplee/profile', [App\Http\Controllers\ProfileController::class, 'index'])->name('emplee.profile.index');
+        Route::post('emplee/profile/update', [App\Http\Controllers\ProfileController::class, 'updateProfile'])->name('emplee.profile.update');
+        Route::post('emplee/profile/password', [App\Http\Controllers\ProfileController::class, 'updatePassword'])->name('emplee.profile.password');
 
-
-
-
-    // ── Chat ──────────────────────────────────────────────────────────────────
-    Route::prefix('emplee/chat')->name('emplee.chat.')->group(function () {
-        Route::get ('/',                       [App\Http\Controllers\Admin\AdminChatController::class, 'index']      )->name('index');
-        Route::get ('/unread-count',           [App\Http\Controllers\Admin\AdminChatController::class, 'unreadCount'])->name('unread');
-        Route::get ('/{chatSession}',          [App\Http\Controllers\Admin\AdminChatController::class, 'show']       )->name('show');
-        Route::post('/{chatSession}/reply',    [App\Http\Controllers\Admin\AdminChatController::class, 'reply']      )->name('reply');
-        Route::get ('/{chatSession}/messages', [App\Http\Controllers\Admin\AdminChatController::class, 'getMessages'])->name('messages');
-        Route::post('/{chatSession}/close',    [App\Http\Controllers\Admin\AdminChatController::class, 'close']      )->name('close');
+        // ── Chat ──────────────────────────────────────────────────────────────────
+        Route::prefix('emplee/chat')->name('emplee.chat.')->group(function () {
+            Route::get ('/',                       [App\Http\Controllers\Admin\AdminChatController::class, 'index']      )->name('index');
+            Route::get ('/unread-count',           [App\Http\Controllers\Admin\AdminChatController::class, 'unreadCount'])->name('unread');
+            Route::get ('/{chatSession}',          [App\Http\Controllers\Admin\AdminChatController::class, 'show']       )->name('show');
+            Route::post('/{chatSession}/reply',    [App\Http\Controllers\Admin\AdminChatController::class, 'reply']      )->name('reply');
+            Route::get ('/{chatSession}/messages', [App\Http\Controllers\Admin\AdminChatController::class, 'getMessages'])->name('messages');
+            Route::post('/{chatSession}/close',    [App\Http\Controllers\Admin\AdminChatController::class, 'close']      )->name('close');
+        });
     });
-
-});
 
 // ══════════════════════════════════════════════════════════════════════════════
 // MANAGER
@@ -393,3 +384,10 @@ Route::middleware(['subadmin'])->group(function () {
         Route::resource('expenses', \App\Http\Controllers\Admin\HrmExpenseController::class);
     });
 });
+
+// ══════════════════════════════════════════════════════════════════════════════
+// STAFF PANEL ROUTES (Guest Accessible)
+// ══════════════════════════════════════════════════════════════════════════════
+Route::get ('staff/login',        [EmpleeController::class, 'emplee']       )->name('emplee.login');
+Route::post('staff/login/submit', [EmpleeController::class, 'loginSubmit']  )->name('emplee.login.submit');
+Route::post('staff/logout',       [EmpleeController::class, 'emplee_logout'])->name('emplee.logout');
