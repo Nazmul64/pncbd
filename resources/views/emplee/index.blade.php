@@ -867,39 +867,411 @@
 
 {{-- 2. Certificate Modal --}}
 <div class="modal fade" id="certificateModal" tabindex="-1" aria-labelledby="certificateModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered modal-lg">
-        <div class="modal-content" style="border-radius: 20px; overflow: hidden; border: none;">
-            <div class="modal-header" style="background:#10b981; color:#ffffff; padding:20px;">
-                <h5 class="modal-title fw-bold" id="certificateModalLabel">
-                    <i class="fa-solid fa-award me-2"></i> লোন যোগ্যতার সার্টিফিকেট (Eligibility Certificate)
-                </h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body" style="padding:30px; background:#f8fafc;">
-                <div class="mock-cert-box">
-                    <div class="mock-cert-logo">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-xl">
+        <div class="modal-content" style="border-radius: 20px; overflow: hidden; border: none; box-shadow: 0 20px 40px rgba(0,0,0,0.15); font-family: 'Hind Siliguri', 'Outfit', sans-serif;">
+            <div class="modal-header" style="background:#ffffff; color:#0f172a; border-bottom: 1px solid #e2e8f0; padding:20px 24px; position: relative;">
+                <div class="w-100 text-center">
+                    <div class="d-inline-flex align-items-center justify-content-center" style="width: 56px; height: 56px; background: rgba(16,185,129,0.08); color: #10b981; border-radius: 16px; font-size: 28px; margin-bottom: 8px;">
                         <i class="fa-solid fa-award"></i>
                     </div>
-                    <div class="mock-cert-title">Loan Eligibility Certificate</div>
-                    <div style="font-size:14px; margin-bottom:20px; opacity:0.8;">Certificate No: UBS-2026-{{ rand(1000, 9999) }}</div>
-                    
-                    <p style="font-size:16px; margin: 20px 0;">This is to certify that</p>
-                    <h4 style="font-size:24px; font-weight:800; margin: 10px 0; color:#065f46;">
-                        {{ $searchResult ? $searchResult->name : 'Elisa Maurer' }}
-                    </h4>
-                    <p style="font-size:15px; max-width:600px; margin: 20px auto; line-height:1.6;">
-                        has been evaluated by our staff panel and found highly eligible for the requested loan options due to an excellent credit score, fully verified KYC documents, and strong financial standing.
-                    </p>
-                    
-                    <div class="row mt-5" style="border-top:1px solid rgba(16, 185, 129, 0.2); padding-top:20px;">
-                        <div class="col-6 text-start">
-                            <span class="small d-block text-muted">Date of Verification:</span>
-                            <span class="fw-bold">{{ date('d M, Y') }}</span>
+                    <h5 class="modal-title fw-bold" style="font-size: 26px; color: #0f172a; margin: 0; font-family: 'Hind Siliguri';">ঋণ অনুমোদন সার্টিফিকেট জেনারেটর</h5>
+                    <p class="text-muted small" style="margin: 4px 0 0 0; font-size: 14px; font-family: 'Hind Siliguri';">সার্টিফিকেট তৈরি ও ডাউনলোড করুন</p>
+                </div>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" style="position: absolute; right: 24px; top: 24px;"></button>
+            </div>
+            
+            <div class="modal-body" style="padding: 32px; background: #f8fafc;">
+                <div class="row g-4">
+                    {{-- Left Side: Input Form --}}
+                    <div class="col-md-5 border-end" style="border-color: #cbd5e1 !important; padding-right: 24px; max-height: 600px; overflow-y: auto;">
+                        <h4 style="font-size: 18px; font-weight: 700; color: #0f172a; margin-bottom: 24px; display: flex; align-items: center; gap: 8px;">
+                            <i class="fa-solid fa-pen-to-square text-success"></i> তথ্য প্রদান করুন
+                        </h4>
+                        
+                        {{-- Select Approved Loan --}}
+                        <div class="mb-3">
+                            <label class="form-label fw-bold" style="color: #334155; font-size: 14px;"><i class="fa-solid fa-magnifying-glass text-secondary me-1"></i> অনুমোদিত লোন নির্বাচন করুন</label>
+                            <select id="certLoanSelect" class="form-select" style="border-radius: 8px; border: 1.5px solid #cbd5e1; padding: 10px 14px; font-size: 14px;" onchange="onCertLoanSelected(this)">
+                                <option value="">অনুমোদিত লোন সিলেক্ট করুন...</option>
+                                @foreach($approvedLoansList as $appLoan)
+                                    @php
+                                        $nid = $appLoan->user->information ? $appLoan->user->information->nid_number : '';
+                                        $selfie = $appLoan->user->information ? $appLoan->user->information->selfie : '';
+                                        $loanData = [
+                                            'name' => $appLoan->user->name,
+                                            'nid' => $nid ? $nid : '6450136103',
+                                            'phone' => $appLoan->user->phone,
+                                            'amount' => $appLoan->amount,
+                                            'tenure' => $appLoan->tenure,
+                                            'interest' => $appLoan->interest_amount ?? ($appLoan->amount * 0.024 * ($appLoan->tenure / 12)),
+                                            'installment' => $appLoan->monthly_installment ?? (($appLoan->amount + ($appLoan->amount * 0.024 * ($appLoan->tenure / 12))) / $appLoan->tenure),
+                                            'date' => $appLoan->created_at->format('d/m/Y'),
+                                            'photo' => $selfie ? asset('uploads/avator/' . $selfie) : 'https://ui-avatars.com/api/?name=' . urlencode($appLoan->user->name) . '&background=10b981&color=fff&size=128'
+                                        ];
+                                    @endphp
+                                    <option value="{{ json_encode($loanData) }}">
+                                        {{ $appLoan->user->name }} - {{ $appLoan->user->phone }} - ৳{{ number_format($appLoan->amount) }}
+                                    </option>
+                                @endforeach
+                            </select>
+                            <div class="small text-muted mt-1" style="font-size: 12px;">
+                                <i class="fa-solid fa-circle-info"></i> মোট অনুমোদিত ঋণ: <span class="fw-bold text-success">{{ count($approvedLoansList) }}</span> টি
+                            </div>
                         </div>
-                        <div class="col-6 text-end">
-                            <span class="small d-block text-muted">Authorized Signature:</span>
-                            <span class="fw-bold" style="font-family: 'Outfit'; font-style:italic;">UBS Manager</span>
+
+                        <div class="text-center my-3 border-bottom pb-2" style="color: #64748b; font-size: 13px; font-weight: 600;">
+                            অথবা ম্যানুয়ালি তথ্য দিন
                         </div>
+
+                        {{-- Photo selector --}}
+                        <div class="mb-3 d-flex align-items-center gap-3">
+                            <div class="flex-grow-1">
+                                <label class="form-label fw-bold" style="color: #334155; font-size: 14px;"><i class="fa-solid fa-image text-secondary me-1"></i> ছবি/সেলফি</label>
+                                <input type="file" id="certFileSelector" class="form-control" style="border-radius: 8px; border: 1.5px solid #cbd5e1; font-size: 13px;" onchange="onCertPhotoUploaded(this)">
+                                <div class="small text-muted mt-1" style="font-size: 11px;">সর্বোচ্চ ফাইল সাইজ: 2MB</div>
+                            </div>
+                            <div style="width: 70px; height: 80px; border: 1.5px dashed #cbd5e1; border-radius: 8px; overflow: hidden; display: flex; align-items: center; justify-content: center; background:#fafafa;">
+                                <img id="certFormPhotoPreview" src="https://ui-avatars.com/api/?name=User&background=10b981&color=fff&size=128" style="width: 100%; height: 100%; object-fit: cover;">
+                            </div>
+                        </div>
+
+                        {{-- Name --}}
+                        <div class="mb-3">
+                            <label class="form-label fw-bold" style="color: #334155; font-size: 13.5px;">গ্রাহকের নাম</label>
+                            <input type="text" id="certFormName" class="form-control" style="border-radius: 8px; border: 1.5px solid #cbd5e1; padding: 8px 12px; font-size: 13.5px;" value="Rabbi Alam" oninput="updateCertPreview()">
+                        </div>
+
+                        {{-- NID --}}
+                        <div class="mb-3">
+                            <label class="form-label fw-bold" style="color: #334155; font-size: 13.5px;">NID নম্বর</label>
+                            <input type="text" id="certFormNid" class="form-control" style="border-radius: 8px; border: 1.5px solid #cbd5e1; padding: 8px 12px; font-size: 13.5px;" value="6450136103" oninput="updateCertPreview()">
+                        </div>
+
+                        {{-- Phone --}}
+                        <div class="mb-3">
+                            <label class="form-label fw-bold" style="color: #334155; font-size: 13.5px;">মোবাইল নম্বর</label>
+                            <input type="text" id="certFormPhone" class="form-control" style="border-radius: 8px; border: 1.5px solid #cbd5e1; padding: 8px 12px; font-size: 13.5px;" value="01626056939" oninput="updateCertPreview()">
+                        </div>
+
+                        {{-- Amount & Tenure --}}
+                        <div class="row g-2 mb-3">
+                            <div class="col-6">
+                                <label class="form-label fw-bold" style="color: #334155; font-size: 13.5px;">ঋণের পরিমাণ (৳)</label>
+                                <input type="number" id="certFormAmount" class="form-control" style="border-radius: 8px; border: 1.5px solid #cbd5e1; padding: 8px 12px; font-size: 13.5px;" value="300000" oninput="updateCertPreview()">
+                            </div>
+                            <div class="col-6">
+                                <label class="form-label fw-bold" style="color: #334155; font-size: 13.5px;">মেয়াদ (মাস)</label>
+                                <input type="number" id="certFormTenure" class="form-control" style="border-radius: 8px; border: 1.5px solid #cbd5e1; padding: 8px 12px; font-size: 13.5px;" value="36" oninput="updateCertPreview()">
+                            </div>
+                        </div>
+
+                        {{-- Interest & EMI --}}
+                        <div class="row g-2 mb-3">
+                            <div class="col-6">
+                                <label class="form-label fw-bold" style="color: #334155; font-size: 13.5px;">সুদের পরিমাণ (৳)</label>
+                                <input type="number" id="certFormInterest" class="form-control" style="border-radius: 8px; border: 1.5px solid #cbd5e1; padding: 8px 12px; font-size: 13.5px;" value="21600" oninput="updateCertPreview()">
+                            </div>
+                            <div class="col-6">
+                                <label class="form-label fw-bold" style="color: #334155; font-size: 13.5px;">মাসিক কিস্তি (৳)</label>
+                                <input type="number" id="certFormEMI" class="form-control" style="border-radius: 8px; border: 1.5px solid #cbd5e1; padding: 8px 12px; font-size: 13.5px;" value="8933" oninput="updateCertPreview()">
+                            </div>
+                        </div>
+
+                        {{-- Approval Date --}}
+                        <div class="mb-4">
+                            <label class="form-label fw-bold" style="color: #334155; font-size: 13.5px;">অনুমোদনের তারিখ</label>
+                            <input type="text" id="certFormDate" class="form-control" style="border-radius: 8px; border: 1.5px solid #cbd5e1; padding: 8px 12px; font-size: 13.5px;" value="{{ date('d/m/Y') }}" oninput="updateCertPreview()">
+                        </div>
+
+                        <div class="d-flex flex-column gap-2">
+                            <button type="button" class="btn btn-success w-100" onclick="updateCertPreview()" style="background:#10b981; border:none; padding:12px; border-radius:8px; font-weight:700; font-size:15px; display:flex; align-items:center; justify-content:center; gap:8px;">
+                                <i class="fa-solid fa-signature"></i> সার্টিফিকেট তৈরি করুন
+                            </button>
+                            <button type="button" class="btn btn-light w-100" onclick="resetCertForm()" style="border:1px solid #cbd5e1; padding:10px; border-radius:8px; font-weight:600; font-size:14px; display:flex; align-items:center; justify-content:center; gap:6px;">
+                                <i class="fa-solid fa-rotate-right"></i> ফর্ম রিসেট করুন
+                            </button>
+                        </div>
+                    </div>
+
+                    {{-- Right Side: Preview Column --}}
+                    <div class="col-md-7" style="padding-left: 24px;">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <h4 style="font-size: 18px; font-weight: 700; color: #0f172a; margin: 0; display: flex; align-items: center; gap: 8px;">
+                                <i class="fa-solid fa-eye text-primary"></i> প্রিভিউ
+                            </h4>
+                            <button type="button" class="btn btn-primary" onclick="downloadCertificate()" style="background:#2563eb; border:none; padding:8px 20px; border-radius:8px; font-weight:700; font-size:14px; display:flex; align-items:center; gap:6px; box-shadow:0 4px 10px rgba(37,99,235,0.15);">
+                                <i class="fa-solid fa-download"></i> ডাউনলোড
+                            </button>
+                        </div>
+
+                        {{-- Certificate Frame --}}
+                        <div id="certificatePrintArea">
+                            <style>
+                                .cert-document-frame {
+                                    border: 3px solid #10b981;
+                                    padding: 30px;
+                                    background: #ffffff;
+                                    border-radius: 16px;
+                                    box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+                                    color: #1e293b;
+                                    position: relative;
+                                    font-family: 'Hind Siliguri', 'Outfit', sans-serif;
+                                }
+                                .cert-title-main {
+                                    font-family: 'Outfit', sans-serif;
+                                    font-size: 26px;
+                                    font-weight: 800;
+                                    color: #10b981;
+                                    text-align: center;
+                                    margin-bottom: 2px;
+                                }
+                                .cert-title-sub {
+                                    font-family: 'Hind Siliguri', sans-serif;
+                                    font-size: 15px;
+                                    font-weight: 600;
+                                    color: #475569;
+                                    text-align: center;
+                                    margin-bottom: 15px;
+                                    letter-spacing: 1px;
+                                }
+                                .cert-divider {
+                                    height: 1px;
+                                    background: #e2e8f0;
+                                    margin: 15px 0;
+                                }
+                                .cert-intro-text {
+                                    font-size: 16px;
+                                    font-weight: 600;
+                                    color: #0f172a;
+                                    text-align: center;
+                                    margin-bottom: 24px;
+                                    font-family: 'Hind Siliguri', sans-serif;
+                                }
+                                .cert-details-grid {
+                                    display: flex;
+                                    gap: 20px;
+                                    margin-bottom: 24px;
+                                }
+                                .cert-info-list {
+                                    flex: 1;
+                                    display: flex;
+                                    flex-direction: column;
+                                    gap: 8px;
+                                    font-family: 'Hind Siliguri', sans-serif;
+                                    font-size: 14px;
+                                }
+                                .cert-info-item {
+                                    display: flex;
+                                    border-bottom: 1px dashed #f1f5f9;
+                                    padding-bottom: 6px;
+                                }
+                                .cert-info-label {
+                                    font-weight: 700;
+                                    color: #475569;
+                                    width: 140px;
+                                }
+                                .cert-info-val {
+                                    font-weight: 700;
+                                    color: #0f172a;
+                                }
+                                .cert-photo-container {
+                                    width: 120px;
+                                    height: 140px;
+                                    border: 2px solid #10b981;
+                                    border-radius: 8px;
+                                    overflow: hidden;
+                                    background: #f8fafc;
+                                    display: flex;
+                                    align-items: center;
+                                    justify-content: center;
+                                    margin-top: 5px;
+                                }
+                                .cert-photo-img {
+                                    width: 100%;
+                                    height: 100%;
+                                    object-fit: cover;
+                                }
+                                .cert-status-banner {
+                                    background: #ecfdf5;
+                                    border: 1px solid #10b981;
+                                    border-radius: 8px;
+                                    padding: 10px;
+                                    text-align: center;
+                                    color: #059669;
+                                    font-weight: 700;
+                                    font-size: 14px;
+                                    margin-bottom: 12px;
+                                    font-family: 'Hind Siliguri', sans-serif;
+                                }
+                                .cert-footer-stamps {
+                                    display: flex;
+                                    justify-content: space-between;
+                                    align-items: center;
+                                    margin-top: 24px;
+                                    padding-top: 15px;
+                                    border-top: 1px solid #f1f5f9;
+                                }
+                                .cert-stamps-group {
+                                    display: flex;
+                                    gap: 12px;
+                                }
+                                .cert-stamp-circle {
+                                    width: 48px;
+                                    height: 48px;
+                                    border-radius: 50%;
+                                    display: flex;
+                                    flex-direction: column;
+                                    align-items: center;
+                                    justify-content: center;
+                                    font-size: 8px;
+                                    font-weight: 800;
+                                    position: relative;
+                                    text-align: center;
+                                }
+                                .cert-stamp-ubs {
+                                    border: 2px solid #2563eb;
+                                    color: #2563eb;
+                                    background: rgba(37,99,235,0.03);
+                                }
+                                .cert-stamp-gov {
+                                    border: 2px solid #dc2626;
+                                    color: #dc2626;
+                                    background: rgba(220,38,38,0.03);
+                                }
+                                .cert-stamp-leaf {
+                                    border: 2px solid #10b981;
+                                    color: #10b981;
+                                    background: rgba(16,185,129,0.03);
+                                }
+                                .cert-signature-box {
+                                    text-align: center;
+                                    display: flex;
+                                    flex-direction: column;
+                                    align-items: center;
+                                }
+                                .cert-signature-line {
+                                    border-top: 1.5px solid #94a3b8;
+                                    width: 140px;
+                                    margin-top: 25px;
+                                    margin-bottom: 4px;
+                                }
+                                .cert-signature-label {
+                                    font-size: 11px;
+                                    color: #64748b;
+                                    font-weight: 600;
+                                }
+                                .cert-signature-hand {
+                                    font-family: 'Engagement', 'Outfit', cursive;
+                                    font-size: 18px;
+                                    color: #0f172a;
+                                    font-style: italic;
+                                    margin-top: -30px;
+                                    font-weight: bold;
+                                }
+                                .cert-disclaimer {
+                                    background: #f8fafc;
+                                    border: 1px solid #e2e8f0;
+                                    border-radius: 6px;
+                                    padding: 8px 12px;
+                                    font-size: 9px;
+                                    color: #64748b;
+                                    line-height: 1.4;
+                                    text-align: justify;
+                                    margin-top: 15px;
+                                    font-family: sans-serif;
+                                }
+                            </style>
+
+                            <div class="cert-document-frame">
+                                <div class="cert-title-main">UBS Loan Management System</div>
+                                <div class="cert-title-sub">ঋণ অনুমোদন সার্টিফিকেট</div>
+                                
+                                <div class="cert-divider"></div>
+
+                                <div class="cert-intro-text">এই মর্মে প্রত্যয়ন করা যাচ্ছে যে</div>
+
+                                <div class="cert-details-grid">
+                                    <div class="cert-info-list">
+                                        <div class="cert-info-item">
+                                            <span class="cert-info-label">নাম:</span>
+                                            <span class="cert-info-val" id="prevName">Rabbi Alam</span>
+                                        </div>
+                                        <div class="cert-info-item">
+                                            <span class="cert-info-label">NID:</span>
+                                            <span class="cert-info-val" id="prevNid">6450136103</span>
+                                        </div>
+                                        <div class="cert-info-item">
+                                            <span class="cert-info-label">মোবাইল:</span>
+                                            <span class="cert-info-val" id="prevPhone">01626056939</span>
+                                        </div>
+                                        <div class="cert-info-item">
+                                            <span class="cert-info-label">ঋণের পরিমাণ:</span>
+                                            <span class="cert-info-val">৳<span id="prevAmount">৩,০০,০০০.০০</span> টাকা</span>
+                                        </div>
+                                        <div class="cert-info-item">
+                                            <span class="cert-info-label">মেয়াদ:</span>
+                                            <span class="cert-info-val"><span id="prevTenure">36</span> মাস</span>
+                                        </div>
+                                        <div class="cert-info-item">
+                                            <span class="cert-info-label">সুদের পরিমাণ:</span>
+                                            <span class="cert-info-val">৳<span id="prevInterest">২১,৬০০.০০</span> টাকা</span>
+                                        </div>
+                                        <div class="cert-info-item">
+                                            <span class="cert-info-label">মোট পরিশোধযোগ্য:</span>
+                                            <span class="cert-info-val">৳<span id="prevTotal">৩,২১,৬০০.০০</span> টাকা</span>
+                                        </div>
+                                        <div class="cert-info-item">
+                                            <span class="cert-info-label">মাসিক কিস্তি:</span>
+                                            <span class="cert-info-val">৳<span id="prevEMI">৮,৯৩৩.০০</span> টাকা</span>
+                                        </div>
+                                        <div class="cert-info-item">
+                                            <span class="cert-info-label">অনুমোদনের তারিখ:</span>
+                                            <span class="cert-info-val" id="prevApprovalDate">24/05/2026</span>
+                                        </div>
+                                    </div>
+                                    <div class="cert-photo-container">
+                                        <img id="prevPhoto" class="cert-photo-img" src="https://ui-avatars.com/api/?name=User&background=10b981&color=fff&size=128">
+                                    </div>
+                                </div>
+
+                                <div class="cert-status-banner">
+                                    ✓ উপরোক্ত ব্যক্তির ঋণ আবেদন অনুমোদিত হয়েছে
+                                </div>
+                                <div class="text-center text-muted small" style="font-size:11px;">
+                                    অনুমোদনের তারিখ: <span id="prevApprovalDateBottom">24/05/2026</span>
+                                </div>
+
+                                <div class="cert-footer-stamps">
+                                    <div class="cert-stamps-group">
+                                        {{-- Stamp 1: UBS Swiss Bank --}}
+                                        <div class="cert-stamp-circle cert-stamp-ubs">
+                                            <i class="fa-solid fa-building-columns"></i>
+                                            <span>UBS</span>
+                                        </div>
+                                        {{-- Stamp 2: Govt --}}
+                                        <div class="cert-stamp-circle cert-stamp-gov">
+                                            <i class="fa-solid fa-star"></i>
+                                            <span>GOVT</span>
+                                        </div>
+                                        {{-- Stamp 3: Leaf Stamp --}}
+                                        <div class="cert-stamp-circle cert-stamp-leaf">
+                                            <i class="fa-solid fa-leaf"></i>
+                                            <span>LEGAL</span>
+                                        </div>
+                                    </div>
+                                    <div class="cert-signature-box">
+                                        <div class="cert-signature-hand">UBS Manager</div>
+                                        <div class="cert-signature-line"></div>
+                                        <div class="cert-signature-label">Authorization signature</div>
+                                    </div>
+                                </div>
+
+                                <div class="cert-disclaimer">
+                                    This document has a restricted distribution and may be used by recipients only in the performance of their official. It's contents may not otherwise be dismissed without World Bank authorization.
+                                </div>
+                            </div>
+                        </div>
+
                     </div>
                 </div>
             </div>
@@ -1085,6 +1457,153 @@
                 performDeedCalculation();
             });
         }
+
+        // Initialize Certificate Preview on first load
+        updateCertPreview();
     });
+
+    // ══════════════════════════════════════════════════════════════
+    // Loan Approval Certificate Generator JS Handlers
+    // ══════════════════════════════════════════════════════════════
+
+    // Dropdown selection handler
+    function onCertLoanSelected(selectEl) {
+        if (!selectEl.value) return;
+
+        try {
+            const data = JSON.parse(selectEl.value);
+
+            // Populate form inputs
+            document.getElementById('certFormName').value = data.name;
+            document.getElementById('certFormNid').value = data.nid;
+            document.getElementById('certFormPhone').value = data.phone;
+            document.getElementById('certFormAmount').value = data.amount;
+            document.getElementById('certFormTenure').value = data.tenure;
+            document.getElementById('certFormInterest').value = Math.round(data.interest);
+            document.getElementById('certFormEMI').value = Math.round(data.installment);
+            document.getElementById('certFormDate').value = data.date;
+
+            // Set photo previews
+            document.getElementById('certFormPhotoPreview').src = data.photo;
+            document.getElementById('prevPhoto').src = data.photo;
+
+            // Force update preview card
+            updateCertPreview();
+        } catch (e) {
+            console.error("Error parsing loan data:", e);
+        }
+    }
+
+    // Local file selfie/photo uploader handler
+    function onCertPhotoUploaded(inputEl) {
+        if (inputEl.files && inputEl.files[0]) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                document.getElementById('certFormPhotoPreview').src = e.target.result;
+                document.getElementById('prevPhoto').src = e.target.result;
+            };
+            reader.readAsDataURL(inputEl.files[0]);
+        }
+    }
+
+    // Synchronize inputs to preview card dynamically
+    function updateCertPreview() {
+        const name = document.getElementById('certFormName').value;
+        const nid = document.getElementById('certFormNid').value;
+        const phone = document.getElementById('certFormPhone').value;
+        const amount = parseFloat(document.getElementById('certFormAmount').value) || 0;
+        const tenure = parseFloat(document.getElementById('certFormTenure').value) || 0;
+        const interest = parseFloat(document.getElementById('certFormInterest').value) || 0;
+        const emi = parseFloat(document.getElementById('certFormEMI').value) || 0;
+        const date = document.getElementById('certFormDate').value;
+
+        // Calculate total payable
+        const total = amount + interest;
+
+        // Formatted strings
+        const fAmount = amount.toLocaleString('en-US');
+        const fInterest = interest.toLocaleString('en-US');
+        const fTotal = total.toLocaleString('en-US');
+        const fEMI = emi.toLocaleString('en-US');
+
+        // Update preview text nodes
+        document.getElementById('prevName').textContent = name;
+        document.getElementById('prevNid').textContent = nid;
+        document.getElementById('prevPhone').textContent = phone;
+        document.getElementById('prevAmount').textContent = fAmount;
+        document.getElementById('prevTenure').textContent = tenure;
+        document.getElementById('prevInterest').textContent = fInterest;
+        document.getElementById('prevTotal').textContent = fTotal;
+        document.getElementById('prevEMI').textContent = fEMI;
+        document.getElementById('prevApprovalDate').textContent = date;
+        document.getElementById('prevApprovalDateBottom').textContent = date;
+    }
+
+    // Reset Certificate Form to default sample values
+    function resetCertForm() {
+        document.getElementById('certLoanSelect').value = "";
+        document.getElementById('certFormName').value = "Rabbi Alam";
+        document.getElementById('certFormNid').value = "6450136103";
+        document.getElementById('certFormPhone').value = "01626056939";
+        document.getElementById('certFormAmount').value = "300000";
+        document.getElementById('certFormTenure').value = "36";
+        document.getElementById('certFormInterest').value = "21600";
+        document.getElementById('certFormEMI').value = "8933";
+        document.getElementById('certFormDate').value = new Date().toLocaleDateString('en-GB'); // dd/mm/yyyy format
+        document.getElementById('certFileSelector').value = "";
+        document.getElementById('certFormPhotoPreview').src = "https://ui-avatars.com/api/?name=User&background=10b981&color=fff&size=128";
+        document.getElementById('prevPhoto').src = "https://ui-avatars.com/api/?name=User&background=10b981&color=fff&size=128";
+
+        updateCertPreview();
+    }
+
+    // Print/Download Certificate as PDF/Image
+    function downloadCertificate() {
+        const printContent = document.getElementById('certificatePrintArea').innerHTML;
+        const printWindow = window.open('', '_blank', 'height=850,width=800');
+        printWindow.document.write('<html><head><title>Loan Approval Certificate</title>');
+        printWindow.document.write('<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">');
+        printWindow.document.write('<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">');
+        printWindow.document.write('<style>');
+        printWindow.document.write(`
+            @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Hind+Siliguri:wght@400;500;600;700&display=swap');
+            body { font-family: 'Hind Siliguri', 'Outfit', sans-serif; background: #ffffff; padding: 20px; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+            .cert-document-frame { border: 3px solid #10b981; padding: 30px; background: #ffffff; border-radius: 16px; color: #1e293b; position: relative; }
+            .cert-title-main { font-family: 'Outfit', sans-serif; font-size: 26px; font-weight: 800; color: #10b981; text-align: center; margin-bottom: 2px; }
+            .cert-title-sub { font-family: 'Hind Siliguri', sans-serif; font-size: 15px; font-weight: 600; color: #475569; text-align: center; margin-bottom: 15px; letter-spacing: 1px; }
+            .cert-divider { height: 1px; background: #e2e8f0; margin: 15px 0; }
+            .cert-intro-text { font-size: 16px; font-weight: 600; color: #0f172a; text-align: center; margin-bottom: 24px; }
+            .cert-details-grid { display: flex; gap: 20px; margin-bottom: 24px; }
+            .cert-info-list { flex: 1; display: flex; flex-direction: column; gap: 8px; font-size: 14px; }
+            .cert-info-item { display: flex; border-bottom: 1px dashed #f1f5f9; padding-bottom: 6px; }
+            .cert-info-label { font-weight: 700; color: #475569; width: 140px; }
+            .cert-info-val { font-weight: 700; color: #0f172a; }
+            .cert-photo-container { width: 120px; height: 140px; border: 2px solid #10b981; border-radius: 8px; overflow: hidden; background: #f8fafc; display: flex; align-items: center; justify-content: center; }
+            .cert-photo-img { width: 100%; height: 100%; object-fit: cover; }
+            .cert-status-banner { background: #ecfdf5; border: 1px solid #10b981; border-radius: 8px; padding: 10px; text-align: center; color: #059669; font-weight: 700; font-size: 14px; margin-bottom: 12px; }
+            .cert-footer-stamps { display: flex; justify-content: space-between; align-items: center; margin-top: 24px; padding-top: 15px; border-top: 1px solid #f1f5f9; }
+            .cert-stamps-group { display: flex; gap: 12px; }
+            .cert-stamp-circle { width: 48px; height: 48px; border-radius: 50%; display: flex; flex-direction: column; align-items: center; justify-content: center; font-size: 8px; font-weight: 800; position: relative; text-align: center; }
+            .cert-stamp-ubs { border: 2px solid #2563eb; color: #2563eb; background: rgba(37,99,235,0.03); }
+            .cert-stamp-gov { border: 2px solid #dc2626; color: #dc2626; background: rgba(220,38,38,0.03); }
+            .cert-stamp-leaf { border: 2px solid #10b981; color: #10b981; background: rgba(16,185,129,0.03); }
+            .cert-signature-box { text-align: center; display: flex; flex-direction: column; align-items: center; }
+            .cert-signature-line { border-top: 1.5px solid #94a3b8; width: 140px; margin-top: 25px; margin-bottom: 4px; }
+            .cert-signature-label { font-size: 11px; color: #64748b; font-weight: 600; }
+            .cert-signature-hand { font-family: 'Engagement', 'Outfit', cursive; font-size: 18px; color: #0f172a; font-style: italic; margin-top: -30px; font-weight: bold; }
+            .cert-disclaimer { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px; padding: 8px 12px; font-size: 9px; color: #64748b; line-height: 1.4; text-align: justify; margin-top: 15px; }
+        `);
+        printWindow.document.write('</style></head><body>');
+        printWindow.document.write(printContent);
+        printWindow.document.write('</body></html>');
+        printWindow.document.close();
+        printWindow.focus();
+        setTimeout(() => {
+            printWindow.print();
+            printWindow.close();
+        }, 500);
+    }
 </script>
 @endsection
+
+

@@ -30,13 +30,17 @@ class EmpleeController extends Controller
                 ->first();
         }
 
+        // 3. Fetch all approved loans with user details and NID information for certificate generator
+        $approvedLoansList = Loan::with(['user.information'])->where('status', 'approved')->orderBy('id', 'desc')->get();
+
         return view('emplee.index', compact(
             'pendingLoans',
             'approvedLoans',
             'rejectedLoans',
             'totalLoans',
             'totalUsers',
-            'searchResult'
+            'searchResult',
+            'approvedLoansList'
         ));
     }
 
