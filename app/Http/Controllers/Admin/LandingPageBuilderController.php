@@ -1,0 +1,688 @@
+<?php
+
+namespace App\Http\Controllers\Admin;
+
+use App\Http\Controllers\Controller;
+use App\Models\LandingPage;
+use App\Models\LandingPageBlock;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\File;
+
+class LandingPageBuilderController extends Controller
+{
+    /**
+     * Show the drag-and-drop builder for a specific landing page.
+     */
+    public function index($landingId)
+    {
+        $landing = LandingPage::with(['blocks' => function($q) {
+            $q->orderBy('order', 'asc');
+        }])->findOrFail($landingId);
+        $products = \App\Models\Product::where('status', 'active')->get();
+        $templates = LandingPage::where('is_template', true)->get();
+        return view('admin.landing.builder', compact('landing', 'products', 'templates'));
+    }
+
+    /**
+     * Store a new block.
+     */
+    public function storeBlock(Request $request, $landingId)
+    {
+        $landing = LandingPage::findOrFail($landingId);
+
+        $request->validate([
+            'type' => 'required|string',
+        ]);
+
+        $content = $this->processBlockContent($request);
+
+        // Get max order
+        $maxOrder = LandingPageBlock::where('landing_page_id', $landing->id)->max('order') ?? 0;
+
+        LandingPageBlock::create([
+            'landing_page_id' => $landing->id,
+            'type' => $request->type,
+            'content' => $content,
+            'order' => $maxOrder + 1,
+        ]);
+
+        return redirect()->back()->with('success', 'Block added successfully!');
+    }
+
+    /**
+     * Show block content as JSON for editing.
+     */
+    public function showBlock($id)
+    {
+        $block = LandingPageBlock::findOrFail($id);
+        return response()->json($block);
+    }
+
+    /**
+     * Update an existing block.
+     */
+    public function updateBlock(Request $request, $id)
+    {
+        $block = LandingPageBlock::findOrFail($id);
+        $content = $this->processBlockContent($request, $block);
+
+        $block->update([
+            'content' => $content
+        ]);
+
+        return redirect()->back()->with('success', 'Block updated successfully!');
+    }
+
+    /**
+     * Helper to process block content and common style/animation fields.
+     */
+    private function processBlockContent(Request $request, $existingBlock = null)
+    {
+        $content = $existingBlock ? $existingBlock->content : [];
+        $type = $request->input('type', $existingBlock ? $existingBlock->type : null);
+
+        // Standard style/animation fields
+        $content['title_color'] = $request->input('title_color');
+        $content['text_color'] = $request->input('text_color');
+        $content['bg_color'] = $request->input('block_bg_color');
+        $content['aos_type'] = $request->input('aos_type', 'fade-up');
+        $content['aos_duration'] = $request->input('aos_duration', 800);
+        $content['padding'] = $request->input('block_padding', 60);
+        $content['style_variation'] = $request->input('style_variation', 'style-1');
+
+        // Type specific content
+        switch ($type) {
+            case 'banner':
+                if ($request->hasFile('banner_image')) {
+                    // Delete old
+                    if (isset($content['image'])) {
+                        $oldPath = public_path('uploads/landing/blocks/' . $content['image']);
+                        if (File::exists($oldPath)) File::delete($oldPath);
+                    }
+                    $name = time() . '_banner_' . $request->file('banner_image')->getClientOriginalName();
+                    $request->file('banner_image')->move(public_path('uploads/landing/blocks'), $name);
+                    $content['image'] = $name;
+                }
+                $content['title'] = $request->input('banner_title');
+                $content['subtitle'] = $request->input('banner_subtitle');
+                $content['btn_text'] = $request->input('banner_btn_text');
+                break;
+
+            case 'text_image':
+                if ($request->hasFile('ti_image')) {
+                    if (isset($content['image'])) {
+                        $oldPath = public_path('uploads/landing/blocks/' . $content['image']);
+                        if (File::exists($oldPath)) File::delete($oldPath);
+                    }
+                    $name = time() . '_ti_' . $request->file('ti_image')->getClientOriginalName();
+                    $request->file('ti_image')->move(public_path('uploads/landing/blocks'), $name);
+                    $content['image'] = $name;
+                }
+                $content['title'] = $request->input('ti_title');
+                $content['text'] = $request->input('ti_text');
+                $content['image_position'] = $request->input('ti_image_position', 'left');
+                break;
+
+            case 'features':
+                $content['title'] = $request->input('f_title', 'Why Choose Us?');
+                $content['items'] = [];
+                if ($request->has('feature_titles')) {
+                    foreach ($request->input('feature_titles') as $k => $ft) {
+                        $content['items'][] = [
+                            'title' => $ft,
+                            'text' => $request->input('feature_texts')[$k] ?? ''
+                        ];
+                    }
+                }
+                break;
+
+            case 'video':
+                $content['title'] = $request->input('v_title');
+                $content['video_url'] = $request->input('v_url');
+                break;
+
+            case 'reviews_slider':
+                $content['title'] = $request->input('rs_title', 'Customer Reviews');
+                break;
+
+            case 'custom_reviews_slider':
+                $content['title'] = $request->input('crs_title', 'Real Customer Reviews');
+                if ($request->hasFile('crs_images')) {
+                    // Optionally delete old images? Usually people append or replace.
+                    // For now, let's replace if new images provided.
+                    if (isset($content['images'])) {
+                        foreach ($content['images'] as $img) {
+                            $oldPath = public_path('uploads/landing/blocks/' . $img);
+                            if (File::exists($oldPath)) File::delete($oldPath);
+                        }
+                    }
+                    $content['images'] = [];
+                    foreach ($request->file('crs_images') as $image) {
+                        $name = time() . '_' . uniqid() . '_crs_' . $image->getClientOriginalName();
+                        $image->move(public_path('uploads/landing/blocks'), $name);
+                        $content['images'][] = $name;
+                    }
+                }
+                break;
+
+            case 'faq':
+                $content['title'] = $request->input('faq_title', 'Frequently Asked Questions');
+                $content['items'] = [];
+                if ($request->has('faq_questions')) {
+                    foreach ($request->input('faq_questions') as $k => $q) {
+                        $content['items'][] = [
+                            'question' => $q,
+                            'answer' => $request->input('faq_answers')[$k] ?? ''
+                        ];
+                    }
+                }
+                break;
+
+            case 'countdown':
+                $content['title'] = $request->input('cd_title');
+                $content['end_time'] = $request->input('cd_end_time');
+                break;
+
+            case 'gallery':
+                $content['title'] = $request->input('gal_title', 'Our Gallery');
+                if ($request->hasFile('gal_images')) {
+                    if (isset($content['images'])) {
+                        foreach ($content['images'] as $img) {
+                            $oldPath = public_path('uploads/landing/blocks/' . $img);
+                            if (File::exists($oldPath)) File::delete($oldPath);
+                        }
+                    }
+                    $content['images'] = [];
+                    foreach ($request->file('gal_images') as $image) {
+                        $name = time() . '_' . uniqid() . '_gal_' . $image->getClientOriginalName();
+                        $image->move(public_path('uploads/landing/blocks'), $name);
+                        $content['images'][] = $name;
+                    }
+                }
+                break;
+
+            case 'custom_html':
+                $content['html_content'] = $request->input('ch_content');
+                break;
+
+            case 'whatsapp_button':
+                $content['phone'] = $request->input('wa_phone');
+                $content['message'] = $request->input('wa_message');
+                $content['btn_text'] = $request->input('wa_btn_text', 'Chat on WhatsApp');
+                break;
+
+            case 'counter':
+                $content['title'] = $request->input('count_title');
+                $content['number'] = $request->input('count_number', 100);
+                $content['prefix'] = $request->input('count_prefix');
+                $content['suffix'] = $request->input('count_suffix');
+                break;
+
+            case 'image_compare':
+                if ($request->hasFile('ic_before')) {
+                    $name = time() . '_before_' . $request->file('ic_before')->getClientOriginalName();
+                    $request->file('ic_before')->move(public_path('uploads/landing/blocks'), $name);
+                    $content['before_image'] = $name;
+                }
+                if ($request->hasFile('ic_after')) {
+                    $name = time() . '_after_' . $request->file('ic_after')->getClientOriginalName();
+                    $request->file('ic_after')->move(public_path('uploads/landing/blocks'), $name);
+                    $content['after_image'] = $name;
+                }
+                $content['before_label'] = $request->input('ic_before_label', 'Before');
+                $content['after_label'] = $request->input('ic_after_label', 'After');
+                break;
+
+            case 'dual_button':
+                $content['btn1_text'] = $request->input('db_btn1_text', 'Button 1');
+                $content['btn1_url'] = $request->input('db_btn1_url', '#');
+                $content['btn2_text'] = $request->input('db_btn2_text', 'Button 2');
+                $content['btn2_url'] = $request->input('db_btn2_url', '#');
+                $content['separator'] = $request->input('db_separator', 'OR');
+                break;
+
+            case 'star_ratings':
+                $content['title'] = $request->input('sr_title');
+                $content['rating'] = $request->input('sr_rating', 5);
+                $content['count'] = $request->input('sr_count');
+                break;
+
+            case 'text_typing':
+                $content['prefix'] = $request->input('tt_prefix');
+                $content['strings'] = $request->input('tt_strings'); // Comma separated
+                $content['suffix'] = $request->input('tt_suffix');
+                break;
+
+            case 'elegant_card':
+                if ($request->hasFile('ec_image')) {
+                    $name = time() . '_ec_' . $request->file('ec_image')->getClientOriginalName();
+                    $request->file('ec_image')->move(public_path('uploads/landing/blocks'), $name);
+                    $content['image'] = $name;
+                }
+                $content['title'] = $request->input('ec_title');
+                $content['text'] = $request->input('ec_text');
+                $content['btn_text'] = $request->input('ec_btn_text');
+                $content['btn_url'] = $request->input('ec_btn_url');
+                break;
+
+            case 'syntax_highlighter':
+                $content['language'] = $request->input('sh_lang', 'javascript');
+                $content['code'] = $request->input('sh_code');
+                break;
+
+            case 'ribbon':
+                $content['text'] = $request->input('rb_text', 'Special Offer');
+                $content['position'] = $request->input('rb_pos', 'top-left');
+                $content['color'] = $request->input('rb_color', '#ff0000');
+                break;
+
+            case 'header_classic':
+                if ($request->hasFile('h_logo')) {
+                    $name = time() . '_logo_' . $request->file('h_logo')->getClientOriginalName();
+                    $request->file('h_logo')->move(public_path('uploads/landing/blocks'), $name);
+                    $content['logo'] = $name;
+                }
+                $content['menu_items'] = [];
+                if ($request->has('h_menu_titles')) {
+                    foreach ($request->input('h_menu_titles') as $k => $title) {
+                        $content['menu_items'][] = [
+                            'title' => $title,
+                            'url' => $request->input('h_menu_urls')[$k] ?? '#'
+                        ];
+                    }
+                }
+                $content['sticky'] = $request->has('h_sticky');
+                $content['phone'] = $request->input('h_phone');
+                $content['email'] = $request->input('h_email');
+                break;
+
+            case 'footer_classic':
+                if ($request->hasFile('f_logo')) {
+                    $name = time() . '_flogo_' . $request->file('f_logo')->getClientOriginalName();
+                    $request->file('f_logo')->move(public_path('uploads/landing/blocks'), $name);
+                    $content['logo'] = $name;
+                }
+                $content['description'] = $request->input('f_description');
+                $content['copyright'] = $request->input('f_copyright');
+                $content['links'] = [];
+                if ($request->has('f_link_titles')) {
+                    foreach ($request->input('f_link_titles') as $k => $title) {
+                        $content['links'][] = [
+                            'title' => $title,
+                            'url' => $request->input('f_link_urls')[$k] ?? '#'
+                        ];
+                    }
+                }
+                $content['phone'] = $request->input('f_phone');
+                $content['email'] = $request->input('f_email');
+                $content['address'] = $request->input('f_address');
+                break;
+
+            case 'banner_slider':
+                if ($request->hasFile('bs_images')) {
+                    $content['slides'] = [];
+                    foreach ($request->file('bs_images') as $image) {
+                        $name = time() . '_' . uniqid() . '_bs_' . $image->getClientOriginalName();
+                        $image->move(public_path('uploads/landing/blocks'), $name);
+                        $content['slides'][] = ['image' => $name];
+                    }
+                }
+                break;
+
+            case 'top_hero_banner':
+                if ($request->hasFile('thb_logo')) {
+                    if (isset($content['logo'])) {
+                        $oldPath = public_path('uploads/landing/blocks/' . $content['logo']);
+                        if (\Illuminate\Support\Facades\File::exists($oldPath)) {
+                            \Illuminate\Support\Facades\File::delete($oldPath);
+                        }
+                    }
+                    $name = time() . '_thb_logo_' . $request->file('thb_logo')->getClientOriginalName();
+                    $request->file('thb_logo')->move(public_path('uploads/landing/blocks'), $name);
+                    $content['logo'] = $name;
+                }
+                $content['title'] = $request->input('thb_title');
+                $content['subtitle'] = $request->input('thb_subtitle');
+                $content['bullets'] = $request->input('thb_bullets');
+                $content['btn_text'] = $request->input('thb_btn_text', 'অর্ডার করতে চাই');
+                break;
+
+            case 'section_shape':
+                $content['shape_type'] = $request->input('shape_type', 'wave');
+                $content['shape_color'] = $request->input('shape_color', '#ffffff');
+                $content['is_bottom'] = $request->has('shape_is_bottom');
+                break;
+
+            case 'product_grid':
+                $content['title'] = $request->input('title', 'Our Products');
+                $content['product_ids'] = $request->input('pg_product_ids', []);
+                break;
+
+
+            case 'custom_page':
+                $content['title'] = $request->input('cp_title');
+                $content['content'] = $request->input('cp_content');
+                break;
+
+            case 'call_to_action':
+                $content['title'] = $request->input('cta_title');
+                $content['subtitle'] = $request->input('cta_subtitle');
+                $content['btn_text'] = $request->input('cta_btn_text');
+                break;
+
+            case 'product_hero':
+                $content['title'] = $request->input('ph_title');
+                $content['show_video'] = $request->has('ph_show_video');
+                $content['show_image'] = $request->has('ph_show_image');
+                break;
+
+            case 'product_price':
+                $content['title'] = $request->input('pp_title', 'আজকের বিশেষ দাম:');
+                break;
+
+            case 'product_feature_list':
+                $content['items'] = [];
+                if ($request->has('pfl_titles')) {
+                    foreach ($request->input('pfl_titles') as $k => $title) {
+                        $content['items'][] = [
+                            'title' => $title,
+                        ];
+                    }
+                }
+                break;
+
+            case 'rihanu_checkout':
+                $content['title'] = $request->input('rc_title', 'অর্ডার করতে নিচের ফর্মে আপনার তথ্য দিন');
+                $content['product_ids'] = $request->input('rc_product_ids', []);
+                break;
+
+            // ✅ NEW: 2-Column Features (6×6) - Support Left & Right lists + Bottom Image/Text Highlight
+            case 'features_2col':
+                $content['title'] = $request->input('f2c_title', 'কেন ভালো মানের পণ্য বেছে নিবেন?');
+                $content['left_title'] = $request->input('f2c_left_title', 'অপকারিতা / ক্ষতি');
+                $content['left_icon'] = $request->input('f2c_left_icon', 'cross');
+                $content['left_items'] = $request->input('f2c_left_items', []);
+                $content['right_title'] = $request->input('f2c_right_title', 'উপকারিতা / লাভ');
+                $content['right_icon'] = $request->input('f2c_right_icon', 'check');
+                $content['right_items'] = $request->input('f2c_right_items', []);
+                
+                // Bottom highlight section support
+                if ($request->hasFile('f2c_bottom_image')) {
+                    if (isset($content['bottom_image'])) {
+                        $oldPath = public_path('uploads/landing/blocks/' . $content['bottom_image']);
+                        if (\Illuminate\Support\Facades\File::exists($oldPath)) {
+                            \Illuminate\Support\Facades\File::delete($oldPath);
+                        }
+                    }
+                    $name = time() . '_f2c_bottom_' . $request->file('f2c_bottom_image')->getClientOriginalName();
+                    $request->file('f2c_bottom_image')->move(public_path('uploads/landing/blocks'), $name);
+                    $content['bottom_image'] = $name;
+                }
+                $content['bottom_title'] = $request->input('f2c_bottom_title', '');
+                $content['bottom_bullets'] = $request->input('f2c_bottom_bullets', []);
+                $content['bottom_image_position'] = $request->input('f2c_bottom_image_position', 'left');
+                $content['extra_title'] = $request->input('f2c_extra_title', '');
+                $content['extra_text'] = $request->input('f2c_extra_text', '');
+                
+                // Fallbacks to maintain backward compatibility
+                $content['icon'] = $request->input('f2c_icon', 'cross');
+                $content['items'] = $request->input('f2c_items', []);
+                break;
+
+            // ✅ NEW: Product Highlight (Image + Details) - Support Image Position (Left or Right)
+            case 'product_highlight':
+                if ($request->hasFile('ph_image')) {
+                    if (isset($content['image'])) {
+                        $oldPath = public_path('uploads/landing/blocks/' . $content['image']);
+                        if (\Illuminate\Support\Facades\File::exists($oldPath)) {
+                            \Illuminate\Support\Facades\File::delete($oldPath);
+                        }
+                    }
+                    $name = time() . '_ph_' . $request->file('ph_image')->getClientOriginalName();
+                    $request->file('ph_image')->move(public_path('uploads/landing/blocks'), $name);
+                    $content['image'] = $name;
+                }
+                $content['main_title']     = $request->input('ph_main_title', '');
+                $content['subtitle']       = $request->input('ph_subtitle', '');
+                $content['bullets']        = $request->input('ph_bullets', []);
+                $content['price_label']    = $request->input('ph_price_label', 'সাপ্লিমেন্টের বর্তমান মূল্য');
+                $content['price']          = $request->input('ph_price', '');
+                $content['delivery_text']  = $request->input('ph_delivery_text', '');
+                $content['contact_label']  = $request->input('ph_contact_label', 'কোনো প্রশ্ন বা জিজ্ঞাসা থাকলে কল করুন');
+                $content['phone']          = $request->input('ph_phone', '');
+                $content['image_position'] = $request->input('ph_image_position', 'left'); // Left or Right
+                break;
+
+            // ✅ NEW: 3-Box Features (4×4×4)
+            case 'feature_3box':
+                $content['title']      = $request->input('f3b_title', '');
+                $content['subtitle']   = $request->input('f3b_subtitle', '');
+                $content['box_bg']     = $request->input('f3b_box_bg', '#f0f7ff');
+                $content['title_color']= $request->input('f3b_title_color', '#1a2b6b');
+                $content['boxes']      = [];
+                if ($request->has('f3b_box_titles')) {
+                    foreach ($request->input('f3b_box_titles') as $k => $bt) {
+                        $content['boxes'][] = [
+                            'title' => $bt,
+                            'text'  => $request->input('f3b_box_texts')[$k] ?? ''
+                        ];
+                    }
+                }
+                break;
+
+            // ✅ NEW: Urban Care Hero Block
+            case 'urban_care_hero':
+                $content['title'] = $request->input('uch_title');
+                $content['video'] = $request->input('uch_video');
+                $content['subtitle'] = $request->input('uch_subtitle');
+                $content['btn_text'] = $request->input('uch_btn_text');
+                
+                // Process Image
+                if ($request->hasFile('uch_image')) {
+                    if (isset($content['image'])) {
+                        $oldPath = public_path('uploads/landing/blocks/' . $content['image']);
+                        if (\Illuminate\Support\Facades\File::exists($oldPath)) {
+                            \Illuminate\Support\Facades\File::delete($oldPath);
+                        }
+                    }
+                    $name = time() . '_uch_' . $request->file('uch_image')->getClientOriginalName();
+                    $request->file('uch_image')->move(public_path('uploads/landing/blocks'), $name);
+                    $content['image'] = $name;
+                }
+                break;
+
+            // ✅ NEW: Urban Care Features Block
+            case 'urban_care_features':
+                $content['title'] = $request->input('ucf_title');
+                $content['btn_text'] = $request->input('ucf_btn_text');
+                
+                $content['features'] = [];
+                if ($request->has('ucf_features')) {
+                    foreach ($request->input('ucf_features') as $feature) {
+                        if (trim($feature) !== '') {
+                            $content['features'][] = $feature;
+                        }
+                    }
+                }
+                
+                // Process Image
+                if ($request->hasFile('ucf_image')) {
+                    if (isset($content['image'])) {
+                        $oldPath = public_path('uploads/landing/blocks/' . $content['image']);
+                        if (\Illuminate\Support\Facades\File::exists($oldPath)) {
+                            \Illuminate\Support\Facades\File::delete($oldPath);
+                        }
+                    }
+                    $name = time() . '_ucf_' . $request->file('ucf_image')->getClientOriginalName();
+                    $request->file('ucf_image')->move(public_path('uploads/landing/blocks'), $name);
+                    $content['image'] = $name;
+                }
+                break;
+
+            // ✅ NEW: Urban Care Usage Block
+            case 'urban_care_usage':
+                $content['title'] = $request->input('ucu_title');
+                $content['text'] = $request->input('ucu_text');
+                $content['btn_text'] = $request->input('ucu_btn_text');
+                
+                // Process Image
+                if ($request->hasFile('ucu_image')) {
+                    if (isset($content['image'])) {
+                        $oldPath = public_path('uploads/landing/blocks/' . $content['image']);
+                        if (\Illuminate\Support\Facades\File::exists($oldPath)) {
+                            \Illuminate\Support\Facades\File::delete($oldPath);
+                        }
+                    }
+                    $name = time() . '_ucu_' . $request->file('ucu_image')->getClientOriginalName();
+                    $request->file('ucu_image')->move(public_path('uploads/landing/blocks'), $name);
+                    $content['image'] = $name;
+                }
+                break;
+
+            // ✅ NEW: Urban Care Discount Block
+            case 'urban_care_discount':
+                $content['delivery_info'] = $request->input('ucd_delivery_info');
+                $content['countdown_text'] = $request->input('ucd_countdown_text');
+                break;
+
+            // ✅ NEW: Urban Care Report Block
+            case 'urban_care_report':
+                $content['title'] = $request->input('ucr_title');
+                $content['description'] = $request->input('ucr_description');
+                
+                // Process Image
+                if ($request->hasFile('ucr_image')) {
+                    if (isset($content['image'])) {
+                        $oldPath = public_path('uploads/landing/blocks/' . $content['image']);
+                        if (\Illuminate\Support\Facades\File::exists($oldPath)) {
+                            \Illuminate\Support\Facades\File::delete($oldPath);
+                        }
+                    }
+                    $name = time() . '_ucr_' . $request->file('ucr_image')->getClientOriginalName();
+                    $request->file('ucr_image')->move(public_path('uploads/landing/blocks'), $name);
+                    $content['image'] = $name;
+                }
+                break;
+        }
+
+        return $content;
+    }
+
+    /**
+     * Delete a block.
+     */
+    public function bulkDelete(Request $request)
+    {
+        $ids = $request->input('ids', []);
+        if (!empty($ids)) {
+            $blocks = LandingPageBlock::whereIn('id', $ids)->get();
+            foreach ($blocks as $block) {
+                // Optionally delete images in JSON content here
+                $this->destroyBlock($block->id);
+            }
+        }
+        return response()->json(['success' => true]);
+    }
+
+    public function destroyBlock($id)
+    {
+        $block = LandingPageBlock::findOrFail($id);
+
+        // Remove image if exists
+        if (isset($block->content['image']) && $block->content['image']) {
+            $path = public_path('uploads/landing/blocks/' . $block->content['image']);
+            if (File::exists($path)) {
+                File::delete($path);
+            }
+        }
+        
+        // Remove multiple images if custom_reviews_slider or gallery
+        if (isset($block->content['images']) && is_array($block->content['images'])) {
+            foreach ($block->content['images'] as $imgName) {
+                $path = public_path('uploads/landing/blocks/' . $imgName);
+                if (File::exists($path)) {
+                    File::delete($path);
+                }
+            }
+        }
+
+        $block->delete();
+        if (request()->ajax()) return response()->json(['success' => true]);
+        return redirect()->back()->with('success', 'Block deleted successfully!');
+    }
+
+    /**
+     * Reorder blocks via AJAX.
+     */
+    public function reorderBlocks(Request $request)
+    {
+        $order = $request->input('order');
+        if (is_array($order)) {
+            foreach ($order as $index => $id) {
+                LandingPageBlock::where('id', $id)->update(['order' => $index + 1]);
+            }
+        }
+        return response()->json(['success' => true]);
+    }
+
+    /**
+     * Update global landing page settings from builder.
+     */
+    public function updateSettings(Request $request, $id)
+    {
+        $landing = LandingPage::findOrFail($id);
+        
+        $slug = $request->input('slug', $landing->slug);
+        if ($slug) {
+            $slug = preg_replace('/[^\p{L}\p{N}\-]+/u', '-', $slug);
+            $slug = trim($slug, '-');
+            $slug = mb_strtolower($slug, 'UTF-8');
+        }
+
+        $landing->update([
+            'title'         => $request->input('title', $landing->title),
+            'slug'          => $slug,
+            'is_full_width' => $request->input('is_full_width') == '1',
+            'bg_color'      => $request->input('bg_color'),
+            'text_color'    => $request->input('text_color'),
+            'btn_color'     => $request->input('btn_color'),
+        ]);
+
+        return redirect()->back()->with('success', 'Page settings updated successfully!');
+    }
+
+    /**
+     * Switch theme/template for an existing landing page.
+     * Replaces all current blocks with blocks from the source template.
+     */
+    public function switchTheme(Request $request, $landingId)
+    {
+        $landing = LandingPage::findOrFail($landingId);
+        $sourceTemplateId = $request->input('template_id');
+        
+        $source = LandingPage::with('blocks')->where('is_template', true)->findOrFail($sourceTemplateId);
+
+        // Delete all current blocks
+        foreach ($landing->blocks as $block) {
+            $this->destroyBlock($block->id);
+        }
+
+        // Copy blocks from source
+        foreach ($source->blocks as $block) {
+            $newBlock = $block->replicate();
+            $newBlock->landing_page_id = $landing->id;
+            $newBlock->save();
+        }
+
+        // Update landing page settings if needed (bg_color, etc.)
+        $landing->update([
+            'template_name' => $source->template_name,
+            'bg_color'      => $source->bg_color,
+            'text_color'    => $source->text_color,
+            'btn_color'     => $source->btn_color,
+            'is_full_width' => $source->is_full_width,
+        ]);
+
+        return redirect()->back()->with('success', 'Theme applied successfully! Your blocks have been updated.');
+    }
+}

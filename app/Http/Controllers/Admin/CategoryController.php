@@ -1,0 +1,187 @@
+<?php
+
+namespace App\Http\Controllers\Admin;
+
+use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
+use App\Models\Category;
+use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Cache;
+
+class CategoryController extends Controller
+{
+    public function index()
+    {
+        $categories = Category::latest()->get();
+        if (request()->routeIs('manager.*')) {
+            return view('manager.category.index', compact('categories'));
+        } elseif (request()->routeIs('emplee.*')) {
+            return view('emplee.category.index', compact('categories'));
+        }
+        return view('admin.category.index', compact('categories'));
+    }
+
+    public function create()
+    {
+        if (request()->routeIs('manager.*')) {
+            return view('manager.category.create');
+        } elseif (request()->routeIs('emplee.*')) {
+            return view('emplee.category.create');
+        }
+        return view('admin.category.create');
+    }
+
+    public function store(Request $request)
+    {
+        $request->validate([
+            'category_name'  => 'required|string|max:255|unique:categories,category_name',
+            'category_photo' => 'required|mimes:jpg,jpeg,png,webp,svg,gif|max:5120',
+        ], [
+            'category_name.unique' => 'এই ক্যাটাগরি অলরেডি ডাটাবেজে আছে আপনার',
+        ]);
+
+        $photo = null;
+        if ($request->hasFile('category_photo')) {
+            $file  = $request->file('category_photo');
+            $photo = time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
+
+            $uploadPath = public_path('uploads/category');
+            if (!file_exists($uploadPath)) {
+                mkdir($uploadPath, 0777, true);
+            }
+            $file->move($uploadPath, $photo);
+        }
+
+        Category::create([
+            'category_name'  => $request->category_name,
+            'category_photo' => $photo,
+            'slug'           => Str::slug($request->category_name),
+            'status'         => $request->status   ?? 'active',
+            'featured'       => $request->featured  ?? 'inactive',
+        ]);
+        $this->clearHomeCache();
+
+        $route = 'admin.category.index';
+        if (request()->routeIs('manager.*')) $route = 'manager.category.index';
+        if (request()->routeIs('emplee.*')) $route = 'emplee.category.index';
+
+        return redirect()->route($route)
+            ->with('success', 'Category Added Successfully');
+    }
+
+    private function clearHomeCache()
+    {
+        Cache::forget('home_slider');
+        Cache::forget('home_categories');
+        Cache::forget('home_flash_products');
+        Cache::forget('home_hot_categories');
+        Cache::forget('home_new_arrivals');
+        Cache::forget('home_best_sellers');
+        Cache::forget('home_top_rated');
+        Cache::forget('home_clearance');
+        Cache::forget('home_special_offers');
+        Cache::forget('sidebar_categories');
+    }
+
+    public function edit(string $id)
+    {
+        $category = Category::findOrFail($id);
+        if (request()->routeIs('manager.*')) {
+            return view('manager.category.edit', compact('category'));
+        } elseif (request()->routeIs('emplee.*')) {
+            return view('emplee.category.edit', compact('category'));
+        }
+        return view('admin.category.edit', compact('category'));
+    }
+
+    public function update(Request $request, string $id)
+    {
+        $category = Category::findOrFail($id);
+
+        $request->validate([
+            'category_name'  => 'required|string|max:255|unique:categories,category_name,' . $id,
+            'category_photo' => 'nullable|mimes:jpg,jpeg,png,webp,svg,gif|max:5120',
+        ], [
+            'category_name.unique' => 'এই ক্যাটাগরি অলরেডি ডাটাবেজে আছে আপনার',
+        ]);
+
+        $photo = $category->category_photo;
+
+        if ($request->hasFile('category_photo')) {
+            $oldPath = public_path('uploads/category/' . $category->category_photo);
+            if ($category->category_photo && file_exists($oldPath)) {
+                unlink($oldPath);
+            }
+
+            $file  = $request->file('category_photo');
+            $photo = time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
+
+            $uploadPath = public_path('uploads/category');
+            if (!file_exists($uploadPath)) {
+                mkdir($uploadPath, 0777, true);
+            }
+            $file->move($uploadPath, $photo);
+        }
+
+        $category->update([
+            'category_name'  => $request->category_name,
+            'category_photo' => $photo,
+            'slug'           => Str::slug($request->category_name),
+            'status'         => $request->status   ?? $category->status,
+            'featured'       => $request->featured  ?? $category->featured,
+        ]);
+        $this->clearHomeCache();
+
+        $route = 'admin.category.index';
+        if (request()->routeIs('manager.*')) $route = 'manager.category.index';
+        if (request()->routeIs('emplee.*')) $route = 'emplee.category.index';
+
+        return redirect()->route($route)
+            ->with('success', 'Category Updated Successfully');
+    }
+
+    public function toggleFeatured(string $id)
+    {
+        $category = Category::findOrFail($id);
+        $category->featured = $category->featured === 'active' ? 'inactive' : 'active';
+        $category->save();
+
+        $this->clearHomeCache();
+
+        return redirect()->route('admin.category.index')
+            ->with('success', 'Featured status updated');
+    }
+
+    public function toggleStatus(string $id)
+    {
+        $category = Category::findOrFail($id);
+        $category->status = $category->status === 'active' ? 'inactive' : 'active';
+        $category->save();
+
+        $this->clearHomeCache();
+
+        return redirect()->route('admin.category.index')
+            ->with('success', 'Status updated');
+    }
+
+    public function destroy(string $id)
+    {
+        $category = Category::findOrFail($id);
+
+        $oldPath = public_path('uploads/category/' . $category->category_photo);
+        if ($category->category_photo && file_exists($oldPath)) {
+            unlink($oldPath);
+        }
+
+        $category->delete();
+
+        $this->clearHomeCache();
+
+        $route = 'admin.category.index';
+        if (request()->routeIs('manager.*')) $route = 'manager.category.index';
+        if (request()->routeIs('emplee.*')) $route = 'emplee.category.index';
+
+        return redirect()->route($route)
+            ->with('success', 'Category Deleted Successfully');
+    }
+}
