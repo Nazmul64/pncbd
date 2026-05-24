@@ -134,7 +134,7 @@
                             <div class="usr-actions" style="justify-content: flex-end;">
                                 {{-- Block/Unblock toggle --}}
                                 @if(auth()->id() !== $user->id && !$user->isSuperAdmin())
-                                <form action="{{ route('admin.users.toggle-status', $user->id) }}" method="POST" style="display:inline;">
+                                <form action="{{ route('admin.users.toggleStatus', $user->id) }}" method="POST" style="display:inline;">
                                     @csrf
                                     @method('PATCH')
                                     <button type="submit" class="usr-btn-icon usr-btn-toggle" title="{{ $user->status === 'active' ? 'Block User' : 'Activate User' }}">
