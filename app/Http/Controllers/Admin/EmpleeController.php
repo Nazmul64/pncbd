@@ -111,11 +111,11 @@ class EmpleeController extends Controller
         if ($user->isSuperAdmin() || $user->isAdmin()) {
             return redirect()->route('admin.dashboard');
         } elseif ($user->isSubAdmin()) {
-            return redirect()->route('subadmin.dashboard');
+            return redirect()->route('admin.subadmin.dashboard');
         } elseif ($user->isManager()) {
-            return redirect()->route('manager.dashboard');
+            return redirect()->route('admin.manager.dashboard');
         } elseif ($user->isEmployee()) {
-            return redirect()->route('emplee.dashboard');
+            return redirect()->route('admin.emplee.dashboard');
         }
 
         return redirect()->to('/');
