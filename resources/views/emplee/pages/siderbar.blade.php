@@ -1,19 +1,14 @@
 {{-- ============================================================
      EMPLOYEE (EMPLEE) SIDEBAR
      resources/views/emplee/pages/siderbar.blade.php
-     100% Permission-based — Linking Admin Panel Features
+     Premium UI/UX - Clean Loan Management & Core Features Only
 ============================================================ --}}
 
 @php
     $u = auth()->user();
     $dashActive   = request()->routeIs('admin.emplee.dashboard');
-    $ordersActive = request()->routeIs('emplee.orders.*');
-    $prodsActive  = request()->routeIs('admin.products.*');
-    $catsActive   = request()->routeIs('emplee.category.*') || request()->routeIs('admin.subcategory.*') || request()->routeIs('admin.childcategory.*');
-    $reviewsActive= request()->routeIs('emplee.reviews.*');
-    $usersActive  = request()->routeIs('customer.*');
-    $vendorsActive= request()->routeIs('admin.seller.*');
-    $blogActive   = request()->routeIs('emplee.blog-categories.*') || request()->routeIs('emplee.blog-posts.*');
+    $profileActive = request()->routeIs('admin.emplee.profile.*');
+    $chatActive    = request()->routeIs('admin.emplee.chat.*');
 @endphp
 
 <aside id="sidebar">
@@ -34,7 +29,7 @@
 <a href="{{ route('admin.emplee.dashboard') }}" class="sb-item {{ $dashActive ? 'active' : '' }}">
     <span class="sb-left"><i class="fas fa-chart-line sb-ico"></i> Dashboard</span>
 </a>
-<a href="{{ route('emplee.profile.index') }}" class="sb-item {{ request()->routeIs('emplee.profile.*') ? 'active' : '' }}">
+<a href="{{ route('admin.emplee.profile.index') }}" class="sb-item {{ $profileActive ? 'active' : '' }}">
     <span class="sb-left"><i class="fas fa-user-circle sb-ico"></i> My Profile</span>
 </a>
 @endif
@@ -44,7 +39,7 @@
 {{-- Communication Section --}}
 @if($u->isSuperAdmin() || $u->hasAnyPermission(['view-chat', 'manage-chat']))
 <div class="sb-section">Communication</div>
-<a href="{{ route('emplee.chat.index') }}" class="sb-item {{ request()->routeIs('emplee.chat.*') ? 'active' : '' }}">
+<a href="{{ route('admin.emplee.chat.index') }}" class="sb-item {{ $chatActive ? 'active' : '' }}">
     <span class="sb-left">
         <i class="fas fa-comments sb-ico"></i> Live Chat
         <span class="badge bg-danger ms-2" id="sbUnreadBadge" style="display:none; font-size:10px;">0</span>
@@ -53,169 +48,9 @@
 <div class="sb-sep"></div>
 @endif
 
-@if($u->isSuperAdmin() || $u->hasAnyPermission(['view-orders', 'view-products', 'view-categories']))
-<div class="sb-section">Inventory & Sales</div>
-
-{{-- Orders Section --}}
-@if($u->isSuperAdmin() || $u->hasAnyPermission(['view-orders', 'edit-orders', 'delete-orders']))
-<div class="sb-item {{ $ordersActive ? 'active open' : '' }}" onclick="sbToggle(this)">
-    <span class="sb-left"><i class="fas fa-shopping-bag sb-ico"></i> Orders</span>
-    <i class="fas fa-chevron-right sb-arr"></i>
-</div>
-<div class="sb-sub {{ $ordersActive ? 'open' : '' }}">
-    <a href="{{ route('emplee.orders.index') }}" class="{{ request()->routeIs('emplee.orders.index') && !request()->filled('status') ? 'active' : '' }}">
-        All Orders
-    </a>
-    <a href="{{ route('emplee.orders.index', ['status' => 'pending']) }}" class="{{ request('status') === 'pending' ? 'active' : '' }}">
-        Pending
-    </a>
-    <a href="{{ route('emplee.orders.index', ['status' => 'processing']) }}" class="{{ request('status') === 'processing' ? 'active' : '' }}">
-        Processing
-    </a>
-</div>
-@endif
-
-{{-- Products Section --}}
-@if($u->isSuperAdmin() || $u->hasAnyPermission(['view-products', 'create-products', 'edit-products', 'delete-products']))
-<div class="sb-item {{ $prodsActive ? 'active open' : '' }}" onclick="sbToggle(this)">
-    <span class="sb-left"><i class="fas fa-box sb-ico"></i> Products</span>
-    <i class="fas fa-chevron-right sb-arr"></i>
-</div>
-<div class="sb-sub {{ $prodsActive ? 'open' : '' }}">
-    <a href="{{ route('admin.products.index') }}" class="{{ request()->routeIs('admin.products.index') ? 'active' : '' }}">
-        Inventory List
-    </a>
-    @if($u->isSuperAdmin() || $u->hasPermission('create-products'))
-    <a href="{{ route('admin.products.create') }}" class="{{ request()->routeIs('admin.products.create') ? 'active' : '' }}">
-        Add New Product
-    </a>
-    @endif
-    <a href="{{ route('admin.products.deactivated') }}" class="{{ request()->routeIs('admin.products.deactivated') ? 'active' : '' }}">
-        Deactivated
-    </a>
-</div>
-@endif
-
-{{-- Category Management --}}
-@if($u->isSuperAdmin() || $u->hasAnyPermission(['view-categories', 'create-categories', 'edit-categories', 'delete-categories']))
-<div class="sb-item {{ $catsActive ? 'active open' : '' }}" onclick="sbToggle(this)">
-    <span class="sb-left"><i class="fas fa-layer-group sb-ico"></i> Catalog</span>
-    <i class="fas fa-chevron-right sb-arr"></i>
-</div>
-<div class="sb-sub {{ $catsActive ? 'open' : '' }}">
-    <a href="{{ route('emplee.category.index') }}" class="{{ request()->routeIs('emplee.category.index') ? 'active' : '' }}">
-        Categories
-    </a>
-    <a href="{{ route('admin.subcategory.index') }}" class="{{ request()->routeIs('admin.subcategory.index') ? 'active' : '' }}">
-        Sub-Categories
-    </a>
-    <a href="{{ route('admin.childcategory.index') }}" class="{{ request()->routeIs('admin.childcategory.index') ? 'active' : '' }}">
-        Child-Categories
-    </a>
-</div>
-@endif
-
-<div class="sb-sep"></div>
-@endif
-
-@if($u->isSuperAdmin() || $u->hasAnyPermission(['view-pages', 'view-users', 'view-sellers']))
-<div class="sb-section">People</div>
-
-{{-- Blog Management --}}
-@if($u->isSuperAdmin() || $u->hasPermission('view-pages'))
-<div class="sb-item {{ $blogActive ? 'active open' : '' }}" onclick="sbToggle(this)">
-    <span class="sb-left"><i class="fas fa-file-alt sb-ico"></i> Blog Management</span>
-    <i class="fas fa-chevron-right sb-arr"></i>
-</div>
-<div class="sb-sub {{ $blogActive ? 'open' : '' }}">
-    <a href="{{ route('emplee.blog-posts.index') }}" class="{{ request()->routeIs('emplee.blog-posts.*') ? 'active' : '' }}">
-        All Posts
-    </a>
-    <a href="{{ route('emplee.blog-categories.index') }}" class="{{ request()->routeIs('emplee.blog-categories.*') ? 'active' : '' }}">
-        Blog Categories
-    </a>
-</div>
-@endif
-
-{{-- Customer Management --}}
-@if($u->isSuperAdmin() || $u->hasPermission('view-users'))
-<div class="sb-item {{ $usersActive ? 'active open' : '' }}" onclick="sbToggle(this)">
-    <span class="sb-left"><i class="fas fa-user-group sb-ico"></i> Customers</span>
-    <i class="fas fa-chevron-right sb-arr"></i>
-</div>
-<div class="sb-sub {{ $usersActive ? 'open' : '' }}">
-    <a href="{{ route('customer.index') }}" class="{{ request()->routeIs('customer.index') ? 'active' : '' }}">
-        All Customers
-    </a>
-    <a href="{{ route('customer.create') }}" class="{{ request()->routeIs('customer.create') ? 'active' : '' }}">
-        Add Customer
-    </a>
-</div>
-@endif
-
-{{-- Vendor Management --}}
-@if($u->isSuperAdmin() || $u->hasPermission('view-sellers'))
-<div class="sb-item {{ $vendorsActive ? 'active open' : '' }}" onclick="sbToggle(this)">
-    <span class="sb-left"><i class="fas fa-store sb-ico"></i> Vendors</span>
-    <i class="fas fa-chevron-right sb-arr"></i>
-</div>
-<div class="sb-sub {{ $vendorsActive ? 'open' : '' }}">
-    <a href="{{ route('admin.seller.register.list') }}" class="{{ request()->routeIs('admin.seller.register.list') ? 'active' : '' }}">
-        Merchant List
-    </a>
-</div>
-@endif
-
-<div class="sb-sep"></div>
-@endif
-
-{{-- HRM System --}}
-@php
-    $hrmActive = request()->routeIs('admin.hrm.*') || request()->routeIs('admin.hrm.leaves.*') || request()->routeIs('admin.hrm.payslips.*');
-@endphp
-@if($u->isSuperAdmin() || $u->hasAnyPermission(['view-employees','manage-attendance','manage-expenses','manage-salary-advance']))
-<div class="sb-section">HRM System</div>
-<div class="sb-item {{ $hrmActive ? 'active open' : '' }}" onclick="sbToggle(this)">
-    <span class="sb-left"><i class="fas fa-users-cog sb-ico"></i> HRM Module</span>
-    <i class="fas fa-chevron-right sb-arr"></i>
-</div>
-<div class="sb-sub {{ $hrmActive ? 'open' : '' }}">
-    @if($u->isSuperAdmin() || $u->hasPermission('view-employees'))
-    <a href="{{ route('admin.hrm.employees.index') }}" class="{{ request()->routeIs('admin.hrm.employees.*') ? 'active' : '' }}">
-        Employees
-    </a>
-    @endif
-    
-    @if($u->isSuperAdmin() || $u->hasPermission('manage-attendance'))
-    <a href="{{ route('admin.hrm.attendance.index') }}" class="{{ request()->routeIs('admin.hrm.attendance.*') ? 'active' : '' }}">
-        Attendance
-    </a>
-    <a href="{{ route('admin.hrm.leaves.index') }}" class="{{ request()->routeIs('admin.hrm.leaves.*') ? 'active' : '' }}">
-        Leave Logs
-    </a>
-    @endif
-    
-    @if($u->isSuperAdmin() || $u->hasPermission('manage-salary-advance'))
-    <a href="{{ route('admin.hrm.advance-salaries.index') }}" class="{{ request()->routeIs('admin.hrm.advance-salaries.*') ? 'active' : '' }}">
-        Salary & Advances
-    </a>
-    <a href="{{ route('admin.hrm.payslips.index') }}" class="{{ request()->routeIs('admin.hrm.payslips.*') ? 'active' : '' }}">
-        Salaries & Payroll
-    </a>
-    @endif
-    
-    @if($u->isSuperAdmin() || $u->hasPermission('manage-expenses'))
-    <a href="{{ route('admin.hrm.expenses.index') }}" class="{{ request()->routeIs('admin.hrm.expenses.*') ? 'active' : '' }}">
-        Expenditures
-    </a>
-    @endif
-</div>
-<div class="sb-sep"></div>
-@endif
-
 {{-- Account Settings --}}
-<div class="sb-item {{ request()->routeIs('emplee.profile.*') ? 'active' : '' }}">
-    <a href="{{ route('emplee.profile.index') }}" style="text-decoration: none; color: inherit; display: flex; align-items: center; width: 100%;">
+<div class="sb-item {{ $profileActive ? 'active' : '' }}">
+    <a href="{{ route('admin.emplee.profile.index') }}" style="text-decoration: none; color: inherit; display: flex; align-items: center; width: 100%;">
         <span class="sb-left"><i class="fas fa-user-gear sb-ico"></i> Profile & Password</span>
     </a>
 </div>
@@ -267,7 +102,7 @@ document.querySelectorAll('.sb-sub').forEach(function(s) {
 // Sidebar Unread Badge Polling
 @if($u->isSuperAdmin() || $u->hasAnyPermission(['view-chat', 'manage-chat']))
 function sbRefreshUnread() {
-    fetch('{{ route("emplee.chat.unread") }}')
+    fetch('{{ route("admin.emplee.chat.unread") }}')
         .then(r => r.json())
         .then(d => {
             const badge = document.getElementById('sbUnreadBadge');
