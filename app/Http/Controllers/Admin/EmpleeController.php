@@ -150,4 +150,46 @@ class EmpleeController extends Controller
 
         return back()->with('success', 'লোন আইডি #' . $loan->id . ' এর স্থিতি সফলভাবে "' . ucfirst($request->status) . '" করা হয়েছে।');
     }
+
+    // Update Customer Profile Details
+    public function updateCustomerProfile(Request $request, $id)
+    {
+        $request->validate([
+            'name'       => 'required|string|max:255',
+            'email'      => 'required|email|unique:users,email,' . $id,
+            'phone'      => 'required|string|unique:users,phone,' . $id,
+            'address'    => 'nullable|string',
+            'nid_number' => 'nullable|string|max:50',
+        ]);
+
+        $user = User::findOrFail($id);
+        $user->update($request->only('name', 'email', 'phone', 'address'));
+
+        if ($request->filled('nid_number')) {
+            $user->information()->updateOrCreate(
+                ['user_id' => $user->id],
+                [
+                    'nid_number'   => $request->nid_number,
+                    'full_name'    => $user->name,
+                    'phone_number' => $user->phone
+                ]
+            );
+        }
+
+        return back()->with('success', 'গ্রাহকের প্রোফাইল তথ্য সফলভাবে আপডেট করা হয়েছে।');
+    }
+
+    // Change Customer Password directly
+    public function changeCustomerPassword(Request $request, $id)
+    {
+        $request->validate([
+            'password' => 'required|string|min:6|confirmed',
+        ]);
+
+        $user = User::findOrFail($id);
+        $user->password = bcrypt($request->password);
+        $user->save();
+
+        return back()->with('success', 'গ্রাহকের পাসওয়ার্ড সফলভাবে পরিবর্তন করা হয়েছে।');
+    }
 }

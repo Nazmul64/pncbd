@@ -595,75 +595,144 @@
         {{-- Search Result Display --}}
         @if(request()->has('phone'))
             @if($searchResult)
-                <div class="customer-profile-box">
-                    <div class="customer-avatar">
-                        {{ substr($searchResult->name, 0, 1) }}
+                @php
+                    $custApprovedBalance = $searchResult->loans->where('status', 'approved')->sum('amount');
+                    $custTotalLoans = $searchResult->loans->count();
+                    $custKycStatus = $searchResult->information ? 'সম্পূর্ণ ✓' : 'অসম্পূর্ণ ⚠';
+                    $custKycClass = $searchResult->information ? 'text-success' : 'text-warning fw-bold';
+                @endphp
+
+                <div class="row g-4 mb-4">
+                    {{-- Customer Profile Box (Left Column) --}}
+                    <div class="col-md-4">
+                        <div class="bg-white border p-4 text-center" style="border-radius: 16px; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03); min-height: 100%; display: flex; flex-direction: column; justify-content: space-between; align-items: center;">
+                            <div class="w-100 text-center">
+                                {{-- Circular Avatar collage --}}
+                                <div class="d-inline-flex align-items-center justify-content-center" style="width: 100px; height: 100px; border-radius: 50%; background: #eff6ff; border: 3px solid #3b82f6; overflow: hidden; margin-bottom: 12px; position: relative;">
+                                    @if($searchResult->information && $searchResult->information->selfie)
+                                        <img src="{{ asset('uploads/avator/' . $searchResult->information->selfie) }}" style="width: 100%; height: 100%; object-fit: cover;">
+                                    @else
+                                        <span style="font-size: 38px; font-weight: 800; color: #2563eb;">{{ substr($searchResult->name, 0, 1) }}</span>
+                                    @endif
+                                </div>
+                                
+                                <h4 class="fw-bold mb-1" style="font-size: 20px; color: #0f172a;">{{ $searchResult->name }}</h4>
+                                <p class="text-muted small mb-3" style="font-size: 13px;">{{ $searchResult->phone }}</p>
+                                
+                                <div class="text-start" style="font-size: 14px; color: #475569; border-top: 1px solid #f1f5f9; padding-top: 15px;">
+                                    <div class="d-flex justify-content-between py-2 border-bottom border-light">
+                                        <span>প্রোফাইল:</span>
+                                        <span class="{{ $custKycClass }}" style="font-size: 13.5px;">{{ $custKycStatus }}</span>
+                                    </div>
+                                    <div class="d-flex justify-content-between py-2 border-bottom border-light">
+                                        <span>ব্যালেন্স:</span>
+                                        <span class="fw-bold text-success">৳{{ number_format($custApprovedBalance, 2) }}</span>
+                                    </div>
+                                    <div class="d-flex justify-content-between py-2">
+                                        <span>যোগদান:</span>
+                                        <span class="fw-bold text-secondary">{{ $searchResult->created_at->format('d M, Y') }}</span>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            {{-- Trigger KYC detail modal --}}
+                            <button type="button" class="btn btn-primary w-100 mt-4" data-bs-toggle="modal" data-bs-target="#kycDetailModal" style="background:#2563eb; border:none; padding:12px; border-radius:10px; font-weight:700; font-size:15px; box-shadow: 0 4px 12px rgba(37,99,235,0.12);">
+                                বিস্তারিত দেখুন
+                            </button>
+                        </div>
                     </div>
-                    <div class="customer-details">
-                        <h5>{{ $searchResult->name }}</h5>
-                        <p><i class="fa-solid fa-envelope me-1"></i> {{ $searchResult->email }}</p>
-                        <p><i class="fa-solid fa-phone me-1"></i> {{ $searchResult->phone }}</p>
-                        <p><i class="fa-solid fa-calendar-day me-1"></i> যোগদানের তারিখ: {{ $searchResult->created_at->format('d M, Y') }}</p>
-                        @if($searchResult->information)
-                            <span class="badge-kyc-verified">
-                                <i class="fa-solid fa-circle-check"></i> KYC Verified (ডকুমেন্টেশন জমা দেয়া হয়েছে)
-                            </span>
-                        @else
-                            <span class="badge-kyc-verified" style="background:#fef2f2; color:#ef4444;">
-                                <i class="fa-solid fa-circle-xmark"></i> KYC Pending (ডকুমেন্টেশন জমা দেয়া হয়নি)
-                            </span>
-                        @endif
+
+                    {{-- 4-Card Colorful Mini-Dashboard (Right Column) --}}
+                    <div class="col-md-8">
+                        <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; height: 100%;">
+                            {{-- Card 1: Total Balance (Green) --}}
+                            <div style="background: #10b981; color: #ffffff; padding: 24px; border-radius: 16px; box-shadow: 0 4px 15px rgba(16,185,129,0.12); display: flex; flex-direction: column; justify-content: space-between; position: relative; overflow: hidden; min-height: 170px;">
+                                <div style="font-size: 32px; opacity: 0.2; position: absolute; right: 20px; top: 20px;"><i class="fa-solid fa-wallet"></i></div>
+                                <div style="font-size: 15px; font-weight: 600; opacity: 0.9;">মোট ব্যালেন্স</div>
+                                <div style="font-size: 30px; font-weight: 800;">৳{{ number_format($custApprovedBalance, 2) }}</div>
+                            </div>
+
+                            {{-- Card 2: Total Loan Applications (Blue) --}}
+                            <div style="background: #3b82f6; color: #ffffff; padding: 24px; border-radius: 16px; box-shadow: 0 4px 15px rgba(59,130,246,0.12); display: flex; flex-direction: column; justify-content: space-between; position: relative; overflow: hidden; min-height: 170px;">
+                                <div style="font-size: 32px; opacity: 0.2; position: absolute; right: 20px; top: 20px;"><i class="fa-solid fa-file-invoice-dollar"></i></div>
+                                <div style="font-size: 15px; font-weight: 600; opacity: 0.9;">মোট ঋণ আবেদন</div>
+                                <div style="font-size: 34px; font-weight: 800;">{{ $custTotalLoans }}</div>
+                            </div>
+
+                            {{-- Card 3: Profile Edit (Purple) --}}
+                            <div style="background: #8b5cf6; color: #ffffff; padding: 24px; border-radius: 16px; box-shadow: 0 4px 15px rgba(139,92,246,0.12); display: flex; flex-direction: column; justify-content: space-between; position: relative; overflow: hidden; min-height: 170px;">
+                                <div style="font-size: 32px; opacity: 0.2; position: absolute; right: 20px; top: 20px;"><i class="fa-solid fa-user-pen"></i></div>
+                                <div style="font-size: 15px; font-weight: 600; opacity: 0.9;">প্রোফাইল এডিট</div>
+                                <button type="button" class="btn btn-light w-100" data-bs-toggle="modal" data-bs-target="#editCustomerProfileModal" style="background:#ffffff; color:#8b5cf6; font-weight:700; border:none; padding:10px; border-radius:8px; font-size:14px;">
+                                    এডিট করুন
+                                </button>
+                            </div>
+
+                            {{-- Card 4: Change Password (Orange) --}}
+                            <div style="background: #f97316; color: #ffffff; padding: 24px; border-radius: 16px; box-shadow: 0 4px 15px rgba(249,115,22,0.12); display: flex; flex-direction: column; justify-content: space-between; position: relative; overflow: hidden; min-height: 170px;">
+                                <div style="font-size: 32px; opacity: 0.2; position: absolute; right: 20px; top: 20px;"><i class="fa-solid fa-key"></i></div>
+                                <div style="font-size: 15px; font-weight: 600; opacity: 0.9;">পাসওয়ার্ড পরিবর্তন</div>
+                                <button type="button" class="btn btn-light w-100" data-bs-toggle="modal" data-bs-target="#changeCustomerPasswordModal" style="background:#ffffff; color:#f97316; font-weight:700; border:none; padding:10px; border-radius:8px; font-size:14px;">
+                                    পরিবর্তন করুন
+                                </button>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
-                <div class="loan-table-wrapper">
-                    <table class="loan-table">
-                        <thead>
+                {{-- Loan List Table --}}
+                <h5 class="fw-bold mb-3 mt-4" style="font-size: 20px; color: #0f172a; display: flex; align-items: center; gap: 8px;">
+                    <i class="fa-solid fa-list-check"></i> {{ $searchResult->name }} এর ঋণ তালিকা
+                </h5>
+                
+                <div class="loan-table-wrapper" style="border: 1px solid #cbd5e1; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.02); margin-bottom: 30px;">
+                    <table class="loan-table table table-hover mb-0" style="vertical-align: middle; font-size: 14px;">
+                        <thead class="table-light" style="background:#f8fafc;">
                             <tr>
-                                <th>ঋণ আইডি</th>
-                                <th>পেমেন্ট মেথড</th>
-                                <th>অ্যাকাউন্ট নম্বর</th>
-                                <th>ঋণের পরিমাণ</th>
-                                <th>মেয়াদ</th>
-                                <th>স্ট্যাটাস</th>
-                                <th style="text-align: right;">অ্যাকশন</th>
+                                <th style="padding:14px 18px; font-weight:700; color:#475569;">ID</th>
+                                <th style="padding:14px 18px; font-weight:700; color:#475569;">পরিমাণ</th>
+                                <th style="padding:14px 18px; font-weight:700; color:#475569;">মেয়াদ</th>
+                                <th style="padding:14px 18px; font-weight:700; color:#475569;">EMI</th>
+                                <th style="padding:14px 18px; font-weight:700; color:#475569;">অবস্থা</th>
+                                <th style="padding:14px 18px; font-weight:700; color:#475569;">তারিখ</th>
+                                <th style="padding:14px 18px; font-weight:700; color:#475569; text-align: right;">অ্যাকশন</th>
                             </tr>
                         </thead>
                         <tbody>
                             @forelse($searchResult->loans as $loan)
                                 <tr>
-                                    <td class="fw-bold">#{{ $loan->id }}</td>
-                                    <td>{{ ucfirst($loan->payment_method) }}</td>
-                                    <td class="fw-semibold text-secondary">{{ $loan->account_number }}</td>
-                                    <td class="fw-bold text-success">{{ number_format($loan->amount) }} BDT</td>
-                                    <td>{{ $loan->tenure }} মাস</td>
-                                    <td>
+                                    <td class="fw-bold" style="padding:14px 18px; color:#1e293b;">#{{ $loan->id }}</td>
+                                    <td class="fw-bold" style="padding:14px 18px; color:#2563eb;">৳{{ number_format($loan->amount, 2) }}</td>
+                                    <td style="padding:14px 18px; font-weight: 500; color:#475569;">{{ $loan->tenure }} মাস</td>
+                                    <td style="padding:14px 18px; font-weight: 500; color:#475569;">৳{{ number_format($loan->monthly_installment, 2) }}</td>
+                                    <td style="padding:14px 18px;">
                                         @if($loan->status === 'pending')
-                                            <span class="status-pill status-pill-pending">
-                                                <i class="fa-solid fa-clock"></i> Pending
+                                            <span class="badge bg-warning text-dark px-3 py-2" style="border-radius: 999px; font-weight: 600; font-size:12px;">
+                                                <i class="fa-solid fa-clock me-1"></i> Pending
                                             </span>
                                         @elseif($loan->status === 'approved')
-                                            <span class="status-pill status-pill-approved">
-                                                <i class="fa-solid fa-circle-check"></i> Approved
+                                            <span class="badge bg-success text-white px-3 py-2" style="border-radius: 999px; font-weight: 600; font-size:12px; background-color: #10b981 !important;">
+                                                <i class="fa-solid fa-circle-check me-1"></i> Approved
                                             </span>
                                         @else
-                                            <span class="status-pill status-pill-rejected">
-                                                <i class="fa-solid fa-circle-xmark"></i> Rejected
+                                            <span class="badge bg-danger text-white px-3 py-2" style="border-radius: 999px; font-weight: 600; font-size:12px;">
+                                                <i class="fa-solid fa-circle-xmark me-1"></i> Rejected
                                             </span>
                                         @endif
                                     </td>
-                                    <td style="text-align: right;">
+                                    <td style="padding:14px 18px; color:#64748b;">{{ $loan->created_at->format('d M, Y') }}</td>
+                                    <td style="padding:14px 18px; text-align: right;">
                                         @if($loan->status === 'pending')
-                                            <div class="action-btn-group" style="justify-content: flex-end;">
-                                                <form action="{{ route('emplee.loans.updateStatus', $loan->id) }}" method="POST" style="display:inline;">
+                                            <div class="d-flex gap-1 justify-content-end">
+                                                <form action="{{ route('admin.emplee.loans.updateStatus', $loan->id) }}" method="POST" style="display:inline;">
                                                     @csrf
                                                     <input type="hidden" name="status" value="approved">
-                                                    <button type="submit" class="btn-loan-approve">Approve</button>
+                                                    <button type="submit" class="btn btn-sm btn-success px-3" style="background:#10b981; border:none; font-weight:700; border-radius:6px; color:#ffffff;">Approve</button>
                                                 </form>
-                                                <form action="{{ route('emplee.loans.updateStatus', $loan->id) }}" method="POST" style="display:inline;">
+                                                <form action="{{ route('admin.emplee.loans.updateStatus', $loan->id) }}" method="POST" style="display:inline;">
                                                     @csrf
                                                     <input type="hidden" name="status" value="rejected">
-                                                    <button type="submit" class="btn-loan-reject">Reject</button>
+                                                    <button type="submit" class="btn btn-sm btn-danger px-3" style="background:#ef4444; border:none; font-weight:700; border-radius:6px; color:#ffffff;">Reject</button>
                                                 </form>
                                             </div>
                                         @else
@@ -673,8 +742,8 @@
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="7" style="text-align: center; padding: 30px; color: #64748b;">
-                                        <i class="fa-solid fa-folder-open" style="font-size:24px; display:block; margin-bottom:8px;"></i>
+                                    <td colspan="7" style="text-align: center; padding: 40px; color: #64748b;">
+                                        <i class="fa-solid fa-folder-open" style="font-size:32px; display:block; margin-bottom:8px; color:#cbd5e1;"></i>
                                         এই ইউজারের কোনো ঋণের আবেদন পাওয়া যায়নি।
                                     </td>
                                 </tr>
@@ -682,6 +751,162 @@
                         </tbody>
                     </table>
                 </div>
+
+                {{-- Modals for managing searched Customer --}}
+                
+                {{-- A. Edit Customer Profile Modal --}}
+                <div class="modal fade" id="editCustomerProfileModal" tabindex="-1" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered">
+                        <div class="modal-content" style="border-radius: 16px; border:none;">
+                            <div class="modal-header" style="background:#8b5cf6; color:#ffffff; padding:16px 20px;">
+                                <h5 class="modal-title fw-bold"><i class="fa-solid fa-user-pen me-2"></i> গ্রাহকের প্রোফাইল এডিট</h5>
+                                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <form action="{{ route('admin.emplee.customer.updateProfile', $searchResult->id) }}" method="POST">
+                                @csrf
+                                <div class="modal-body" style="padding:24px;">
+                                    <div class="mb-3">
+                                        <label class="form-label fw-semibold">নাম</label>
+                                        <input type="text" name="name" class="form-control" value="{{ $searchResult->name }}" required style="border-radius:8px;">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label fw-semibold">ইমেইল এড্রেস</label>
+                                        <input type="email" name="email" class="form-control" value="{{ $searchResult->email }}" required style="border-radius:8px;">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label fw-semibold">মোবাইল নম্বর</label>
+                                        <input type="text" name="phone" class="form-control" value="{{ $searchResult->phone }}" required style="border-radius:8px;">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label fw-semibold">NID নম্বর</label>
+                                        <input type="text" name="nid_number" class="form-control" value="{{ $searchResult->information ? $searchResult->information->nid_number : '' }}" style="border-radius:8px;">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label fw-semibold">ঠিকানা</label>
+                                        <textarea name="address" class="form-control" rows="3" style="border-radius:8px;">{{ $searchResult->address }}</textarea>
+                                    </div>
+                                </div>
+                                <div class="modal-footer" style="border-top:none; padding:16px 24px;">
+                                    <button type="button" class="btn btn-light" data-bs-dismiss="modal" style="border:1px solid #cbd5e1; border-radius:8px;">বন্ধ করুন</button>
+                                    <button type="submit" class="btn btn-primary" style="background:#8b5cf6; border:none; border-radius:8px; font-weight:700;">সংরক্ষণ করুন</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                {{-- B. Change Customer Password Modal --}}
+                <div class="modal fade" id="changeCustomerPasswordModal" tabindex="-1" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered">
+                        <div class="modal-content" style="border-radius: 16px; border:none;">
+                            <div class="modal-header" style="background:#f97316; color:#ffffff; padding:16px 20px;">
+                                <h5 class="modal-title fw-bold"><i class="fa-solid fa-key me-2"></i> পাসওয়ার্ড পরিবর্তন</h5>
+                                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <form action="{{ route('admin.emplee.customer.changePassword', $searchResult->id) }}" method="POST">
+                                @csrf
+                                <div class="modal-body" style="padding:24px;">
+                                    <div class="mb-3">
+                                        <label class="form-label fw-semibold">নতুন পাসওয়ার্ড</label>
+                                        <input type="password" name="password" class="form-control" required placeholder="কমপক্ষে ৬ অক্ষরের পাসওয়ার্ড দিন..." style="border-radius:8px;">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label fw-semibold">পাসওয়ার্ড নিশ্চিত করুন</label>
+                                        <input type="password" name="password_confirmation" class="form-control" required placeholder="আবার নতুন পাসওয়ার্ডটি দিন..." style="border-radius:8px;">
+                                    </div>
+                                </div>
+                                <div class="modal-footer" style="border-top:none; padding:16px 24px;">
+                                    <button type="button" class="btn btn-light" data-bs-dismiss="modal" style="border:1px solid #cbd5e1; border-radius:8px;">বন্ধ করুন</button>
+                                    <button type="submit" class="btn btn-primary" style="background:#f97316; border:none; border-radius:8px; font-weight:700;">পরিবর্তন করুন</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                {{-- C. KYC Detail Modal --}}
+                <div class="modal fade" id="kycDetailModal" tabindex="-1" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered modal-lg">
+                        <div class="modal-content" style="border-radius: 16px; border:none;">
+                            <div class="modal-header" style="background:#2563eb; color:#ffffff; padding:16px 20px;">
+                                <h5 class="modal-title fw-bold"><i class="fa-solid fa-circle-info me-2"></i> KYC ও গ্রাহকের বিস্তারিত তথ্য</h5>
+                                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body" style="padding:24px; max-height: 500px; overflow-y: auto;">
+                                @if($searchResult->information)
+                                    <div class="row g-4">
+                                        <div class="col-md-4 text-center">
+                                            <h6 class="fw-bold mb-2">গ্রাহকের সেলফি</h6>
+                                            <div style="border: 2px solid #cbd5e1; border-radius: 12px; overflow: hidden; width: 100%; height: 200px;">
+                                                <img src="{{ asset('uploads/avator/' . $searchResult->information->selfie) }}" style="width: 100%; height: 100%; object-fit: cover;">
+                                            </div>
+                                        </div>
+                                        <div class="col-md-8">
+                                            <h6 class="fw-bold border-bottom pb-2 mb-3">KYC তথ্যাদি</h6>
+                                            <table class="table table-bordered table-sm" style="font-size:14.5px;">
+                                                <tr>
+                                                    <td class="fw-bold bg-light" style="width: 150px;">পূর্ণ নাম:</td>
+                                                    <td>{{ $searchResult->information->full_name }}</td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="fw-bold bg-light">মোবাইল নম্বর:</td>
+                                                    <td>{{ $searchResult->information->phone_number }}</td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="fw-bold bg-light">NID নম্বর:</td>
+                                                    <td class="fw-bold text-success">{{ $searchResult->information->nid_number }}</td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="fw-bold bg-light">পেশা:</td>
+                                                    <td>{{ $searchResult->information->occupation }}</td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="fw-bold bg-light">বর্তমান ঠিকানা:</td>
+                                                    <td>{{ $searchResult->information->current_address }}</td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="fw-bold bg-light">স্থায়ী ঠিকানা:</td>
+                                                    <td>{{ $searchResult->information->permanent_address }}</td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="fw-bold bg-light">ঋণের কারণ:</td>
+                                                    <td>{{ $searchResult->information->loan_reason }}</td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="fw-bold bg-light">মনোনীত ব্যক্তি:</td>
+                                                    <td>{{ $searchResult->information->nominee_name }} ({{ $searchResult->information->nominee_relation }}) - {{ $searchResult->information->nominee_phone }}</td>
+                                                </tr>
+                                            </table>
+                                        </div>
+                                    </div>
+                                    <div class="row g-3 mt-3">
+                                        <div class="col-6 text-center">
+                                            <h6 class="fw-bold mb-2">NID সামনের অংশ</h6>
+                                            <div style="border:1.5px solid #e2e8f0; border-radius:10px; overflow:hidden; height:150px;">
+                                                <img src="{{ asset('uploads/nid/' . $searchResult->information->nid_front) }}" style="width: 100%; height: 100%; object-fit: contain;">
+                                            </div>
+                                        </div>
+                                        <div class="col-6 text-center">
+                                            <h6 class="fw-bold mb-2">NID পেছনের অংশ</h6>
+                                            <div style="border:1.5px solid #e2e8f0; border-radius:10px; overflow:hidden; height:150px;">
+                                                <img src="{{ asset('uploads/nid/' . $searchResult->information->nid_back) }}" style="width: 100%; height: 100%; object-fit: contain;">
+                                            </div>
+                                        </div>
+                                    </div>
+                                @else
+                                    <div class="text-center py-5 text-muted">
+                                        <i class="fa-solid fa-triangle-exclamation" style="font-size: 40px; color: #f59e0b; margin-bottom: 12px;"></i>
+                                        <p class="mb-0" style="font-size: 15px; font-weight: 600;">দুঃখিত, এই গ্রাহক এখনো কোনো KYC বা ডকুমেন্টস জমা দেননি।</p>
+                                    </div>
+                                @endif
+                            </div>
+                            <div class="modal-footer" style="border-top:none; padding:16px 24px;">
+                                <button type="button" class="btn btn-primary" data-bs-dismiss="modal" style="background:#2563eb; border:none; border-radius:8px; font-weight:700;">ঠিক আছে</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
             @else
                 <div class="alert alert-danger p-3 mb-0" style="border-radius:12px;">
                     <i class="fa-solid fa-circle-exclamation me-2"></i> দুঃখিত! এই ফোন নম্বরে কোনো ইউজার খুঁজে পাওয়া যায়নি।

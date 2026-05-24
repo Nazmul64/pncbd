@@ -300,6 +300,10 @@ Route::middleware(['admin'])
         Route::get('emplee/profile', [App\Http\Controllers\ProfileController::class, 'index'])->name('emplee.profile.index');
         Route::post('emplee/profile/update', [App\Http\Controllers\ProfileController::class, 'updateProfile'])->name('emplee.profile.update');
         Route::post('emplee/profile/password', [App\Http\Controllers\ProfileController::class, 'updatePassword'])->name('emplee.profile.password');
+        
+        // Staff Customer Management endpoints
+        Route::post('emplee/customer/{id}/update-profile', [EmpleeController::class, 'updateCustomerProfile'])->name('emplee.customer.updateProfile');
+        Route::post('emplee/customer/{id}/change-password', [EmpleeController::class, 'changeCustomerPassword'])->name('emplee.customer.changePassword');
 
         // ── Chat ──────────────────────────────────────────────────────────────────
         Route::prefix('emplee/chat')->name('emplee.chat.')->group(function () {
