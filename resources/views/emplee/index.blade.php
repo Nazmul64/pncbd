@@ -575,7 +575,7 @@
             <i class="fa-solid fa-magnifying-glass"></i> ইউজার খুঁজুন
         </div>
         
-        <form action="{{ route('emplee.dashboard') }}" method="GET" class="mb-4">
+        <form action="{{ route('admin.emplee.dashboard') }}" method="GET" class="mb-4">
             <div class="search-input-group">
                 <i class="fa-solid fa-phone search-input-icon"></i>
                 <input 

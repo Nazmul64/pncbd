@@ -6,7 +6,7 @@
 
 @php
     $u = auth()->user();
-    $dashActive   = request()->routeIs('emplee.dashboard');
+    $dashActive   = request()->routeIs('admin.emplee.dashboard');
     $ordersActive = request()->routeIs('emplee.orders.*');
     $prodsActive  = request()->routeIs('admin.products.*');
     $catsActive   = request()->routeIs('emplee.category.*') || request()->routeIs('admin.subcategory.*') || request()->routeIs('admin.childcategory.*');
@@ -18,7 +18,7 @@
 
 <aside id="sidebar">
 
-<a href="{{ route('emplee.dashboard') }}" class="sb-brand">
+<a href="{{ route('admin.emplee.dashboard') }}" class="sb-brand">
     <div class="sb-icon"><i class="fas fa-briefcase"></i></div>
     <div>
         <span class="sb-brand-name">Shahzadimart</span>
@@ -31,7 +31,7 @@
 <div class="sb-section">Core</div>
 
 @if($u->canAccessAdmin() || $u->hasPermission('view-dashboard'))
-<a href="{{ route('emplee.dashboard') }}" class="sb-item {{ $dashActive ? 'active' : '' }}">
+<a href="{{ route('admin.emplee.dashboard') }}" class="sb-item {{ $dashActive ? 'active' : '' }}">
     <span class="sb-left"><i class="fas fa-chart-line sb-ico"></i> Dashboard</span>
 </a>
 <a href="{{ route('emplee.profile.index') }}" class="sb-item {{ request()->routeIs('emplee.profile.*') ? 'active' : '' }}">
