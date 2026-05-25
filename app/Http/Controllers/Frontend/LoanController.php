@@ -170,20 +170,76 @@ class LoanController extends Controller
     public function success()
     {
         $loanId = session('loan_id');
-        if (!$loanId) {
-            $latestLoan = Loan::where('user_id', Auth::id())->latest()->first();
-            if ($latestLoan) {
-                $loanId = $latestLoan->id;
-            } else {
-                return redirect()->route('customer.dashboard');
+        
+        // Handle potential stale session mismatch gracefully
+        if ($loanId) {
+            $loan = Loan::find($loanId);
+            if (!$loan || $loan->user_id !== Auth::id()) {
+                $loanId = null;
             }
         }
 
-        $loan = Loan::findOrFail($loanId);
+        if (!$loanId) {
+            $latestLoan = Loan::where('user_id', Auth::id())->latest()->first();
+            if ($latestLoan) {
+                $loan = $latestLoan;
+            } else {
+                return redirect()->route('customer.dashboard');
+            }
+        } else {
+            $loan = Loan::findOrFail($loanId);
+        }
+
+        return view('loan.success', compact('loan'));
+    }
+
+    /**
+     * Show customer-side loan details (payment guide, administrative message, and screenshot upload)
+     */
+    public function details($id)
+    {
+        $loan = Loan::findOrFail($id);
+        if ($loan->user_id !== Auth::id()) {
+            abort(403);
+        }
+        return view('loan.details', compact('loan'));
+    }
+
+    /**
+     * Handle payment screenshot upload by customer
+     */
+    public function uploadScreenshot(Request $request, $id)
+    {
+        $request->validate([
+            'screenshot' => 'required|image|max:10240', // Max 10MB
+        ], [
+            'screenshot.required' => 'পেমেন্টের স্ক্রিনশট ফাইলটি নির্বাচন করুন।',
+            'screenshot.image' => 'আপলোড করা ফাইলটি অবশ্যই একটি ছবি হতে হবে।',
+            'screenshot.max' => 'ফাইলের আকার ১০ মেগাবাইটের কম হতে হবে।',
+        ]);
+
+        $loan = Loan::findOrFail($id);
         if ($loan->user_id !== Auth::id()) {
             abort(403);
         }
 
-        return view('loan.success', compact('loan'));
+        if ($request->hasFile('screenshot')) {
+            $file = $request->file('screenshot');
+            $filename = time() . '_receipt_' . $loan->id . '.' . $file->getClientOriginalExtension();
+            
+            $uploadPath = public_path('uploads/information');
+            if (!file_exists($uploadPath)) {
+                mkdir($uploadPath, 0755, true);
+            }
+            
+            $file->move($uploadPath, $filename);
+            
+            $loan->screenshot = 'uploads/information/' . $filename;
+            $loan->save();
+
+            return redirect()->back()->with('success', 'পেমেন্টের স্ক্রিনশট সফলভাবে আপলোড করা হয়েছে।');
+        }
+
+        return redirect()->back()->with('error', 'ফাইল আপলোড করতে ব্যর্থ হয়েছে।');
     }
 }

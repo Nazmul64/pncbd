@@ -5,7 +5,7 @@
     $navBalance = \App\Models\Loan::where('user_id', $navUser->id)->where('status', 'approved')->sum('amount');
     $navInitial = mb_substr($navName, 0, 1);
     $activeRoute = $activeRoute ?? null;
-    $siteName = $gs->site_name ?? 'UBS';
+    $siteName = $gs->site_name ?? 'PNCBD';
 @endphp
 
 @once

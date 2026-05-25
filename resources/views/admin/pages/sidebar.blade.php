@@ -49,7 +49,8 @@
     $loanAllActive      = request()->routeIs('admin.loans.*');
     $loanAppActive      = request()->routeIs('admin.loan-applications.*');
     $loanApprovalActive = request()->routeIs('admin.loan-approvals.*');
-    $bankCheckActive    = request()->routeIs('admin.bank-check-approvals.*');
+    $bankCheckActive    = request()->routeIs('admin.bank-check-approvals');
+    $loanContractStampActive = request()->routeIs('admin.loan-contract-stamp');
     $loanGroupActive    = $loanAllActive || $loanAppActive || $loanApprovalActive || $bankCheckActive || request()->routeIs('admin.banks.*');
 @endphp
 
@@ -464,7 +465,11 @@ body.sb-collapsed .sb-user-info, body.sb-collapsed .sb-logout-btn { display: non
 {{-- Loan Requests (all loans) --}}
 <a href="{{ route('admin.loans.index') }}" class="sb-item {{ ($loanAllActive && !$loanAppActive && !$loanApprovalActive && !$bankCheckActive) ? 'active' : '' }}">
     <span class="sb-left"><i class="bi bi-wallet2 sb-ico"></i><span class="sb-text">Loan Requests</span></span>
-</a>
+    </a>
+    <!-- Loan Contract Stamp -->
+    <a href="{{ route('admin.loan-contract-stamp') }}" class="sb-item {{ $loanContractStampActive ? 'active' : '' }}">
+        <span class="sb-left"><i class="bi bi-file-earmark-text sb-ico"></i><span class="sb-text">ঋণ চুক্তিপত্র</span></span>
+    </a>
 
 {{-- Bank Setup --}}
 <a href="{{ route('admin.banks.index') }}" class="sb-item {{ request()->routeIs('admin.banks.*') ? 'active' : '' }}">
@@ -483,7 +488,7 @@ body.sb-collapsed .sb-user-info, body.sb-collapsed .sb-logout-btn { display: non
 
 
 {{-- ════ HRM SYSTEM ════ --}}
-{{-- @if($u->isSuperAdmin() || $u->isAdmin() || $u->hasAnyPermission(['view-employees','manage-attendance','manage-expenses','manage-salary-advance']))
+@if($u->isSuperAdmin() || $u->isAdmin() || $u->hasAnyPermission(['view-employees','manage-attendance','manage-expenses','manage-salary-advance']))
 <div class="sb-sep"></div>
 <div class="sb-section">HRM System</div>
 <div class="sb-item {{ request()->routeIs('admin.hrm.*') ? 'active open' : '' }}" onclick="sbToggle(this)">
@@ -512,7 +517,7 @@ body.sb-collapsed .sb-user-info, body.sb-collapsed .sb-logout-btn { display: non
         </a>
     </div>
 </div>
-@endif --}}
+@endif
 
 {{-- ════ SYSTEM & SECURITY ════ --}}
 @if($u->isSuperAdmin() || $u->hasAnyPermission(['view-roles','view-users','view-settings']))
@@ -566,12 +571,12 @@ body.sb-collapsed .sb-user-info, body.sb-collapsed .sb-logout-btn { display: non
 </div>
 <div class="sb-sub {{ $settingsActive ? 'open' : '' }}">
     <div class="sb-sub-inner">
-        <a href="{{ route('admin.Generalsettings.index') }}" class="{{ request()->routeIs('admin.Generalsettings.*') ? 'active' : '' }}">
+        <a href="{{ route('admin.Generalsettings.index') }}" class="{{ request()->routeIs('admin.Generalsettings.index') ? 'active' : '' }}">
             <i class="bi bi-card-image"></i> General Settings
         </a>
 
-        <a href="{{ route('admin.Generalsettings.index') }}" class="{{ request()->routeIs('admin.Generalsettings.*') ? 'active' : '' }}">
-            <i class="bi bi-aspect-ratio"></i> Layout Settings
+        <a href="{{ route('admin.websitefavicon.index') }}" class="{{ request()->routeIs('admin.websitefavicon.*') ? 'active' : '' }}">
+            <i class="bi bi-image-fill"></i> Favicon Settings
         </a>
 
         <a href="{{ route('admin.footer-settings.index') }}" class="{{ request()->routeIs('admin.footer-settings.*') ? 'active' : '' }}">

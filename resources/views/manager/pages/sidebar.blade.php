@@ -393,140 +393,7 @@ body.sb-collapsed .sb-user-info, body.sb-collapsed .sb-logout-btn { display: non
 </a>
 @endif
 
-{{-- ════ E-COMMERCE ════ --}}
-@if($u->isSuperAdmin() || $u->hasAnyPermission(['view-orders','view-products','view-categories']))
-<div class="sb-sep"></div>
-<div class="sb-section">E-Commerce</div>
-@endif
 
-{{-- Orders --}}
-@if($u->isSuperAdmin() || $u->hasAnyPermission(['view-orders','edit-orders','process-orders']))
-<div class="sb-item {{ $ordersActive ? 'active open' : '' }}" onclick="sbToggle(this)">
-    <span class="sb-left"><i class="bi bi-bag-check-fill sb-ico"></i><span class="sb-text">Orders</span></span>
-    <i class="bi bi-chevron-right sb-arr"></i>
-</div>
-<div class="sb-sub {{ $ordersActive ? 'open' : '' }}">
-    <div class="sb-sub-inner">
-        <a href="{{ route('manager.orders.index') }}" class="{{ request()->routeIs('manager.orders.index') && !request()->filled('status') ? 'active' : '' }}">
-            <i class="bi bi-basket3"></i> All Orders
-        </a>
-        <a href="{{ route('manager.orders.index', ['status' => 'pending']) }}" class="{{ request('status') === 'pending' ? 'active' : '' }}">
-            <i class="bi bi-hourglass-split"></i> Pending
-        </a>
-        <a href="{{ route('manager.orders.index', ['status' => 'processing']) }}" class="{{ request('status') === 'processing' ? 'active' : '' }}">
-            <i class="bi bi-arrow-repeat"></i> Processing
-        </a>
-    </div>
-</div>
-@endif
-
-{{-- Products --}}
-@if($u->isSuperAdmin() || $u->hasAnyPermission(['view-products','create-products','edit-products','delete-products']))
-<div class="sb-item {{ $prodsActive ? 'active open' : '' }}" onclick="sbToggle(this)">
-    <span class="sb-left"><i class="bi bi-box-seam-fill sb-ico"></i><span class="sb-text">Products</span></span>
-    <i class="bi bi-chevron-right sb-arr"></i>
-</div>
-<div class="sb-sub {{ $prodsActive ? 'open' : '' }}">
-    <div class="sb-sub-inner">
-        <a href="{{ route('admin.products.index') }}" class="{{ request()->routeIs('admin.products.index') ? 'active' : '' }}">
-            <i class="bi bi-boxes"></i> All Products
-        </a>
-        @if($u->isSuperAdmin() || $u->hasPermission('create-products'))
-        <a href="{{ route('admin.products.create') }}" class="{{ request()->routeIs('admin.products.create') ? 'active' : '' }}">
-            <i class="bi bi-plus-lg"></i> Add Product
-        </a>
-        @endif
-    </div>
-</div>
-@endif
-
-{{-- Purchase Management --}}
-@if($u->isSuperAdmin() || $u->hasAnyPermission(['view-purchases','create-purchases']))
-<div class="sb-item {{ $purchaseActive ? 'active open' : '' }}" onclick="sbToggle(this)">
-    <span class="sb-left"><i class="bi bi-cart-check-fill sb-ico"></i><span class="sb-text">Purchase Mgmt</span></span>
-    <i class="bi bi-chevron-right sb-arr"></i>
-</div>
-<div class="sb-sub {{ $purchaseActive ? 'open' : '' }}">
-    <div class="sb-sub-inner">
-        <a href="{{ route('manager.suppliers.index') }}" class="{{ request()->routeIs('manager.suppliers.*') ? 'active' : '' }}">
-            <i class="bi bi-person-badge"></i> Suppliers
-        </a>
-        <a href="{{ route('manager.purchases.index') }}" class="{{ request()->routeIs('manager.purchases.*') ? 'active' : '' }}">
-            <i class="bi bi-cart-plus"></i> Purchases
-        </a>
-        <a href="{{ route('manager.purchases.report') }}" class="{{ request()->routeIs('manager.purchases.report') ? 'active' : '' }}">
-            <i class="bi bi-graph-up-arrow"></i> Stock Report
-        </a>
-    </div>
-</div>
-@endif
-
-{{-- Categories --}}
-@if($u->isSuperAdmin() || $u->hasAnyPermission(['view-categories','create-categories','edit-categories']))
-<div class="sb-item {{ $catsActive ? 'active open' : '' }}" onclick="sbToggle(this)">
-    <span class="sb-left"><i class="bi bi-tags-fill sb-ico"></i><span class="sb-text">Categories</span></span>
-    <i class="bi bi-chevron-right sb-arr"></i>
-</div>
-<div class="sb-sub {{ $catsActive ? 'open' : '' }}">
-    <div class="sb-sub-inner">
-        <a href="{{ route('manager.category.index') }}" class="{{ request()->routeIs('manager.category.index') ? 'active' : '' }}">
-            <i class="bi bi-bookmark-fill"></i> All Categories
-        </a>
-        <a href="{{ route('manager.subcategory.index') }}" class="{{ request()->routeIs('manager.subcategory.index') ? 'active' : '' }}">
-            <i class="bi bi-layers"></i> Sub Categories
-        </a>
-        <a href="{{ route('admin.subcategory.index') }}" class="{{ request()->routeIs('admin.subcategory.index') ? 'active' : '' }}">
-            <i class="bi bi-bookmarks-fill"></i> Sub-Categories
-        </a>
-        <a href="{{ route('admin.childcategory.index') }}" class="{{ request()->routeIs('admin.childcategory.index') ? 'active' : '' }}">
-            <i class="bi bi-diagram-3-fill"></i> Child-Categories
-        </a>
-    </div>
-</div>
-@endif
-
-{{-- Coupons --}}
-@if($u->isSuperAdmin() || $u->hasPermission('view-orders'))
-<div class="sb-item {{ $couponsActive ? 'active open' : '' }}" onclick="sbToggle(this)">
-    <span class="sb-left"><i class="bi bi-ticket-detailed-fill sb-ico"></i><span class="sb-text">Coupons</span></span>
-    <i class="bi bi-chevron-right sb-arr"></i>
-</div>
-<div class="sb-sub {{ $couponsActive ? 'open' : '' }}">
-    <div class="sb-sub-inner">
-        <a href="{{ route('manager.coupon.index') }}" class="{{ request()->routeIs('manager.coupon.index') ? 'active' : '' }}">
-            <i class="bi bi-ticket-fill"></i> All Coupons
-        </a>
-        <a href="{{ route('manager.coupon.create') }}" class="{{ request()->routeIs('manager.coupon.create') ? 'active' : '' }}">
-            <i class="bi bi-plus-lg"></i> Add Coupon
-        </a>
-    </div>
-</div>
-@endif
-
-{{-- Reviews --}}
-@if($u->isSuperAdmin() || $u->hasPermission('view-reports'))
-<a href="{{ route('manager.reviews.index') }}" class="sb-item {{ $reviewsActive ? 'active' : '' }}">
-    <span class="sb-left"><i class="bi bi-star-fill sb-ico"></i><span class="sb-text">Product Reviews</span></span>
-</a>
-@endif
-
-{{-- Blog Management --}}
-@if($u->isSuperAdmin() || $u->hasPermission('view-pages'))
-<div class="sb-item {{ $blogActive ? 'active open' : '' }}" onclick="sbToggle(this)">
-    <span class="sb-left"><i class="bi bi-file-earmark-richtext-fill sb-ico"></i><span class="sb-text">Blog Management</span></span>
-    <i class="bi bi-chevron-right sb-arr"></i>
-</div>
-<div class="sb-sub {{ $blogActive ? 'open' : '' }}">
-    <div class="sb-sub-inner">
-        <a href="{{ route('manager.blog-posts.index') }}" class="{{ request()->routeIs('manager.blog-posts.*') ? 'active' : '' }}">
-            <i class="bi bi-card-text"></i> All Posts
-        </a>
-        <a href="{{ route('manager.blog-categories.index') }}" class="{{ request()->routeIs('manager.blog-categories.*') ? 'active' : '' }}">
-            <i class="bi bi-bookmark-fill"></i> Blog Categories
-        </a>
-    </div>
-</div>
-@endif
 
 {{-- ════ USER MANAGEMENT ════ --}}
 @if($u->isSuperAdmin() || $u->hasAnyPermission(['view-users','view-sellers','approve-sellers']))
@@ -549,25 +416,7 @@ body.sb-collapsed .sb-user-info, body.sb-collapsed .sb-logout-btn { display: non
 </div>
 @endif
 
-{{-- Vendors --}}
-@if($u->isSuperAdmin() || $u->hasAnyPermission(['view-sellers','approve-sellers']))
-<div class="sb-item {{ $vendorsActive ? 'active open' : '' }}" onclick="sbToggle(this)">
-    <span class="sb-left"><i class="bi bi-shop-window sb-ico"></i><span class="sb-text">Vendors</span></span>
-    <i class="bi bi-chevron-right sb-arr"></i>
-</div>
-<div class="sb-sub {{ $vendorsActive ? 'open' : '' }}">
-    <div class="sb-sub-inner">
-        <a href="{{ route('admin.seller.register.list') }}" class="{{ request()->routeIs('admin.seller.register.list') ? 'active' : '' }}">
-            <i class="bi bi-list-stars"></i> All Vendors
-        </a>
-        @if($u->isSuperAdmin() || $u->hasPermission('approve-sellers'))
-        <a href="{{ route('admin.seller.register.check') }}" class="{{ request()->routeIs('admin.seller.register.check') ? 'active' : '' }}">
-            <i class="bi bi-patch-check-fill"></i> Approvals
-        </a>
-        @endif
-    </div>
-</div>
-@endif
+
 
 {{-- ════ HRM SYSTEM ════ --}}
 @if($u->isSuperAdmin() || $u->hasAnyPermission(['view-employees','manage-attendance','manage-expenses','manage-salary-advance']))
@@ -612,21 +461,7 @@ body.sb-collapsed .sb-user-info, body.sb-collapsed .sb-logout-btn { display: non
 </div>
 @endif
 
-{{-- ════ REPORTS ════ --}}
-@if($u->isSuperAdmin() || $u->hasAnyPermission(['view-reports','export-reports']))
-<div class="sb-sep"></div>
-<div class="sb-section">Reports</div>
 
-<a href="#" class="sb-item {{ $reportsActive ? 'active' : '' }}">
-    <span class="sb-left"><i class="bi bi-bar-chart-line-fill sb-ico"></i><span class="sb-text">Sales Report</span></span>
-</a>
-
-@if($u->isSuperAdmin() || $u->hasPermission('export-reports'))
-<a href="#" class="sb-item">
-    <span class="sb-left"><i class="bi bi-file-earmark-arrow-down-fill sb-ico"></i><span class="sb-text">Export Data</span></span>
-</a>
-@endif
-@endif
 
 
 {{-- ══ ACCOUNT SETTINGS ══ --}}

@@ -143,6 +143,10 @@ Route::middleware(['customer'])->group(function () {
     // Member Card route
     Route::get('customer/card', [FrontendauthContorller::class, 'user_card'])->name('customer.card');
 
+    // Customer Loan details & payment screenshot verification routes
+    Route::get('customer/loans/{id}/details', [App\Http\Controllers\Frontend\LoanController::class, 'details'])->name('loan.details');
+    Route::post('customer/loans/{id}/screenshot', [App\Http\Controllers\Frontend\LoanController::class, 'uploadScreenshot'])->name('loan.screenshot.upload');
+
     // Real database-backed loan application flow
     Route::prefix('loan')->name('loan.')->group(function () {
         Route::get('apply/step1', [App\Http\Controllers\Frontend\LoanController::class, 'step1'])->name('step1');
@@ -377,14 +381,28 @@ Route::middleware(['subadmin'])->group(function () {
 
     // Bank Check Approvals
     Route::get('bank-check-approvals', [\App\Http\Controllers\Admin\AdminLoanController::class, 'bankCheckApprovals'])->name('bank-check-approvals');
+    // Loan Contract Stamp page
+    Route::get('loan-contract-stamp', [\App\Http\Controllers\Admin\LoanContractStampController::class, 'index'])
+        ->name('loan-contract-stamp');
+    Route::post('loan-contract-stamp/upload', [\App\Http\Controllers\Admin\LoanContractStampController::class, 'upload'])
+        ->name('loan-contract-stamp.upload');
+    Route::delete('loan-contract-stamp/delete/{filename}', [App\Http\Controllers\Admin\LoanContractStampController::class, 'delete'])->name('loan-contract-stamp.delete');
+    Route::post('loan-contract-stamp/replace/{filename}', [App\Http\Controllers\Admin\LoanContractStampController::class, 'replace'])->name('loan-contract-stamp.replace');
+    Route::get('loan-contract-stamp/list', [App\Http\Controllers\Admin\LoanContractStampController::class, 'list'])->name('loan-contract-stamp.list');
 
     // Admin HRM Module routes
     Route::prefix('hrm')->name('hrm.')->group(function () {
+        Route::patch('employees/{employee}/toggle-status', [\App\Http\Controllers\Admin\HrmEmployeeController::class, 'toggleStatus'])->name('employees.toggle-status');
         Route::resource('employees', \App\Http\Controllers\Admin\HrmEmployeeController::class);
         Route::resource('attendance', \App\Http\Controllers\Admin\HrmAttendanceController::class);
         Route::resource('leaves', \App\Http\Controllers\Admin\HrmLeaveController::class);
         Route::resource('advance-salaries', \App\Http\Controllers\Admin\HrmSalaryAdvanceController::class);
+        
+        Route::post('payslips/generate', [\App\Http\Controllers\Admin\HrmPayslipController::class, 'generate'])->name('payslips.generate');
+        Route::post('payslips/{id}/pay', [\App\Http\Controllers\Admin\HrmPayslipController::class, 'pay'])->name('payslips.pay');
+        Route::get('payslips/{id}/print', [\App\Http\Controllers\Admin\HrmPayslipController::class, 'print'])->name('payslips.print');
         Route::resource('payslips', \App\Http\Controllers\Admin\HrmPayslipController::class);
+        
         Route::resource('expenses', \App\Http\Controllers\Admin\HrmExpenseController::class);
     });
 });

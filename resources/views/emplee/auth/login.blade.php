@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>স্টাফ প্যানেল - লোন ম্যানেজমেন্ট সিস্টেম</title>
+    <title>স্টাফ প্যানেল - {{ $gs->site_name ?? 'PNCBD' }} - লোন ম্যানেজমেন্ট সিস্টেম</title>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Hind+Siliguri:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css" rel="stylesheet"/>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet"/>
@@ -304,10 +304,14 @@
     {{-- Header --}}
     <div class="brand-section">
         <div class="brand-icon-wrapper">
-            <i class="fa-solid fa-user-tie"></i>
+            @if(!empty($gs->header_logo))
+                <img src="{{ asset($gs->header_logo) }}" alt="{{ $gs->site_name ?? 'PNCBD' }}" style="width: 60px; height: 60px; object-fit: contain; border-radius: 12px;">
+            @else
+                <i class="fa-solid fa-building-columns"></i>
+            @endif
         </div>
-        <h1>স্টাফ প্যানেল</h1>
-        <p>Loan Management System</p>
+        <h1>{{ $gs->site_name ?? 'PNCBD' }}</h1>
+        <p>Loan Management System — Staff Panel</p>
     </div>
 
     {{-- Grid containing cards --}}

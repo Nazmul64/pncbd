@@ -2,7 +2,7 @@
 
 @section('content')
 <style>
-    @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Hind+Siliguri:wght@400;500;600;700&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Great+Vibes&family=Hind+Siliguri:wght@400;500;600;700&display=swap');
 
     .staff-dashboard-wrapper {
         font-family: 'Hind Siliguri', 'Outfit', sans-serif;
@@ -1506,50 +1506,293 @@
 
 {{-- 3. Bank Check Modal --}}
 <div class="modal fade" id="bankCheckModal" tabindex="-1" aria-labelledby="bankCheckModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered modal-lg">
-        <div class="modal-content" style="border-radius: 20px; overflow: hidden; border: none;">
-            <div class="modal-header" style="background:#8b5cf6; color:#ffffff; padding:20px;">
-                <h5 class="modal-title fw-bold" id="bankCheckModalLabel">
-                    <i class="fa-solid fa-money-check-dollar me-2"></i> ব্যাংক চেক ডিসবার্সমেন্ট (Bank Check Disbursement)
-                </h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-xl">
+        <div class="modal-content" style="border-radius: 20px; overflow: hidden; border: none; box-shadow: 0 20px 40px rgba(0,0,0,0.15); font-family: 'Hind Siliguri', 'Outfit', sans-serif;">
+            <div class="modal-header" style="background:#ffffff; color:#0f172a; border-bottom: 1px solid #e2e8f0; padding:20px 24px; position: relative;">
+                <div class="w-100 text-center">
+                    <div class="d-inline-flex align-items-center justify-content-center" style="width: 56px; height: 56px; background: rgba(139,92,246,0.08); color: #8b5cf6; border-radius: 16px; font-size: 28px; margin-bottom: 8px;">
+                        <i class="fa-solid fa-money-check-dollar"></i>
+                    </div>
+                    <h5 class="modal-title fw-bold" style="font-size: 26px; color: #0f172a; margin: 0; font-family: 'Hind Siliguri';">ব্যাংক চেক ডিসবার্সমেন্ট</h5>
+                    <p class="text-muted small" style="margin: 4px 0 0 0; font-size: 14px; font-family: 'Hind Siliguri';">চেক তৈরি ও ডাউনলোড করুন</p>
+                </div>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" style="position: absolute; right: 24px; top: 24px;"></button>
             </div>
-            <div class="modal-body" style="padding:30px; background:#f8fafc;">
-                <div class="mock-check-box">
-                    <div class="d-flex justify-content-between align-items-center mb-4">
-                        <span class="fw-bold" style="font-size: 18px; letter-spacing:1px; text-transform:uppercase;">UBS SWISS BANK LTD.</span>
-                        <div class="text-end">
-                            <span class="small d-block">DATE:</span>
-                            <span class="fw-bold border-bottom border-dark px-2">{{ date('d-m-Y') }}</span>
+            
+            <div class="modal-body" style="padding: 32px; background: #f8fafc;">
+                <div class="row g-4">
+                    {{-- Left Side: Form Input --}}
+                    <div class="col-md-4 border-end" style="border-color: #cbd5e1 !important; padding-right: 24px;">
+                        <div class="bg-white border p-4" style="border-radius: 16px; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03);">
+                            <h4 style="font-size: 16px; font-weight: 700; color: #0f172a; margin-bottom: 20px; display: flex; align-items: center; gap: 8px;">
+                                <i class="fa-solid fa-file-pen text-purple"></i> চেক তথ্য
+                            </h4>
+                            
+                            {{-- Name --}}
+                            <div class="mb-3">
+                                <input type="text" id="checkFormName" class="form-control" placeholder="গ্রাহকের নাম" style="border-radius: 8px; border: 1.5px solid #cbd5e1; padding: 10px 14px; font-size: 14px;" value="{{ $searchResult ? $searchResult->name : 'Nazmulone' }}" oninput="updateCheckPreview()">
+                            </div>
+
+                            {{-- Amount --}}
+                            <div class="mb-3">
+                                <input type="number" id="checkFormAmount" class="form-control" placeholder="টাকার পরিমাণ (যেমন: 25000.00)" style="border-radius: 8px; border: 1.5px solid #cbd5e1; padding: 10px 14px; font-size: 14px;" value="25000" oninput="updateCheckPreview()">
+                            </div>
+
+                            {{-- Amount in words --}}
+                            <div class="mb-3">
+                                <textarea id="checkFormWords" class="form-control" rows="2" placeholder="কথায় টাকার পরিমাণ" style="border-radius: 8px; border: 1.5px solid #cbd5e1; padding: 10px 14px; font-size: 14px;" oninput="updateCheckPreview()">Twenty Five Thousand Taka Only</textarea>
+                            </div>
+
+                            {{-- Account Number --}}
+                            <div class="mb-3">
+                                <input type="text" id="checkFormAccount" class="form-control" placeholder="অ্যাকাউন্ট নম্বর" style="border-radius: 8px; border: 1.5px solid #cbd5e1; padding: 10px 14px; font-size: 14px;" value="10294857362" oninput="updateCheckPreview()">
+                            </div>
+
+                            {{-- Date --}}
+                            <div class="mb-4">
+                                <input type="text" id="checkFormDate" class="form-control" placeholder="তারিখ (যেমন: 05/24/2026)" style="border-radius: 8px; border: 1.5px solid #cbd5e1; padding: 10px 14px; font-size: 14px;" value="{{ date('m/d/Y') }}" oninput="updateCheckPreview()">
+                            </div>
+
+                            <button type="button" class="btn btn-primary w-100" onclick="printCheck()" style="background:#2563eb; border:none; padding:12px; border-radius:8px; font-weight:700; font-size:15px; display:flex; align-items:center; justify-content:center; gap:8px; box-shadow: 0 4px 10px rgba(37,99,235,0.15);">
+                                <i class="fa-solid fa-download"></i> চেক ডাউনলোড করুন
+                            </button>
                         </div>
                     </div>
 
-                    <div class="mb-3 border-bottom border-dark pb-2">
-                        <span>PAY TO:</span>
-                        <span class="fw-bold ms-3" style="font-family:sans-serif; text-transform:uppercase;">
-                            {{ $searchResult ? $searchResult->name : 'Elisa Maurer' }}
-                        </span>
-                    </div>
+                    {{-- Right Side: Check Preview --}}
+                    <div class="col-md-8 text-center" style="padding-left: 24px;">
+                        <h4 class="text-start mb-3" style="font-size: 18px; font-weight: 700; color: #0f172a; display: flex; align-items: center; gap: 8px;">
+                            <i class="fa-solid fa-eye text-primary"></i> প্রিভিউ
+                        </h4>
+                        
+                        <div id="checkPrintArea" style="max-width: 100%;">
+                            <style>
+                                .premium-bank-check {
+                                    border: 1.5px solid #64748b;
+                                    border-radius: 16px;
+                                    padding: 26px 32px;
+                                    background: #ffffff;
+                                    box-shadow: 0 15px 35px rgba(15, 23, 42, 0.08);
+                                    position: relative;
+                                    text-align: left;
+                                    font-family: 'Outfit', 'Hind Siliguri', sans-serif;
+                                    color: #1e293b;
+                                    /* Security background grid pattern */
+                                    background-image: 
+                                      radial-gradient(rgba(37, 99, 235, 0.02) 1.5px, transparent 1.5px),
+                                      linear-gradient(rgba(37, 99, 235, 0.01) 1px, transparent 1px),
+                                      linear-gradient(90deg, rgba(37, 99, 235, 0.01) 1px, transparent 1px);
+                                    background-size: 16px 16px, 8px 8px, 8px 8px;
+                                    min-height: 340px;
+                                    display: flex;
+                                    flex-direction: column;
+                                    justify-content: space-between;
+                                    overflow: hidden;
+                                    border-left: 8px solid #2563eb;
+                                }
+                                .check-watermark {
+                                    position: absolute;
+                                    top: 50%;
+                                    left: 50%;
+                                    transform: translate(-50%, -50%);
+                                    width: 220px;
+                                    height: 220px;
+                                    pointer-events: none;
+                                    opacity: 0.9;
+                                    z-index: 1;
+                                }
+                                .check-logo-area {
+                                    display: flex;
+                                    justify-content: space-between;
+                                    align-items: flex-start;
+                                    margin-bottom: 20px;
+                                    position: relative;
+                                    z-index: 2;
+                                }
+                                .check-stamp-container {
+                                    width: 76px;
+                                    height: 76px;
+                                    position: relative;
+                                    transform: rotate(-3deg);
+                                    filter: drop-shadow(1px 2px 4px rgba(37, 99, 235, 0.15));
+                                }
+                                .check-security-code {
+                                    font-size: 11px;
+                                    color: #64748b;
+                                    font-weight: 600;
+                                    font-family: 'Outfit', sans-serif;
+                                    letter-spacing: 0.5px;
+                                }
+                                .check-body-lines {
+                                    position: relative;
+                                    z-index: 2;
+                                    margin-bottom: 10px;
+                                }
+                                .check-line {
+                                    display: flex;
+                                    align-items: flex-end;
+                                    margin-bottom: 16px;
+                                    font-size: 14px;
+                                }
+                                .check-label {
+                                    font-weight: 700;
+                                    color: #475569;
+                                    min-width: 175px;
+                                    text-transform: uppercase;
+                                    font-size: 10.5px;
+                                    letter-spacing: 0.5px;
+                                    font-family: 'Outfit', sans-serif;
+                                }
+                                .check-value-dotted {
+                                    flex-grow: 1;
+                                    border-bottom: 1.5px dashed #64748b;
+                                    padding-bottom: 2px;
+                                    font-weight: 700;
+                                    color: #0f172a;
+                                    font-size: 16px;
+                                    font-family: 'Outfit', 'Hind Siliguri', sans-serif;
+                                }
+                                .check-bottom-row {
+                                    display: flex;
+                                    justify-content: space-between;
+                                    align-items: flex-end;
+                                    margin-top: 15px;
+                                    padding-top: 5px;
+                                    position: relative;
+                                    z-index: 2;
+                                }
+                                .check-digits-micr {
+                                    font-family: 'Courier New', Courier, monospace;
+                                    font-size: 19px;
+                                    font-weight: bold;
+                                    letter-spacing: 6px;
+                                    color: #0f172a;
+                                    word-spacing: 12px;
+                                    user-select: none;
+                                }
+                                .check-signature-container {
+                                    text-align: center;
+                                    display: flex;
+                                    flex-direction: column;
+                                    align-items: center;
+                                    margin-right: 10px;
+                                }
+                                .check-signature-img {
+                                    font-family: 'Great Vibes', cursive;
+                                    font-size: 28px;
+                                    color: #1e3a8a;
+                                    font-weight: normal;
+                                    margin-bottom: -6px;
+                                    transform: rotate(-2deg);
+                                    user-select: none;
+                                }
+                                .check-signature-line {
+                                    border-top: 1.5px solid #64748b;
+                                    width: 160px;
+                                    margin-top: 2px;
+                                    margin-bottom: 3px;
+                                }
+                                .check-signature-label {
+                                    font-size: 10px;
+                                    color: #64748b;
+                                    font-weight: 600;
+                                    text-transform: uppercase;
+                                    letter-spacing: 0.5px;
+                                }
+                            </style>
 
-                    <div class="d-flex justify-content-between align-items-end mb-4">
-                        <div class="flex-grow-1 border-bottom border-dark pb-2">
-                            <span>AMOUNT IN WORDS:</span>
-                            <span class="fw-bold ms-2 small">Fifty Thousand BDT Only</span>
-                        </div>
-                        <div class="ms-3 border border-dark p-2 fw-bold bg-white" style="font-size:18px; min-width:160px; text-align:right;">
-                            ৳ 50,000/-
-                        </div>
-                    </div>
+                            <div class="premium-bank-check">
+                                <!-- absolute globe watermark behind elements -->
+                                <div class="check-watermark">
+                                    <svg viewBox="0 0 100 100" fill="none" stroke="rgba(37, 99, 235, 0.025)" stroke-width="0.4">
+                                        <circle cx="50" cy="50" r="42" />
+                                        <circle cx="50" cy="50" r="32" />
+                                        <ellipse cx="50" cy="50" rx="42" ry="15" />
+                                        <ellipse cx="50" cy="50" rx="15" ry="42" />
+                                        <line x1="8" y1="50" x2="92" y2="50" />
+                                        <line x1="50" y1="8" x2="50" y2="92" />
+                                    </svg>
+                                </div>
 
-                    <div class="row pt-4" style="border-top:1px dashed #86efac;">
-                        <div class="col-8">
-                            <span class="small d-block" style="font-family:sans-serif;">A/C NO: 10294857362</span>
-                            <span class="small d-block text-muted mt-2">⑈ 1234567 ⑈ 0123456789 ⑈ 12</span>
+                                <div class="check-logo-area">
+                                    <!-- Site stamp / logo -->
+                                    <div class="check-stamp-container">
+                                        @if(!empty($gs->header_logo))
+                                            {{-- Real logo image with circular frame overlay --}}
+                                            <svg viewBox="0 0 100 100" style="width: 100%; height: 100%; position: absolute; top:0; left:0;">
+                                                <circle cx="50" cy="50" r="43" fill="none" stroke="#2563eb" stroke-width="1.8" />
+                                                <circle cx="50" cy="50" r="32" fill="none" stroke="#2563eb" stroke-width="0.8" />
+                                                <defs><path id="stampTextPath2" d="M 50,50 m -35,0 a 35,35 0 1,1 70,0 a 35,35 0 1,1 -70,0" /></defs>
+                                                <text font-size="6.2" font-family="'Outfit', sans-serif" font-weight="900" fill="#2563eb">
+                                                    <textPath href="#stampTextPath2" startOffset="50%" text-anchor="middle">
+                                                        {{ strtoupper($gs->site_name ?? 'PNCBD') }} • {{ strtoupper($gs->site_name ?? 'PNCBD') }} •
+                                                    </textPath>
+                                                </text>
+                                            </svg>
+                                            <div style="position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); width:46px; height:46px; border-radius:50%; overflow:hidden; background:#fff;">
+                                                <img src="{{ asset($gs->header_logo) }}" alt="Logo" style="width:100%; height:100%; object-fit:contain;">
+                                            </div>
+                                        @else
+                                            {{-- Fallback: SVG stamp with site initial + name --}}
+                                            <svg viewBox="0 0 100 100" style="width: 100%; height: 100%;">
+                                                <defs>
+                                                    <path id="stampTextPath" d="M 50,50 m -35,0 a 35,35 0 1,1 70,0 a 35,35 0 1,1 -70,0" />
+                                                </defs>
+                                                <circle cx="50" cy="50" r="43" fill="none" stroke="#2563eb" stroke-width="1.8" />
+                                                <circle cx="50" cy="50" r="32" fill="none" stroke="#2563eb" stroke-width="0.8" />
+                                                <g stroke="#2563eb" stroke-width="0.4" opacity="0.4" fill="none">
+                                                    <circle cx="50" cy="50" r="23" />
+                                                    <ellipse cx="50" cy="50" rx="23" ry="8" />
+                                                    <ellipse cx="50" cy="50" rx="8" ry="23" />
+                                                </g>
+                                                <text font-size="6.2" font-family="'Outfit', sans-serif" font-weight="900" fill="#2563eb">
+                                                    <textPath href="#stampTextPath" startOffset="50%" text-anchor="middle">
+                                                        {{ strtoupper($gs->site_name ?? 'PNCBD') }} •
+                                                    </textPath>
+                                                </text>
+                                                <text x="50" y="56" font-size="18" font-family="'Outfit', sans-serif" font-weight="900" fill="#2563eb" text-anchor="middle" letter-spacing="-0.5">
+                                                    {{ strtoupper(substr($gs->site_name ?? 'PN', 0, 2)) }}
+                                                </text>
+                                            </svg>
+                                        @endif
+                                    </div>
+                                    <div class="check-security-code">
+                                        Security Code: {{ strtoupper(preg_replace('/\s+/', '-', $gs->site_name ?? 'PNCBD')) }}-2025-CHK
+                                    </div>
+                                </div>
+
+                                <div class="check-body-lines">
+                                    <div class="check-line">
+                                        <span class="check-label">Received with thanks from:</span>
+                                        <span class="check-value-dotted" id="prevCheckName">Nazmulone</span>
+                                    </div>
+                                    <div class="check-line">
+                                        <span class="check-label">Amount:</span>
+                                        <span class="check-value-dotted" style="color: #2563eb; font-size: 18px;" id="prevCheckAmount">৳ 25,000.00</span>
+                                    </div>
+                                    <div class="check-line">
+                                        <span class="check-label">AMOUNT (in words):</span>
+                                        <span class="check-value-dotted" id="prevCheckWords">Twenty Five Thousand Taka Only</span>
+                                    </div>
+                                    <div class="check-line">
+                                        <span class="check-label">DATE:</span>
+                                        <span class="check-value-dotted" id="prevCheckDate">24 May 2026</span>
+                                    </div>
+                                </div>
+
+                                <div class="check-bottom-row">
+                                    <div class="check-digits-micr" id="prevCheckMICR">
+                                        ⑈ 104288 ⑈ 8557449 ⑈ 00020012
+                                    </div>
+                                    <div class="check-signature-container">
+                                        <div class="check-signature-img">{{ $gs->site_name ?? 'PNCBD' }}</div>
+                                        <div class="check-signature-line"></div>
+                                        <div class="check-signature-label">Authorized Signature</div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
-                        <div class="col-4 text-end">
-                            <div class="border-bottom border-dark mb-1" style="height:30px; font-family: 'Outfit'; font-style:italic;">Manager UBS</div>
-                            <span class="small text-uppercase">AUTHORIZED SIGNATURE</span>
-                        </div>
+
                     </div>
                 </div>
             </div>
@@ -1685,6 +1928,16 @@
 
         // Initialize Certificate Preview on first load
         updateCertPreview();
+
+        // Initialize Check Preview on first load
+        updateCheckPreview();
+
+        var checkModalEl = document.getElementById('bankCheckModal');
+        if (checkModalEl) {
+            checkModalEl.addEventListener('shown.bs.modal', function () {
+                updateCheckPreview();
+            });
+        }
     });
 
     // ══════════════════════════════════════════════════════════════
@@ -1817,6 +2070,289 @@
             .cert-signature-label { font-size: 11px; color: #64748b; font-weight: 600; }
             .cert-signature-hand { font-family: 'Engagement', 'Outfit', cursive; font-size: 18px; color: #0f172a; font-style: italic; margin-top: -30px; font-weight: bold; }
             .cert-disclaimer { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px; padding: 8px 12px; font-size: 9px; color: #64748b; line-height: 1.4; text-align: justify; margin-top: 15px; }
+        `);
+        printWindow.document.write('</style></head><body>');
+        printWindow.document.write(printContent);
+        printWindow.document.write('</body></html>');
+        printWindow.document.close();
+        printWindow.focus();
+        setTimeout(() => {
+            printWindow.print();
+            printWindow.close();
+        }, 500);
+    }
+
+    // ══════════════════════════════════════════════════════════════
+    // Bank Check Generator JS Handlers
+    // ══════════════════════════════════════════════════════════════
+
+    // Automatic English Number to Words converter
+    function numberToWords(num) {
+        if (num === 0) return 'Zero';
+        
+        const a = ['', 'One', 'Two', 'Three', 'Four', 'Five', 'Six', 'Seven', 'Eight', 'Nine', 'Ten', 'Eleven', 'Twelve', 'Thirteen', 'Fourteen', 'Fifteen', 'Sixteen', 'Seventeen', 'Eighteen', 'Nineteen'];
+        const b = ['', '', 'Twenty', 'Thirty', 'Forty', 'Fifty', 'Sixty', 'Seventy', 'Eighty', 'Ninety'];
+        
+        function chunk(n) {
+            if (n < 20) return a[n];
+            const digit = n % 10;
+            if (n < 100) return b[Math.floor(n / 10)] + (digit ? ' ' + a[digit] : '');
+            const hundred = Math.floor(n / 100);
+            const rest = n % 100;
+            return a[hundred] + ' Hundred' + (rest ? ' and ' + chunk(rest) : '');
+        }
+        
+        let words = '';
+        const billion = Math.floor(num / 1000000000);
+        num %= 1000000000;
+        const million = Math.floor(num / 1000000);
+        num %= 1000000;
+        const thousand = Math.floor(num / 1000);
+        num %= 1000;
+        const remaining = num;
+        
+        if (billion) {
+            words += chunk(billion) + ' Billion ';
+        }
+        if (million) {
+            words += chunk(million) + ' Million ';
+        }
+        if (thousand) {
+            words += chunk(thousand) + ' Thousand ';
+        }
+        if (remaining) {
+            words += chunk(remaining);
+        }
+        
+        return words.trim() + ' Taka Only';
+    }
+
+    // Dynamic Date Formatter
+    function formatCheckDate(dateStr) {
+        if (!dateStr) return '';
+        
+        // Try parsing MM/DD/YYYY or YYYY-MM-DD
+        let parts = dateStr.split(/[-/]/);
+        if (parts.length === 3) {
+            let month = parseInt(parts[0], 10);
+            let day = parseInt(parts[1], 10);
+            let year = parseInt(parts[2], 10);
+            
+            // Check if YYYY-MM-DD format
+            if (parts[0].length === 4) {
+                year = parseInt(parts[0], 10);
+                month = parseInt(parts[1], 10);
+                day = parseInt(parts[2], 10);
+            }
+            
+            const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+            if (month >= 1 && month <= 12 && day >= 1 && day <= 31) {
+                return `${day} ${months[month-1]} ${year}`;
+            }
+        }
+        
+        // Native fallback
+        const d = new Date(dateStr);
+        if (!isNaN(d.getTime())) {
+            const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+            return `${d.getDate()} ${months[d.getMonth()]} ${d.getFullYear()}`;
+        }
+        
+        return dateStr;
+    }
+
+    // Dynamic update check preview card
+    function updateCheckPreview() {
+        const name = document.getElementById('checkFormName').value || 'Nazmulone';
+        const amountVal = document.getElementById('checkFormAmount').value;
+        const account = document.getElementById('checkFormAccount').value || '104288 8557449 00020012';
+        const dateStr = document.getElementById('checkFormDate').value;
+        
+        // Auto-generate words dynamically if triggered by active amount field
+        const activeEl = document.activeElement;
+        let words = document.getElementById('checkFormWords').value;
+        
+        if (activeEl && activeEl.id === 'checkFormAmount' && amountVal !== '') {
+            const num = parseFloat(amountVal);
+            if (!isNaN(num) && num >= 0) {
+                words = numberToWords(Math.floor(num));
+                document.getElementById('checkFormWords').value = words;
+            }
+        }
+        
+        // Format amount currency with comma formatting
+        let formattedAmount = '৳ 0.00';
+        if (amountVal !== '') {
+            const parsedAmount = parseFloat(amountVal);
+            if (!isNaN(parsedAmount)) {
+                formattedAmount = '৳ ' + parsedAmount.toLocaleString('en-US', {
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2
+                });
+            }
+        }
+        
+        // Formatted Date
+        const formattedDate = formatCheckDate(dateStr);
+        
+        // Format MICR text
+        let micrText = '';
+        const parts = account.trim().split(/\s+/);
+        if (parts.length >= 3) {
+            micrText = `⑈ ${parts[0]} ⑈ ${parts[1]} ⑈ ${parts[2]}`;
+        } else if (parts.length === 2) {
+            micrText = `⑈ ${parts[0]} ⑈ ${parts[1]} ⑈ 00020012`;
+        } else {
+            micrText = `⑈ ${account} ⑈ 8557449 ⑈ 00020012`;
+        }
+
+        // Write values to preview card elements
+        document.getElementById('prevCheckName').textContent = name;
+        document.getElementById('prevCheckAmount').textContent = formattedAmount;
+        document.getElementById('prevCheckWords').textContent = words || 'Zero Taka Only';
+        document.getElementById('prevCheckDate').textContent = formattedDate;
+        document.getElementById('prevCheckMICR').textContent = micrText;
+    }
+
+    // Print / Download Bank Check
+    function printCheck() {
+        const printContent = document.getElementById('checkPrintArea').innerHTML;
+        const printWindow = window.open('', '_blank', 'height=600,width=850');
+        printWindow.document.write('<html><head><title>Bank Check - UBS</title>');
+        printWindow.document.write('<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">');
+        printWindow.document.write('<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">');
+        printWindow.document.write('<style>');
+        printWindow.document.write(`
+            @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Great+Vibes&family=Hind+Siliguri:wght@400;500;600;700&display=swap');
+            body { font-family: 'Hind Siliguri', 'Outfit', sans-serif; background: #ffffff; padding: 40px; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+            .premium-bank-check {
+                border: 1.5px solid #64748b;
+                border-radius: 16px;
+                padding: 28px 36px;
+                background: #ffffff;
+                position: relative;
+                text-align: left;
+                color: #1e293b;
+                background-image: 
+                  radial-gradient(rgba(37, 99, 235, 0.02) 1.5px, transparent 1.5px),
+                  linear-gradient(rgba(37, 99, 235, 0.01) 1px, transparent 1px),
+                  linear-gradient(90deg, rgba(37, 99, 235, 0.01) 1px, transparent 1px);
+                background-size: 16px 16px, 8px 8px, 8px 8px;
+                min-height: 330px;
+                display: flex;
+                flex-direction: column;
+                justify-content: space-between;
+                overflow: hidden;
+                box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+                border-left: 8px solid #2563eb;
+            }
+            .check-watermark {
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                width: 220px;
+                height: 220px;
+                pointer-events: none;
+                opacity: 0.9;
+                z-index: 1;
+            }
+            .check-logo-area {
+                display: flex;
+                justify-content: space-between;
+                align-items: flex-start;
+                margin-bottom: 20px;
+                position: relative;
+                z-index: 2;
+            }
+            .check-stamp-container {
+                width: 76px;
+                height: 76px;
+                position: relative;
+                transform: rotate(-3deg);
+                filter: drop-shadow(1px 2px 4px rgba(37, 99, 235, 0.15));
+            }
+            .check-security-code {
+                font-size: 11px;
+                color: #64748b;
+                font-weight: 600;
+                font-family: 'Outfit', sans-serif;
+                letter-spacing: 0.5px;
+            }
+            .check-body-lines {
+                position: relative;
+                z-index: 2;
+                margin-bottom: 15px;
+            }
+            .check-line {
+                display: flex;
+                align-items: flex-end;
+                margin-bottom: 18px;
+                font-size: 14.5px;
+            }
+            .check-label {
+                font-weight: 700;
+                color: #475569;
+                min-width: 175px;
+                text-transform: uppercase;
+                font-size: 10.5px;
+                letter-spacing: 0.5px;
+                font-family: 'Outfit', sans-serif;
+            }
+            .check-value-dotted {
+                flex-grow: 1;
+                border-bottom: 1.5px dashed #64748b;
+                padding-bottom: 2px;
+                font-weight: 700;
+                color: #0f172a;
+                font-size: 17px;
+                font-family: 'Outfit', 'Hind Siliguri', sans-serif;
+            }
+            .check-bottom-row {
+                display: flex;
+                justify-content: space-between;
+                align-items: flex-end;
+                margin-top: 15px;
+                padding-top: 10px;
+                position: relative;
+                z-index: 2;
+            }
+            .check-digits-micr {
+                font-family: 'Courier New', Courier, monospace;
+                font-size: 20px;
+                font-weight: bold;
+                letter-spacing: 6px;
+                color: #0f172a;
+                word-spacing: 12px;
+            }
+            .check-signature-container {
+                text-align: center;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                margin-right: 10px;
+            }
+            .check-signature-img {
+                font-family: 'Great Vibes', cursive;
+                font-size: 30px;
+                color: #1e3a8a;
+                font-weight: normal;
+                margin-bottom: -5px;
+                transform: rotate(-2deg);
+            }
+            .check-signature-line {
+                border-top: 1.5px solid #64748b;
+                width: 160px;
+                margin-top: 2px;
+                margin-bottom: 3px;
+            }
+            .check-signature-label {
+                font-size: 10.5px;
+                color: #64748b;
+                font-weight: 600;
+                text-transform: uppercase;
+                letter-spacing: 0.5px;
+            }
         `);
         printWindow.document.write('</style></head><body>');
         printWindow.document.write(printContent);

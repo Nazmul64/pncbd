@@ -14,9 +14,17 @@
 <aside id="sidebar">
 
 <a href="{{ route('admin.emplee.dashboard') }}" class="sb-brand">
-    <div class="sb-icon"><i class="fas fa-briefcase"></i></div>
+    <div class="sb-icon" style="overflow:hidden; padding: 0; background: transparent;">
+        @if(!empty($gs->header_logo))
+            <img src="{{ asset($gs->header_logo) }}" alt="Logo" style="width:40px; height:40px; object-fit:contain; border-radius:10px;">
+        @else
+            <span style="display:flex; align-items:center; justify-content:center; width:40px; height:40px; background:var(--primary); border-radius:10px; font-size:18px; font-weight:900; color:#fff; text-transform:uppercase;">
+                {{ substr($gs->site_name ?? 'P', 0, 1) }}
+            </span>
+        @endif
+    </div>
     <div>
-        <span class="sb-brand-name">Shahzadimart</span>
+        <span class="sb-brand-name">{{ $gs->site_name ?? 'PNCBD' }}</span>
         <span class="sb-brand-tag">Employee Panel</span>
     </div>
 </a>

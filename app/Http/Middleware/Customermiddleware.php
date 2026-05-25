@@ -10,9 +10,14 @@ class CustomerMiddleware
 {
     public function handle(Request $request, Closure $next): Response
     {
+        if (!auth()->check()) {
+            return redirect()->route('customer.login')
+                ->with('error', 'অনুগ্রহ করে প্রথমে লগইন করুন।');
+        }
+
         $user = auth()->user();
 
-        if (!$user || !$user->hasRole('customer')) {
+        if (!$user->hasRole('customer')) {
             abort(403, 'Customer অ্যাক্সেস প্রয়োজন।');
         }
 

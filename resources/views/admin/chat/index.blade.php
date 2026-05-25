@@ -135,13 +135,78 @@
 </div>
 
 <script>
+// ── Soft, premium synth chime for admin list page unread feedback ────────
+function playAdminNotificationSound() {
+    try {
+        const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+        if (!AudioContextClass) return;
+        const ctx = new AudioContextClass();
+        if (ctx.state === 'suspended') {
+            ctx.resume();
+        }
+
+        // Tone 1 (C5)
+        const osc1 = ctx.createOscillator();
+        const gain1 = ctx.createGain();
+        osc1.type = 'sine';
+        osc1.frequency.setValueAtTime(523.25, ctx.currentTime);
+        gain1.gain.setValueAtTime(0.08, ctx.currentTime);
+        gain1.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 0.35);
+        osc1.connect(gain1);
+        gain1.connect(ctx.destination);
+        osc1.start();
+        osc1.stop(ctx.currentTime + 0.35);
+
+        // Tone 2 (E5, delayed)
+        setTimeout(() => {
+            const osc2 = ctx.createOscillator();
+            const gain2 = ctx.createGain();
+            osc2.type = 'sine';
+            osc2.frequency.setValueAtTime(659.25, ctx.currentTime);
+            gain2.gain.setValueAtTime(0.06, ctx.currentTime);
+            gain2.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 0.45);
+            osc2.connect(gain2);
+            gain2.connect(ctx.destination);
+            osc2.start();
+            osc2.stop(ctx.currentTime + 0.45);
+        }, 80);
+
+        // Tone 3 (G5, delayed)
+        setTimeout(() => {
+            const osc3 = ctx.createOscillator();
+            const gain3 = ctx.createGain();
+            osc3.type = 'sine';
+            osc3.frequency.setValueAtTime(783.99, ctx.currentTime);
+            gain3.gain.setValueAtTime(0.05, ctx.currentTime);
+            gain3.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 0.55);
+            osc3.connect(gain3);
+            gain3.connect(ctx.destination);
+            osc3.start();
+            osc3.stop(ctx.currentTime + 0.55);
+        }, 160);
+    } catch (e) {
+        console.warn("List page chime failed:", e);
+    }
+}
+
 // ── Poll global unread count every 8 seconds ──
+let previousUnreadCount = 0;
+let isFirstUnreadCheck = true;
+
 function refreshUnreadBadge() {
     fetch('{{ route($unreadRoute) }}')
         .then(r => r.json())
         .then(d => {
             const badge  = document.getElementById('globalUnreadBadge');
             const numEl  = document.getElementById('globalUnreadNum');
+            
+            // Check if unread count increased
+            if (!isFirstUnreadCheck && d.count > previousUnreadCount) {
+                playAdminNotificationSound();
+            }
+            isFirstUnreadCheck = false;
+            previousUnreadCount = d.count;
+
             if (d.count > 0) {
                 numEl.textContent  = d.count;
                 badge.style.display = 'inline-block';

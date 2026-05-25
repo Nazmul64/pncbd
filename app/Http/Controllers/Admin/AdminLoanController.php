@@ -51,11 +51,15 @@ class AdminLoanController extends Controller
     public function updateStatus(Request $request, $id)
     {
         $request->validate([
-            'status' => 'required|in:approved,rejected,pending',
+            'status'        => 'required|in:approved,rejected,pending',
+            'admin_message' => 'nullable|string',
         ]);
 
         $loan = Loan::findOrFail($id);
         $loan->status = $request->status;
+        if ($request->has('admin_message')) {
+            $loan->admin_message = $request->admin_message;
+        }
         $loan->save();
 
         return redirect()->route('admin.loans.show', $loan->id)

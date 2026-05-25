@@ -32,7 +32,7 @@ class UserInformationController extends Controller
 
     /**
      * Store the submitted information and documents
-     * Uploads go to: public/uploads/imformation/
+     * Uploads go to: public/uploads/information/
      */
     public function store(Request $request)
     {
@@ -84,7 +84,7 @@ class UserInformationController extends Controller
         ]);
 
         // Ensure upload directory exists
-        $uploadPath = public_path('uploads/imformation');
+        $uploadPath = public_path('uploads/information');
         if (!file_exists($uploadPath)) {
             mkdir($uploadPath, 0755, true);
         }
@@ -108,7 +108,7 @@ class UserInformationController extends Controller
             $file     = $request->file('selfie');
             $filename = time() . '_selfie_' . $user->id . '.' . $file->getClientOriginalExtension();
             $file->move($uploadPath, $filename);
-            $data['selfie'] = 'uploads/imformation/' . $filename;
+            $data['selfie'] = 'uploads/information/' . $filename;
         }
 
         // ── Upload NID Front ──
@@ -116,7 +116,7 @@ class UserInformationController extends Controller
             $file     = $request->file('nid_front');
             $filename = time() . '_nid_front_' . $user->id . '.' . $file->getClientOriginalExtension();
             $file->move($uploadPath, $filename);
-            $data['nid_front'] = 'uploads/imformation/' . $filename;
+            $data['nid_front'] = 'uploads/information/' . $filename;
         }
 
         // ── Upload NID Back ──
@@ -124,7 +124,7 @@ class UserInformationController extends Controller
             $file     = $request->file('nid_back');
             $filename = time() . '_nid_back_' . $user->id . '.' . $file->getClientOriginalExtension();
             $file->move($uploadPath, $filename);
-            $data['nid_back'] = 'uploads/imformation/' . $filename;
+            $data['nid_back'] = 'uploads/information/' . $filename;
         }
 
         // ── Upload Other Document (optional) ──
@@ -132,7 +132,7 @@ class UserInformationController extends Controller
             $file     = $request->file('other_document');
             $filename = time() . '_other_doc_' . $user->id . '.' . $file->getClientOriginalExtension();
             $file->move($uploadPath, $filename);
-            $data['other_document'] = 'uploads/imformation/' . $filename;
+            $data['other_document'] = 'uploads/information/' . $filename;
         }
 
         // ── Save Signature (base64 → image file) ──
@@ -144,7 +144,7 @@ class UserInformationController extends Controller
                 $signatureData = base64_decode($signatureData);
                 $sigFilename   = time() . '_signature_' . $user->id . '.' . $ext;
                 file_put_contents($uploadPath . '/' . $sigFilename, $signatureData);
-                $data['signature'] = 'uploads/imformation/' . $sigFilename;
+                $data['signature'] = 'uploads/information/' . $sigFilename;
             }
         }
 

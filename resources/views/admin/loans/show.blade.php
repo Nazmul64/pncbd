@@ -16,19 +16,40 @@
 
             <!-- Current Status Badge -->
             <div>
-                @if($loan->status === 'pending')
-                    <span class="badge bg-warning text-dark rounded-pill px-4 py-2 fs-6 fw-bold border border-warning border-opacity-25 shadow-sm">
-                        <i class="fa-solid fa-hourglass-half me-1"></i> অপেক্ষমান (Pending)
-                    </span>
-                @elseif($loan->status === 'approved')
-                    <span class="badge bg-success text-white rounded-pill px-4 py-2 fs-6 fw-bold border border-success border-opacity-25 shadow-sm">
-                        <i class="fa-solid fa-check-circle me-1"></i> অনুমোদিত (Approved)
-                    </span>
-                @else
-                    <span class="badge bg-danger text-white rounded-pill px-4 py-2 fs-6 fw-bold border border-danger border-opacity-25 shadow-sm">
-                        <i class="fa-solid fa-circle-xmark me-1"></i> প্রত্যাখ্যাত (Rejected)
-                    </span>
-                @endif
+                                    @if($loan->status === 'pending')
+                        <span class="badge bg-warning text-dark rounded-pill px-4 py-2 fs-6 fw-bold border border-warning border-opacity-25 shadow-sm">
+                            <i class="fa-solid fa-hourglass-half me-1"></i> অপেক্ষমান (Pending)
+                        </span>
+                    @elseif($loan->status === 'approved')
+                        <span class="badge bg-success text-white rounded-pill px-4 py-2 fs-6 fw-bold border border-success border-opacity-25 shadow-sm">
+                            <i class="fa-solid fa-check-circle me-1"></i> অনুমোদিত (Approved)
+                        </span>
+                        @if(file_exists(public_path('uploads/loan-stamps/stamp.png')))
+    <div class="mt-3 text-center">
+        <a href="#" data-bs-toggle="modal" data-bs-target="#stampModal">
+            <img src="{{ asset('uploads/loan-stamps/stamp.png') }}" alt="Loan Stamp" class="img-fluid" style="max-height:200px; border:2px solid #fff; border-radius:8px; cursor:pointer; transition: transform 0.3s;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'"/>
+        </a>
+    </div>
+    <!-- Stamp Modal -->
+    <div class="modal fade" id="stampModal" tabindex="-1" aria-labelledby="stampModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content bg-dark text-white" style="border-radius:12px; overflow:hidden;">
+                <div class="modal-header border-0">
+                    <h5 class="modal-title" id="stampModalLabel">ঋণ চুক্তিপত্র স্ট্যাম্প</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body p-0 text-center" style="background: linear-gradient(135deg, #ff7e5f, #feb47b);">
+                    <img src="{{ asset('uploads/loan-stamps/stamp.png') }}" alt="Loan Stamp" class="img-fluid" style="max-width:100%; max-height:80vh;"/>
+                </div>
+            </div>
+        </div>
+    </div>
+@endif                        </div>
+                    @else
+                        <span class="badge bg-danger text-white rounded-pill px-4 py-2 fs-6 fw-bold border border-danger border-opacity-25 shadow-sm">
+                            <i class="fa-solid fa-circle-xmark me-1"></i> প্রত্যাখ্যাত (Rejected)
+                        </span>
+                    @endif
             </div>
         </div>
     </div>
@@ -174,6 +195,23 @@
                     </div>
                 </div>
 
+                @if($loan->screenshot)
+                    <!-- Payment Screenshot Card -->
+                    <div class="col-md-12 mb-4">
+                        <div class="card border-0 shadow-sm rounded-4 p-4 bg-white">
+                            <h5 class="fw-bold mb-3 text-success border-bottom pb-2">
+                                <i class="fa-solid fa-receipt me-2"></i> গ্রাহকের পেমেন্ট স্ক্রিনশট
+                            </h5>
+                            <div class="text-center">
+                                <a href="{{ asset($loan->screenshot) }}" target="_blank" title="ক্লিক করে বড় ছবি দেখুন">
+                                    <img src="{{ asset($loan->screenshot) }}" class="img-fluid rounded-3 border" style="max-height: 250px; cursor: pointer; object-fit: contain;">
+                                </a>
+                                <p class="text-muted small mt-2 mb-0">পেমেন্ট স্লিপের সত্যতা যাচাই করতে ছবিতে ক্লিক করুন</p>
+                            </div>
+                        </div>
+                    </div>
+                @endif
+
                 <!-- Admin Action Card -->
                 <div class="col-md-12">
                     <div class="card border-0 shadow-sm rounded-4 p-4 bg-white">
@@ -185,7 +223,7 @@
                             @csrf
                             @method('PUT')
 
-                            <div class="mb-4">
+                            <div class="mb-3">
                                 <label for="status-select" class="form-label fw-bold text-muted small text-uppercase">আবেদনের স্থিতি নির্বাচন করুন</label>
                                 <select name="status" id="status-select" class="form-select border-light bg-light rounded-3 p-3">
                                     <option value="pending" {{ $loan->status === 'pending' ? 'selected' : '' }}>অপেক্ষমান রাখুন (Pending)</option>
@@ -194,7 +232,12 @@
                                 </select>
                             </div>
 
-                            <button type="submit" class="btn btn-primary w-100 rounded-pill py-3 fw-bold shadow-sm">
+                            <div class="mb-4">
+                                <label for="admin-message" class="form-label fw-bold text-muted small text-uppercase">প্রশাসনিক বার্তা (Administrative Message)</label>
+                                <textarea name="admin_message" id="admin-message" class="form-control border-light bg-light rounded-3 p-3" rows="3" placeholder="যেমন: পেমেন্ট সম্পন্ন হয়েছে বা কোনো নির্দেশনা...">{{ old('admin_message', $loan->admin_message) }}</textarea>
+                            </div>
+
+                            <button type="submit" class="btn btn-primary w-100 rounded-pill py-3 fw-bold shadow-sm" style="background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%); border: none;">
                                 স্থিতি আপডেট করুন <i class="fa-solid fa-circle-chevron-right ms-1"></i>
                             </button>
                         </form>

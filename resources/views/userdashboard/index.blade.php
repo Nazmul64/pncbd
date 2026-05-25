@@ -621,6 +621,7 @@
                                 <th>মাসিক কিস্তি (EMI)</th>
                                 <th>তারিখ</th>
                                 <th>অবস্থা</th>
+                                <th class="text-end">অ্যাকশন</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -655,6 +656,11 @@
                                         @else
                                             <span class="badge bg-danger">প্রত্যাখ্যাত</span>
                                         @endif
+                                    </td>
+                                    <td class="text-end">
+                                        <a href="{{ route('loan.details', $loan->id) }}" class="btn btn-sm btn-primary rounded-pill px-3 fw-bold shadow-sm" style="font-size: 0.85rem; background: linear-gradient(135deg, #3b82f6, #2563eb); border: none;">
+                                            <i class="fa-solid fa-file-invoice-dollar me-1"></i> বিস্তারিত
+                                        </a>
                                     </td>
                                 </tr>
                             @endforeach

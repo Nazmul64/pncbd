@@ -307,7 +307,7 @@
             </div>
         </div>
 
-        <form action="{{ route('admin.hrm.attendance.save') }}" method="POST">
+        <form action="{{ route('admin.hrm.attendance.store') }}" method="POST">
             @csrf
             <input type="hidden" name="year" value="{{ $year }}">
             <input type="hidden" name="month" value="{{ $month }}">

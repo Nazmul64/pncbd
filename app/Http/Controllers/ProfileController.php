@@ -67,7 +67,7 @@ class ProfileController extends Controller
             ];
 
             if ($request->hasFile('photo')) {
-                $uploadPath = public_path('uploads/imformation');
+                $uploadPath = public_path('uploads/information');
                 if (!file_exists($uploadPath)) {
                     mkdir($uploadPath, 0755, true);
                 }
@@ -76,7 +76,7 @@ class ProfileController extends Controller
                 $filename = time() . '_selfie_' . $user->id . '.' . $image->getClientOriginalExtension();
                 $image->move($uploadPath, $filename);
                 
-                $selfiePath = 'uploads/imformation/' . $filename;
+                $selfiePath = 'uploads/information/' . $filename;
                 $userData['photo'] = $selfiePath;
             }
 

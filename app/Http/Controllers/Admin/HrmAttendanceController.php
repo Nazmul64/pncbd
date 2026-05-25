@@ -76,7 +76,7 @@ class HrmAttendanceController extends Controller
     /**
      * Save the attendance grid.
      */
-    public function save(Request $request)
+    public function store(Request $request)
     {
         $request->validate([
             'year' => ['required', 'integer'],
