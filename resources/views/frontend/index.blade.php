@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ $gs->site_name ?? 'UBS' }} - সহজ, দ্রুত ও নিরাপদ লোন</title>
+    <title>{{ $gs->site_name ?? 'Pncbd' }} - সহজ, দ্রুত ও নিরাপদ লোন</title>
     @include('frontend.partials.favicon')
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -29,12 +29,12 @@
         {{-- ── Logo (General Settings — শুধু লোগো অথবা সাইট নাম) ── --}}
         <div class="logo-wrap">
             @if(!empty($gs->header_logo))
-                <img src="{{ asset($gs->header_logo) }}" alt="{{ $gs->site_name ?? 'UBS' }}" class="hero-logo-img">
+                <img src="{{ asset($gs->header_logo) }}" alt="{{ $gs->site_name ?? 'Pncbd' }}" class="hero-logo-img">
             @else
                 <div class="logo-ring">
-                    <span class="logo-symbol">{{ mb_substr($gs->site_name ?? 'U', 0, 1) }}</span>
+                    <span class="logo-symbol">{{ mb_substr($gs->site_name ?? 'P', 0, 1) }}</span>
                 </div>
-                <span class="logo-name-main">{{ $gs->site_name ?? 'UBS' }}</span>
+                <span class="logo-name-main">{{ $gs->site_name ?? 'Pncbd' }}</span>
             @endif
         </div>
 
@@ -544,7 +544,7 @@
                     <i class="fas fa-headset"></i>
                 </div>
                 <div>
-                    <h5 class="ubs-support-title">{{ $gs->site_name ?? 'UBS' }} Support</h5>
+                    <h5 class="ubs-support-title">{{ $gs->site_name ?? 'Pncbd' }} Support</h5>
                     <span class="ubs-support-status">
                         <span class="ubs-status-dot"></span> অনলাইন আছেন
                     </span>

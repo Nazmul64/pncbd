@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ঋণের বিস্তারিত তথ্য - {{ $gs->site_name ?? 'UBS' }}</title>
+    <title>ঋণের বিস্তারিত তথ্য - {{ $gs->site_name ?? 'Pncbd' }}</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
@@ -524,7 +524,7 @@
                         <i class="fas fa-exclamation-triangle"></i> গুরুত্বপূর্ণ সতর্কতা
                     </div>
                     <div>
-                        শুধু সাইটে এই লিস্টে দেওয়া অফিশিয়াল নাম্বারে লেনদেন করলে হবে। সাইটের বাইরে বা ব্যক্তিগত লেনদেনের দায়ভার UBS কর্তৃপক্ষ নেবে না।
+                        শুধু সাইটে এই লিস্টে দেওয়া অফিশিয়াল নাম্বারে লেনদেন করলে হবে। সাইটের বাইরে বা ব্যক্তিগত লেনদেনের দায়ভার Pncbd কর্তৃপক্ষ নেবে না।
                     </div>
                 </div>
             </div>

@@ -32,6 +32,7 @@
     $taxActive        = request()->routeIs('admin.alltaxes.*');
     $blogActive       = request()->routeIs('admin.blog-categories.*') || request()->routeIs('admin.blog-posts.*');
     $chatActive       = request()->routeIs('admin.chat.*');
+    $staffChatActive  = request()->routeIs('admin.staff-chat.*');
     $settingsActive   = request()->routeIs('admin.Generalsettings.*') || request()->routeIs('admin.websitefavicon.*') || request()->routeIs('admin.footer-settings.*') || request()->routeIs('admin.contact.*') || request()->routeIs('admin.pixels.*') || request()->routeIs('admin.googletagmanager.*') || $campaignActive || $shippingActive || $reviewsActive || $taxActive || request()->routeIs('admin.nagad.*') || request()->routeIs('admin.mail.*');
     $apiActive        = request()->routeIs('admin.paymentgetewaymanage.*') || request()->routeIs('admin.steadfastcourier.*') || request()->routeIs('admin.pathaocourier.*') || request()->routeIs('admin.Smsgatewaysetup.*') || request()->routeIs('admin.payment.*') || request()->routeIs('admin.payment.history');
     $pagesActive      = request()->routeIs('admin.pages.*') || request()->routeIs('admin.footercategory.*') || request()->routeIs('admin.aboutcompany.*') || request()->routeIs('admin.tremsandcondation.*') || request()->routeIs('admin.contactinfomationadmins.*');
@@ -440,6 +441,14 @@ body.sb-collapsed .sb-user-info, body.sb-collapsed .sb-logout-btn { display: non
 </a>
 @endif
 
+{{-- Admin ↔ Staff Chat --}}
+@if($u->isSuperAdmin() || $u->isAdmin())
+<a href="{{ route('admin.staff-chat.index') }}" class="sb-item {{ $staffChatActive ? 'active' : '' }}">
+    <span class="sb-left"><i class="bi bi-person-lines-fill sb-ico" style="color:#8b5cf6"></i><span class="sb-text">Staff Chat</span></span>
+    <span id="adminStaffChatBadge" class="badge bg-danger rounded-pill" style="font-size:10px;display:none"></span>
+</a>
+@endif
+
 {{-- Bank Check Approvals --}}
 @if($u->isSuperAdmin() || $u->hasPermission('manage-bank-check-approvals'))
 <a href="{{ route('admin.bank-check-approvals') }}" class="sb-item {{ $bankCheckActive ? 'active' : '' }}">
@@ -485,7 +494,7 @@ body.sb-collapsed .sb-user-info, body.sb-collapsed .sb-logout-btn { display: non
 <!-- Certificate Stamp Settings -->
 @if($u->isSuperAdmin() || $u->hasPermission('manage-certificate-stamps'))
 <a href="{{ route('admin.certificate-stamp') }}" class="sb-item {{ request()->routeIs('admin.certificate-stamp') ? 'active' : '' }}">
-    <span class="sb-left"><i class="bi bi-award sb-ico"></i><span class="sb-text">সার্টিফিকেট স্ট্যাম্প</span></span>
+    <span class="sb-left"><i class="bi bi-award sb-ico" style="color: #10b981;"></i><span class="sb-text">ঋণ অনুমোদন সার্টিফিকেট জেনারেটর</span></span>
 </a>
 @endif
 
@@ -690,6 +699,25 @@ body.sb-collapsed .sb-user-info, body.sb-collapsed .sb-logout-btn { display: non
     });
 
     document.addEventListener('keydown', function(e){ if(e.key === 'Escape') window.sbClose(); });
+
+    // ── Admin Staff-Chat unread badge (sidebar) ──────────────────────────────
+    @if(isset($u) && ($u->isSuperAdmin() || $u->isAdmin()))
+    (function pollStaffChatBadge() {
+        var badge = document.getElementById('adminStaffChatBadge');
+        if (!badge) return;
+        fetch('{{ route("admin.staff-chat.unread") }}')
+            .then(r => r.json())
+            .then(d => {
+                if (d.count > 0) {
+                    badge.textContent  = d.count;
+                    badge.style.display = 'inline-block';
+                } else {
+                    badge.style.display = 'none';
+                }
+            }).catch(() => {});
+        setTimeout(pollStaffChatBadge, 10000);
+    })();
+    @endif
 
     var sx = 0, sb = document.getElementById('sidebar');
     if(sb){

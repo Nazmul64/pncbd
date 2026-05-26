@@ -61,7 +61,7 @@ class FrontendauthContorller extends Controller
             $user = User::create([
                 'name'     => $request->name,
                 'phone'    => $phone,
-                'email'    => $phone . '@ubs.customer',
+                'email'    => $phone . '@pncbd.customer',
                 'password' => Hash::make($request->password),
             ]);
 

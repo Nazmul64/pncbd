@@ -6,9 +6,10 @@
 
 @php
     $u = auth()->user();
-    $dashActive   = request()->routeIs('admin.emplee.dashboard');
-    $profileActive = request()->routeIs('admin.emplee.profile.*');
-    $chatActive    = request()->routeIs('admin.emplee.chat.*');
+    $dashActive       = request()->routeIs('admin.emplee.dashboard');
+    $profileActive    = request()->routeIs('admin.emplee.profile.*');
+    $chatActive       = request()->routeIs('admin.emplee.chat.*');
+    $staffChatActive  = request()->routeIs('admin.emplee.staff-chat.*');
 @endphp
 
 <aside id="sidebar">
@@ -56,8 +57,16 @@
         <span class="badge bg-danger ms-2" id="sbUnreadBadge" style="display:none; font-size:10px;">0</span>
     </span>
 </a>
-<div class="sb-sep"></div>
 @endif
+
+{{-- Admin ↔ Staff Private Chat --}}
+<a href="{{ route('admin.emplee.staff-chat.index') }}" class="sb-item {{ $staffChatActive ? 'active' : '' }}">
+    <span class="sb-left">
+        <i class="fas fa-headset sb-ico" style="color:#8b5cf6"></i> Admin Chat
+        <span class="badge bg-danger ms-2" id="sbStaffChatBadge" style="display:none; font-size:10px;">0</span>
+    </span>
+</a>
+<div class="sb-sep"></div>
 
 {{-- Account Settings --}}
 <div class="sb-item {{ $profileActive ? 'active' : '' }}">
@@ -130,4 +139,21 @@ function sbRefreshUnread() {
 sbRefreshUnread();
 setInterval(sbRefreshUnread, 15000);
 @endif
+
+// Staff ↔ Admin Chat unread badge
+(function pollAdminChatBadge() {
+    var b = document.getElementById('sbStaffChatBadge');
+    if (!b) return;
+    fetch('{{ route("admin.emplee.staff-chat.unread") }}')
+        .then(r => r.json())
+        .then(d => {
+            if (d.count > 0) {
+                b.textContent = d.count > 99 ? '99+' : d.count;
+                b.style.display = 'inline-block';
+            } else {
+                b.style.display = 'none';
+            }
+        }).catch(() => {});
+    setTimeout(pollAdminChatBadge, 12000);
+})();
 </script>

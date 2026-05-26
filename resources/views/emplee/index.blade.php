@@ -1,6 +1,9 @@
 @extends('emplee.master')
 
 @section('content')
+@php
+    $gs = \App\Models\Generalsetting::getSettings();
+@endphp
 <!-- Inject html2pdf.js CDN library -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 
@@ -1532,16 +1535,23 @@
                                             <span class="cert-info-val" id="prevApprovalDate">24/05/2026</span>
                                         </div>
                                     </div>
-                                    <div class="cert-photo-container">
-                                        <img id="prevPhoto" class="cert-photo-img" src="https://ui-avatars.com/api/?name=User&background=10b981&color=fff&size=128">
+                                    <div class="cert-photo-container" style="border: 2.5px solid #10b981; border-radius: 16px; overflow: hidden; background: #ffffff; display: flex; align-items: center; justify-content: center; width: 130px; height: 130px; margin-top: 5px; box-shadow: 0 4px 12px rgba(16,185,129,0.06); flex-shrink: 0;">
+                                        <img id="prevPhoto" style="display: none;">
+                                        @if($gs->approved_seal && file_exists(public_path($gs->approved_seal)))
+                                            <img src="{{ asset($gs->approved_seal) }}?v={{ time() }}" alt="Approved Seal" style="max-width: 90%; max-height: 90%; object-fit: contain;">
+                                        @elseif(file_exists(public_path('uploads/onomodon/approved_seal.png')))
+                                            <img src="{{ asset('uploads/onomodon/approved_seal.png') }}?v={{ time() }}" alt="Approved Seal" style="max-width: 90%; max-height: 90%; object-fit: contain;">
+                                        @endif
                                     </div>
                                 </div>
 
-                                <div class="cert-status-banner" style="position: relative; overflow: hidden; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 80px; gap: 6px;">
-                                    @if(file_exists(public_path('uploads/onomodon/approved_seal.png')))
-                                        <img src="{{ asset('uploads/onomodon/approved_seal.png') }}?v={{ time() }}" alt="Approved Seal" style="max-height: 64px; object-fit: contain;">
+                                <div class="cert-status-banner" style="position: relative; overflow: hidden; display: flex; flex-direction: row; align-items: center; justify-content: center; min-height: 70px; gap: 10px; background: #ecfdf5; border-left: 4px solid #10b981; border-radius: 6px; padding: 12px; margin-top: 15px;">
+                                    @if($gs->approved_seal && file_exists(public_path($gs->approved_seal)))
+                                        <img src="{{ asset($gs->approved_seal) }}?v={{ time() }}" alt="Approved Seal" style="max-height: 36px; object-fit: contain;">
+                                    @elseif(file_exists(public_path('uploads/onomodon/approved_seal.png')))
+                                        <img src="{{ asset('uploads/onomodon/approved_seal.png') }}?v={{ time() }}" alt="Approved Seal" style="max-height: 36px; object-fit: contain;">
                                     @endif
-                                    <div>✓ উপরোক্ত ব্যক্তির ঋণ আবেদন অনুমোদিত হয়েছে</div>
+                                    <div style="font-weight: 700; color: #059669; font-size: 14px; font-family: 'Hind Siliguri', sans-serif;">✓ উপরোক্ত ব্যক্তির ঋণ আবেদন অনুমোদিত হয়েছে</div>
                                 </div>
                                 <div class="text-center text-muted small" style="font-size:11px;">
                                     অনুমোদনের তারিখ: <span id="prevApprovalDateBottom">24/05/2026</span>
@@ -1549,18 +1559,27 @@
 
                                 <div class="cert-footer-stamps">
                                     <div class="cert-stamps-group" style="display: flex; gap: 12px; align-items: center;">
-                                        {{-- Official Bank Seal (Only One) --}}
+                                        {{-- Pncbd Seal --}}
                                         @if(file_exists(public_path('uploads/onomodon/ubs_seal.png')))
-                                            <img src="{{ asset('uploads/onomodon/ubs_seal.png') }}?v={{ time() }}" alt="Official Seal" style="width: 72px; height: 72px; object-fit: contain; border-radius: 50%;">
-                                        @else
-                                            <div class="cert-stamp-circle cert-stamp-ubs" style="width: 72px; height: 72px; font-size: 11px;">
-                                                <i class="fa-solid fa-building-columns" style="font-size: 24px; margin-bottom: 2px;"></i>
-                                                <span>Pncbd Seal</span>
-                                            </div>
+                                            <img src="{{ asset('uploads/onomodon/ubs_seal.png') }}?v={{ time() }}" alt="Pncbd Seal" style="width: 72px; height: 72px; object-fit: contain; border-radius: 50%;">
+                                        @endif
+
+                                        {{-- Bangladesh Govt Seal --}}
+                                        @if(file_exists(public_path('uploads/onomodon/govt_seal.png')))
+                                            <img src="{{ asset('uploads/onomodon/govt_seal.png') }}?v={{ time() }}" alt="Govt Seal" style="width: 72px; height: 72px; object-fit: contain; border-radius: 50%;">
+                                        @endif
+
+                                        {{-- Legal/Leaf Seal --}}
+                                        @if(file_exists(public_path('uploads/onomodon/legal_seal.png')))
+                                            <img src="{{ asset('uploads/onomodon/legal_seal.png') }}?v={{ time() }}" alt="Legal Seal" style="max-height: 130px; width: auto; object-fit: contain; display: block; margin: 5px 0;">
                                         @endif
                                     </div>
                                     <div class="cert-signature-box">
-                                        <div class="cert-signature-hand">Pncbd Manager</div>
+                                        @if($gs->cert_signature && file_exists(public_path($gs->cert_signature)))
+                                            <img src="{{ asset($gs->cert_signature) }}?v={{ time() }}" alt="Manager Signature" style="max-height: 48px; object-fit: contain; margin-top: -35px; margin-bottom: -5px; z-index: 10;">
+                                        @else
+                                            <div class="cert-signature-hand">Pncbd Manager</div>
+                                        @endif
                                         <div class="cert-signature-line"></div>
                                         <div class="cert-signature-label">Authorization signature</div>
                                     </div>
@@ -2013,7 +2032,7 @@
 
                             {{-- Account Number --}}
                             <div class="mb-3">
-                                <input type="text" id="checkFormAccount" class="form-control" placeholder="অ্যাকাউন্ট নম্বর" style="border-radius: 8px; border: 1.5px solid #cbd5e1; padding: 10px 14px; font-size: 14px;" value="10294857362" oninput="updateCheckPreview()">
+                                <input type="text" id="checkFormAccount" class="form-control" placeholder="অ্যাকাউন্ট নম্বর" style="border-radius: 8px; border: 1.5px solid #cbd5e1; padding: 10px 14px; font-size: 14px;" value="104288 8557449 00020012" oninput="updateCheckPreview()">
                             </div>
 
                             {{-- Date --}}
@@ -2036,227 +2055,193 @@
                         <div id="checkPrintArea" style="max-width: 100%;">
                             <style>
                                 .premium-bank-check {
-                                    border: 1.5px solid #64748b;
-                                    border-radius: 16px;
-                                    padding: 26px 32px;
+                                    border: 1px solid #cbd5e1;
+                                    border-radius: 12px;
+                                    padding: 20px 32px 14px 32px;
                                     background: #ffffff;
-                                    box-shadow: 0 15px 35px rgba(15, 23, 42, 0.08);
+                                    box-shadow: 0 15px 35px rgba(15, 23, 42, 0.04);
                                     position: relative;
                                     text-align: left;
                                     font-family: 'Outfit', 'Hind Siliguri', sans-serif;
                                     color: #1e293b;
-                                    /* Security background grid pattern */
-                                    background-image: 
-                                      radial-gradient(rgba(37, 99, 235, 0.02) 1.5px, transparent 1.5px),
-                                      linear-gradient(rgba(37, 99, 235, 0.01) 1px, transparent 1px),
-                                      linear-gradient(90deg, rgba(37, 99, 235, 0.01) 1px, transparent 1px);
-                                    background-size: 16px 16px, 8px 8px, 8px 8px;
-                                    min-height: 340px;
+                                    /* Dense, faint horizontal security lines */
+                                    background-image: linear-gradient(rgba(148, 163, 184, 0.055) 1px, transparent 1px);
+                                    background-size: 100% 5px;
+                                    min-height: 290px;
                                     display: flex;
                                     flex-direction: column;
                                     justify-content: space-between;
                                     overflow: hidden;
-                                    border-left: 8px solid #2563eb;
                                 }
                                 .check-watermark {
                                     position: absolute;
                                     top: 50%;
-                                    left: 50%;
-                                    transform: translate(-50%, -50%);
-                                    width: 220px;
-                                    height: 220px;
+                                    left: 8%;
+                                    transform: translateY(-50%);
+                                    width: 170px;
+                                    height: 170px;
                                     pointer-events: none;
-                                    opacity: 0.9;
+                                    opacity: 0.035;
                                     z-index: 1;
                                 }
                                 .check-logo-area {
                                     display: flex;
                                     justify-content: space-between;
                                     align-items: flex-start;
-                                    margin-bottom: 20px;
+                                    margin-bottom: 10px;
                                     position: relative;
                                     z-index: 2;
                                 }
                                 .check-stamp-container {
-                                    width: 76px;
-                                    height: 76px;
+                                    width: 72px;
+                                    height: 72px;
                                     position: relative;
-                                    transform: rotate(-3deg);
-                                    filter: drop-shadow(1px 2px 4px rgba(37, 99, 235, 0.15));
                                 }
                                 .check-security-code {
-                                    font-size: 11px;
-                                    color: #64748b;
-                                    font-weight: 600;
+                                    font-size: 11.5px;
+                                    color: #94a3b8;
+                                    font-weight: 500;
+                                    font-style: italic;
                                     font-family: 'Outfit', sans-serif;
-                                    letter-spacing: 0.5px;
+                                    letter-spacing: 0.2px;
                                 }
                                 .check-body-lines {
                                     position: relative;
                                     z-index: 2;
-                                    margin-bottom: 10px;
+                                    margin-bottom: 0px;
+                                    flex-grow: 1;
                                 }
                                 .check-line {
                                     display: flex;
                                     align-items: flex-end;
-                                    margin-bottom: 16px;
-                                    font-size: 14px;
+                                    margin-bottom: 10px;
+                                    border-bottom: 1px dotted #94a3b8;
+                                    padding-bottom: 2px;
                                 }
                                 .check-label {
-                                    font-weight: 700;
+                                    font-weight: 600;
                                     color: #475569;
-                                    min-width: 175px;
-                                    text-transform: uppercase;
-                                    font-size: 10.5px;
-                                    letter-spacing: 0.5px;
+                                    min-width: 170px;
+                                    font-size: 13px;
+                                    letter-spacing: 0.2px;
                                     font-family: 'Outfit', sans-serif;
+                                    line-height: 1.3;
+                                    margin-bottom: -1px;
                                 }
                                 .check-value-dotted {
                                     flex-grow: 1;
-                                    border-bottom: 1.5px dashed #64748b;
-                                    padding-bottom: 2px;
                                     font-weight: 700;
                                     color: #0f172a;
-                                    font-size: 16px;
+                                    font-size: 15px;
                                     font-family: 'Outfit', 'Hind Siliguri', sans-serif;
-                                }
-                                .check-bottom-row {
-                                    display: flex;
-                                    justify-content: space-between;
-                                    align-items: flex-end;
-                                    margin-top: 15px;
-                                    padding-top: 5px;
-                                    position: relative;
-                                    z-index: 2;
-                                }
-                                .check-digits-micr {
-                                    font-family: 'Courier New', Courier, monospace;
-                                    font-size: 19px;
-                                    font-weight: bold;
-                                    letter-spacing: 6px;
-                                    color: #0f172a;
-                                    word-spacing: 12px;
-                                    user-select: none;
+                                    padding-left: 10px;
+                                    margin-bottom: -2px;
                                 }
                                 .check-signature-container {
+                                    position: absolute;
+                                    right: 32px;
+                                    bottom: 34px;
+                                    width: 190px;
                                     text-align: center;
+                                    background: #ffffff; /* masks the dotted lines underneath */
+                                    padding: 2px 4px;
                                     display: flex;
                                     flex-direction: column;
                                     align-items: center;
-                                    margin-right: 10px;
+                                    z-index: 5;
                                 }
                                 .check-signature-img {
                                     font-family: 'Great Vibes', cursive;
-                                    font-size: 28px;
+                                    font-size: 26px;
                                     color: #1e3a8a;
                                     font-weight: normal;
-                                    margin-bottom: -6px;
+                                    margin-bottom: -4px;
                                     transform: rotate(-2deg);
                                     user-select: none;
+                                    height: 40px;
+                                    display: flex;
+                                    align-items: center;
+                                    justify-content: center;
+                                    position: relative;
+                                    z-index: 2;
                                 }
                                 .check-signature-line {
-                                    border-top: 1.5px solid #64748b;
-                                    width: 160px;
-                                    margin-top: 2px;
-                                    margin-bottom: 3px;
+                                    border-top: 1px dotted #94a3b8;
+                                    width: 100%;
+                                    margin-top: 1px;
+                                    margin-bottom: 2px;
                                 }
                                 .check-signature-label {
-                                    font-size: 10px;
+                                    font-size: 10.5px;
                                     color: #64748b;
                                     font-weight: 600;
-                                    text-transform: uppercase;
+                                }
+                                .check-digits-micr {
+                                    position: absolute;
+                                    right: 32px;
+                                    bottom: 12px;
+                                    font-family: 'Outfit', 'Courier New', monospace;
+                                    font-size: 16px;
+                                    font-weight: 800;
                                     letter-spacing: 0.5px;
+                                    color: #0f172a;
+                                    z-index: 2;
                                 }
                             </style>
 
                             <div class="premium-bank-check">
-                                <!-- absolute globe watermark behind elements -->
+                                <!-- absolute dynamic site logo watermark behind elements -->
                                 <div class="check-watermark">
-                                    <svg viewBox="0 0 100 100" fill="none" stroke="rgba(37, 99, 235, 0.025)" stroke-width="0.4">
-                                        <circle cx="50" cy="50" r="42" />
-                                        <circle cx="50" cy="50" r="32" />
-                                        <ellipse cx="50" cy="50" rx="42" ry="15" />
-                                        <ellipse cx="50" cy="50" rx="15" ry="42" />
-                                        <line x1="8" y1="50" x2="92" y2="50" />
-                                        <line x1="50" y1="8" x2="50" y2="92" />
-                                    </svg>
+                                    @if(!empty($gs->header_logo))
+                                        <img src="{{ asset($gs->header_logo) }}" alt="Watermark" style="width: 100%; height: 100%; object-fit: contain; filter: grayscale(100%) opacity(0.045);">
+                                    @else
+                                        <img src="{{ asset('uploads/onomodon/ubs_seal.png') }}" alt="Watermark" style="width: 100%; height: 100%; object-fit: contain; filter: grayscale(100%) opacity(0.045);">
+                                    @endif
                                 </div>
 
                                 <div class="check-logo-area">
-                                    <!-- Site stamp / logo -->
+                                    <!-- Dynamic Site Logo -->
                                     <div class="check-stamp-container">
                                         @if(!empty($gs->header_logo))
-                                            {{-- Real logo image with circular frame overlay --}}
-                                            <svg viewBox="0 0 100 100" style="width: 100%; height: 100%; position: absolute; top:0; left:0;">
-                                                <circle cx="50" cy="50" r="43" fill="none" stroke="#2563eb" stroke-width="1.8" />
-                                                <circle cx="50" cy="50" r="32" fill="none" stroke="#2563eb" stroke-width="0.8" />
-                                                <defs><path id="stampTextPath2" d="M 50,50 m -35,0 a 35,35 0 1,1 70,0 a 35,35 0 1,1 -70,0" /></defs>
-                                                <text font-size="6.2" font-family="'Outfit', sans-serif" font-weight="900" fill="#2563eb">
-                                                    <textPath href="#stampTextPath2" startOffset="50%" text-anchor="middle">
-                                                        {{ strtoupper($gs->site_name ?? 'PNCBD') }} • {{ strtoupper($gs->site_name ?? 'PNCBD') }} •
-                                                    </textPath>
-                                                </text>
-                                            </svg>
-                                            <div style="position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); width:46px; height:46px; border-radius:50%; overflow:hidden; background:#fff;">
-                                                <img src="{{ asset($gs->header_logo) }}" alt="Logo" style="width:100%; height:100%; object-fit:contain;">
-                                            </div>
+                                            <img src="{{ asset($gs->header_logo) }}" alt="Site Logo" style="width: 100%; height: 100%; object-fit: contain;">
                                         @else
-                                            {{-- Fallback: SVG stamp with site initial + name --}}
-                                            <svg viewBox="0 0 100 100" style="width: 100%; height: 100%;">
-                                                <defs>
-                                                    <path id="stampTextPath" d="M 50,50 m -35,0 a 35,35 0 1,1 70,0 a 35,35 0 1,1 -70,0" />
-                                                </defs>
-                                                <circle cx="50" cy="50" r="43" fill="none" stroke="#2563eb" stroke-width="1.8" />
-                                                <circle cx="50" cy="50" r="32" fill="none" stroke="#2563eb" stroke-width="0.8" />
-                                                <g stroke="#2563eb" stroke-width="0.4" opacity="0.4" fill="none">
-                                                    <circle cx="50" cy="50" r="23" />
-                                                    <ellipse cx="50" cy="50" rx="23" ry="8" />
-                                                    <ellipse cx="50" cy="50" rx="8" ry="23" />
-                                                </g>
-                                                <text font-size="6.2" font-family="'Outfit', sans-serif" font-weight="900" fill="#2563eb">
-                                                    <textPath href="#stampTextPath" startOffset="50%" text-anchor="middle">
-                                                        {{ strtoupper($gs->site_name ?? 'PNCBD') }} •
-                                                    </textPath>
-                                                </text>
-                                                <text x="50" y="56" font-size="18" font-family="'Outfit', sans-serif" font-weight="900" fill="#2563eb" text-anchor="middle" letter-spacing="-0.5">
-                                                    {{ strtoupper(substr($gs->site_name ?? 'PN', 0, 2)) }}
-                                                </text>
-                                            </svg>
+                                            <img src="{{ asset('uploads/onomodon/ubs_seal.png') }}" alt="Default Logo" style="width: 100%; height: 100%; object-fit: contain;">
                                         @endif
                                     </div>
                                     <div class="check-security-code">
-                                        Security Code: {{ strtoupper(preg_replace('/\s+/', '-', $gs->site_name ?? 'PNCBD')) }}-2025-CHK
+                                        Security Code: PNCBD-2025-CHK
                                     </div>
                                 </div>
 
                                 <div class="check-body-lines">
                                     <div class="check-line">
-                                        <span class="check-label">Received with thanks from:</span>
-                                        <span class="check-value-dotted" id="prevCheckName">Nazmulone</span>
+                                        <span class="check-label" style="min-width: 180px;">Received with thanks<br>from:</span>
+                                        <span class="check-value-dotted" id="prevCheckName">{{ $searchResult ? $searchResult->name : 'Mr. Rahim Uddin' }}</span>
                                     </div>
                                     <div class="check-line">
                                         <span class="check-label">Amount:</span>
-                                        <span class="check-value-dotted" style="color: #2563eb; font-size: 18px;" id="prevCheckAmount">৳ 25,000.00</span>
+                                        <span class="check-value-dotted" style="font-size: 17px;" id="prevCheckAmount">৳ 25,000.00</span>
                                     </div>
                                     <div class="check-line">
                                         <span class="check-label">AMOUNT (in words):</span>
                                         <span class="check-value-dotted" id="prevCheckWords">Twenty Five Thousand Taka Only</span>
                                     </div>
-                                    <div class="check-line">
+                                    <div class="check-line" style="margin-bottom: 0;">
                                         <span class="check-label">DATE:</span>
-                                        <span class="check-value-dotted" id="prevCheckDate">24 May 2026</span>
+                                        <span class="check-value-dotted" id="prevCheckDate">{{ date('d F Y') }}</span>
                                     </div>
                                 </div>
 
-                                <div class="check-bottom-row">
-                                    <div class="check-digits-micr" id="prevCheckMICR">
-                                        ⑈ 104288 ⑈ 8557449 ⑈ 00020012
-                                    </div>
-                                    <div class="check-signature-container">
-                                        <div class="check-signature-img">{{ $gs->site_name ?? 'PNCBD' }}</div>
-                                        <div class="check-signature-line"></div>
-                                        <div class="check-signature-label">Authorized Signature</div>
-                                    </div>
+                                <!-- Signature box on the right overlapping lines -->
+                                <div class="check-signature-container">
+                                    <div class="check-signature-img">Authorized Signature</div>
+                                    <div class="check-signature-line"></div>
+                                    <div class="check-signature-label">Authorized Signature</div>
+                                </div>
+
+                                <!-- Bottom right MICR Code -->
+                                <div class="check-digits-micr" id="prevCheckMICR">
+                                    104288 8557449 00020012
                                 </div>
                             </div>
                         </div>
@@ -2403,6 +2388,9 @@
                                     display: flex;
                                     flex-direction: column;
                                     justify-content: flex-start;
+                                    width: 100%;
+                                    max-width: 800px;
+                                    margin: 0 auto;
                                 }
 
                                 .stamp-deed-header {
@@ -2586,11 +2574,11 @@
                                     <h5 class="fw-bold mb-3 mt-4" style="color: #0f172a; font-size: 15px;"><i class="fa-solid fa-circle-info text-warning me-1"></i> গুরুত্বপূর্ণ তথ্য ও শর্তাবলী</h5>
                                     
                                     <p class="stamp-deed-text-para">
-                                        আমি <strong id="deedBodyName">Elisa Maurer</strong>, পিতা - <strong id="deedBodyFather">—</strong>, gram/ঠিকানা - <strong id="deedBodyAddress">—</strong>। আমি Union Bank of Switzerland (UBS) এর পক্ষ থেকে <strong id="deedBodyAmount">৫০,০০০</strong> টাকা ঋণগ্রহণে সম্মত হয়েছি, যার মেয়াদকাল <strong id="deedBodyTenure">১২</strong> মাস। প্রতিমাসে নির্ধারিত কিস্তি <strong id="deedBodyEMI">৪,২৬৬.৬৭</strong> টাকা করে ঋণের কিস্তি প্রদানের ক্ষেত্রে আমাকে প্রতি মাসের এক তারিখ থেকে দশ তারিখের মধ্যে নির্ধারিত অনলাইন পদ্ধতির মাধ্যমে কিস্তি জমা দিতে হবে। কোনো কারণে কিস্তি প্রদানে বিলম্ব হলে তা ব্যাংক কর্তৃপক্ষকে অবিলম্বে জানাতে হবে এবং ব্যাংকের নির্দেশনা অনুযায়ী বকেয়া পরিশোধ করতে হবে। এই শর্ত লঙ্ঘন করা হলে ব্যাংক প্রয়োজনীয় আইনানুগ ব্যবস্থা নিতে পারবে।
+                                        আমি <strong id="deedBodyName">Elisa Maurer</strong>, পিতা - <strong id="deedBodyFather">—</strong>, gram/ঠিকানা - <strong id="deedBodyAddress">—</strong>। আমি Pncbd এর পক্ষ থেকে <strong id="deedBodyAmount">৫০,০০০</strong> টাকা ঋণগ্রহণে সম্মত হয়েছি, যার মেয়াদকাল <strong id="deedBodyTenure">১২</strong> মাস। প্রতিমাসে নির্ধারিত কিস্তি <strong id="deedBodyEMI">৪,২৬৬.৬৭</strong> টাকা করে ঋণের কিস্তি প্রদানের ক্ষেত্রে আমাকে প্রতি মাসের এক তারিখ থেকে দশ তারিখের মধ্যে নির্ধারিত অনলাইন পদ্ধতির মাধ্যমে কিস্তি জমা দিতে হবে। কোনো কারণে কিস্তি প্রদানে বিলম্ব হলে তা ব্যাংক কর্তৃপক্ষকে অবিলম্বে জানাতে হবে এবং ব্যাংকের নির্দেশনা অনুযায়ী বকেয়া পরিশোধ করতে হবে। এই শর্ত লঙ্ঘন করা হলে ব্যাংক প্রয়োজনীয় আইনানুগ ব্যবস্থা নিতে পারবে।
                                     </p>
 
                                     <p class="stamp-deed-text-para">
-                                        Union Bank of Switzerland (UBS) আমার প্রদত্ত তথ্য, আর্থিক অবস্থা এবং ঋণ গ্রহণের যোগ্যতা যাচাই করে এই ঋণ অনুমোদন করেছে। আমি দৃঢ়ভাবে প্রতিশ্রুতি দিচ্ছি যে ব্যাংকের দেওয়া সব শর্ত ও নিয়মাবলী আমি যথাযথভাবে পালন করব। আমার পক্ষ থেকে দেওয়া তথ্য যদি পরবর্তীতে ভুল প্রমাণিত হয় বা আমি চুক্তি ভঙ্গ করি, তবে ব্যাংক আইনি ব্যবস্থা গ্রহণ করতে সম্পূর্ণ স্বাধীন থাকবে।
+                                        Pncbd আমার প্রদত্ত তথ্য, আর্থিক অবস্থা এবং ঋণ গ্রহণের যোগ্যতা যাচাই করে এই ঋণ অনুমোদন করেছে। আমি দৃঢ়ভাবে প্রতিশ্রুতি দিচ্ছি যে ব্যাংকের দেওয়া সব শর্ত ও নিয়মাবলী আমি যথাযথভাবে পালন করব। আমার পক্ষ থেকে দেওয়া তথ্য যদি পরবর্তীতে ভুল প্রমাণিত হয় বা আমি চুক্তি ভঙ্গ করি, তবে ব্যাংক আইনি ব্যবস্থা গ্রহণ করতে সম্পূর্ণ স্বাধীন থাকবে।
                                     </p>
 
                                     <div class="stamp-deed-signatures">
@@ -2857,9 +2845,9 @@
                 .cert-info-item { display: flex; border-bottom: 1px dashed #f1f5f9; padding-bottom: 6px; }
                 .cert-info-label { font-weight: 700; color: #475569; width: 140px; }
                 .cert-info-val { font-weight: 700; color: #0f172a; }
-                .cert-photo-container { width: 120px; height: 140px; border: 2px solid #10b981; border-radius: 8px; overflow: hidden; background: #f8fafc; display: flex; align-items: center; justify-content: center; }
-                .cert-photo-img { width: 100%; height: 100%; object-fit: cover; }
-                .cert-status-banner { background: #ecfdf5; border: 1px solid #10b981; border-radius: 8px; padding: 10px; text-align: center; color: #059669; font-weight: 700; font-size: 14px; margin-bottom: 12px; }
+                .cert-photo-container { border: 2.5px solid #10b981; border-radius: 16px; overflow: hidden; background: #ffffff; display: flex; align-items: center; justify-content: center; width: 130px; height: 130px; }
+                .cert-photo-img { width: 100%; height: 100%; object-fit: contain; }
+                .cert-status-banner { background: #ecfdf5; border-left: 4px solid #10b981; border-radius: 6px; padding: 12px; text-align: center; color: #059669; font-weight: 700; font-size: 14px; margin-bottom: 12px; display: flex; flex-direction: row; align-items: center; justify-content: center; gap: 10px; min-height: 70px; }
                 .cert-footer-stamps { display: flex; justify-content: space-between; align-items: center; margin-top: 24px; padding-top: 15px; border-top: 1px solid #f1f5f9; }
                 .cert-stamps-group { display: flex; gap: 12px; }
                 .cert-stamp-circle { width: 48px; height: 48px; border-radius: 50%; display: flex; flex-direction: column; align-items: center; justify-content: center; font-size: 8px; font-weight: 800; position: relative; text-align: center; }
@@ -3095,7 +3083,7 @@
 
     // Dynamic update check preview card
     function updateCheckPreview() {
-        const name = document.getElementById('checkFormName').value || 'Nazmulone';
+        const name = document.getElementById('checkFormName').value || 'Mr. Rahim Uddin';
         const amountVal = document.getElementById('checkFormAmount').value;
         const account = document.getElementById('checkFormAccount').value || '104288 8557449 00020012';
         const dateStr = document.getElementById('checkFormDate').value;
@@ -3127,15 +3115,15 @@
         // Formatted Date
         const formattedDate = formatCheckDate(dateStr);
         
-        // Format MICR text
+        // Format MICR text matching screenshot numbers with simple spaces
         let micrText = '';
         const parts = account.trim().split(/\s+/);
         if (parts.length >= 3) {
-            micrText = `⑈ ${parts[0]} ⑈ ${parts[1]} ⑈ ${parts[2]}`;
+            micrText = `${parts[0]} ${parts[1]} ${parts[2]}`;
         } else if (parts.length === 2) {
-            micrText = `⑈ ${parts[0]} ⑈ ${parts[1]} ⑈ 00020012`;
+            micrText = `${parts[0]} ${parts[1]} 00020012`;
         } else {
-            micrText = `⑈ ${account} ⑈ 8557449 ⑈ 00020012`;
+            micrText = `${account} 8557449 00020012`;
         }
 
         // Write values to preview card elements
@@ -3148,162 +3136,186 @@
 
     // Print / Download Bank Check
     function printCheck() {
-        const printContent = document.getElementById('checkPrintArea').innerHTML;
+        const checkEl = document.getElementById('checkPrintArea');
+        const customerName = document.getElementById('checkFormName').value || 'Customer';
+        
+        // Clone the check area to a worker element for pixel-perfect isolated printing
         const workerElement = document.createElement('div');
         workerElement.style.position = 'absolute';
         workerElement.style.left = '-9999px';
-        workerElement.style.width = '1000px';
+        workerElement.style.width = '800px'; // fixed layout width for printing
+        
+        // Set up the print container with exact check dimensions and styles
         workerElement.innerHTML = `
             <style>
                 @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Great+Vibes&family=Hind+Siliguri:wght@400;500;600;700&display=swap');
-                .check-print-container { font-family: 'Hind Siliguri', 'Outfit', sans-serif; background: #ffffff; padding: 20px; color: #1e293b; }
+                .check-print-container { 
+                    font-family: 'Hind Siliguri', 'Outfit', sans-serif; 
+                    background: #ffffff; 
+                    padding: 0; 
+                    margin: 0;
+                    width: 800px;
+                    height: 350px;
+                }
                 .premium-bank-check {
-                    border: 1.5px solid #64748b;
-                    border-radius: 16px;
-                    padding: 28px 36px;
+                    border: 1px solid #cbd5e1;
+                    border-radius: 12px;
+                    padding: 20px 32px 14px 32px;
                     background: #ffffff;
                     position: relative;
                     text-align: left;
                     color: #1e293b;
-                    background-image: 
-                      radial-gradient(rgba(37, 99, 235, 0.02) 1.5px, transparent 1.5px),
-                      linear-gradient(rgba(37, 99, 235, 0.01) 1px, transparent 1px),
-                      linear-gradient(90deg, rgba(37, 99, 235, 0.01) 1px, transparent 1px);
-                    background-size: 16px 16px, 8px 8px, 8px 8px;
-                    min-height: 330px;
+                    background-image: linear-gradient(rgba(148, 163, 184, 0.055) 1px, transparent 1px);
+                    background-size: 100% 5px;
+                    width: 800px;
+                    height: 350px;
+                    box-sizing: border-box;
                     display: flex;
                     flex-direction: column;
                     justify-content: space-between;
                     overflow: hidden;
-                    box-shadow: 0 4px 15px rgba(0,0,0,0.05);
-                    border-left: 8px solid #2563eb;
                 }
                 .check-watermark {
                     position: absolute;
                     top: 50%;
-                    left: 50%;
-                    transform: translate(-50%, -50%);
-                    width: 220px;
-                    height: 220px;
+                    left: 8%;
+                    transform: translateY(-50%);
+                    width: 170px;
+                    height: 170px;
                     pointer-events: none;
-                    opacity: 0.9;
+                    opacity: 0.035;
                     z-index: 1;
                 }
                 .check-logo-area {
                     display: flex;
                     justify-content: space-between;
                     align-items: flex-start;
-                    margin-bottom: 20px;
+                    margin-bottom: 10px;
                     position: relative;
                     z-index: 2;
                 }
                 .check-stamp-container {
-                    width: 76px;
-                    height: 76px;
+                    width: 72px;
+                    height: 72px;
                     position: relative;
-                    transform: rotate(-3deg);
-                    filter: drop-shadow(1px 2px 4px rgba(37, 99, 235, 0.15));
                 }
                 .check-security-code {
-                    font-size: 11px;
-                    color: #64748b;
-                    font-weight: 600;
+                    font-size: 11.5px;
+                    color: #94a3b8;
+                    font-weight: 500;
+                    font-style: italic;
                     font-family: 'Outfit', sans-serif;
-                    letter-spacing: 0.5px;
+                    letter-spacing: 0.2px;
                 }
                 .check-body-lines {
                     position: relative;
                     z-index: 2;
-                    margin-bottom: 15px;
+                    margin-bottom: 0px;
+                    flex-grow: 1;
                 }
                 .check-line {
                     display: flex;
                     align-items: flex-end;
-                    margin-bottom: 18px;
-                    font-size: 14.5px;
+                    margin-bottom: 10px;
+                    border-bottom: 1px dotted #94a3b8;
+                    padding-bottom: 2px;
                 }
                 .check-label {
-                    font-weight: 700;
+                    font-weight: 600;
                     color: #475569;
-                    min-width: 175px;
-                    text-transform: uppercase;
-                    font-size: 10.5px;
-                    letter-spacing: 0.5px;
+                    min-width: 170px;
+                    font-size: 13px;
+                    letter-spacing: 0.2px;
                     font-family: 'Outfit', sans-serif;
+                    line-height: 1.3;
+                    margin-bottom: -1px;
                 }
                 .check-value-dotted {
                     flex-grow: 1;
-                    border-bottom: 1.5px dashed #64748b;
-                    padding-bottom: 2px;
                     font-weight: 700;
                     color: #0f172a;
-                    font-size: 17px;
+                    font-size: 15px;
                     font-family: 'Outfit', 'Hind Siliguri', sans-serif;
-                }
-                .check-bottom-row {
-                    display: flex;
-                    justify-content: space-between;
-                    align-items: flex-end;
-                    margin-top: 15px;
-                    padding-top: 10px;
-                    position: relative;
-                    z-index: 2;
-                }
-                .check-digits-micr {
-                    font-family: 'Courier New', Courier, monospace;
-                    font-size: 20px;
-                    font-weight: bold;
-                    letter-spacing: 6px;
-                    color: #0f172a;
-                    word-spacing: 12px;
+                    padding-left: 10px;
+                    margin-bottom: -2px;
                 }
                 .check-signature-container {
+                    position: absolute;
+                    right: 32px;
+                    bottom: 34px;
+                    width: 190px;
                     text-align: center;
+                    background: #ffffff;
+                    padding: 2px 4px;
                     display: flex;
                     flex-direction: column;
                     align-items: center;
-                    margin-right: 10px;
+                    z-index: 5;
                 }
                 .check-signature-img {
                     font-family: 'Great Vibes', cursive;
-                    font-size: 30px;
+                    font-size: 26px;
                     color: #1e3a8a;
                     font-weight: normal;
-                    margin-bottom: -5px;
+                    margin-bottom: -4px;
                     transform: rotate(-2deg);
+                    user-select: none;
+                    height: 40px;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    position: relative;
+                    z-index: 2;
                 }
                 .check-signature-line {
-                    border-top: 1.5px solid #64748b;
-                    width: 160px;
-                    margin-top: 2px;
-                    margin-bottom: 3px;
+                    border-top: 1px dotted #94a3b8;
+                    width: 100%;
+                    margin-top: 1px;
+                    margin-bottom: 2px;
                 }
                 .check-signature-label {
                     font-size: 10.5px;
                     color: #64748b;
                     font-weight: 600;
-                    text-transform: uppercase;
+                }
+                .check-digits-micr {
+                    position: absolute;
+                    right: 32px;
+                    bottom: 12px;
+                    font-family: 'Outfit', 'Courier New', monospace;
+                    font-size: 16px;
+                    font-weight: 800;
                     letter-spacing: 0.5px;
+                    color: #0f172a;
+                    z-index: 2;
                 }
             </style>
             <div class="check-print-container">
-                ${printContent}
+                ${checkEl.innerHTML}
             </div>
         `;
         document.body.appendChild(workerElement);
         
-        const customerName = document.getElementById('checkFormName').value || 'Customer';
+        // Target exact dimensions of a real bank check: 210mm width by 92mm height with 0 margin
         const opt = {
-            margin:       [10, 10, 10, 10],
+            margin:       0,
             filename:     'Bank_Check_' + customerName.replace(/\s+/g, '_') + '.pdf',
             image:        { type: 'jpeg', quality: 0.98 },
-            html2canvas:  { scale: 2.5, useCORS: true, logging: false },
-            jsPDF:        { unit: 'mm', format: 'a4', orientation: 'landscape' }
+            html2canvas:  { 
+                scale: 2.5, 
+                useCORS: true, 
+                logging: false,
+                letterRendering: true
+            },
+            jsPDF:        { unit: 'mm', format: [210, 92], orientation: 'landscape' }
         };
         
-        html2pdf().set(opt).from(workerElement).save().then(() => {
-            document.body.removeChild(workerElement);
-        });
+        // Wait 250ms for images and web fonts to fully render in the cloned DOM tree
+        setTimeout(() => {
+            html2pdf().set(opt).from(workerElement).save().then(() => {
+                document.body.removeChild(workerElement);
+            });
+        }, 250);
     }
 
     // ══════════════════════════════════════════════════════════════

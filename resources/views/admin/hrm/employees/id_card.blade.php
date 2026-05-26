@@ -895,7 +895,7 @@ select.idcard-control { cursor: pointer; }
 
                         <!-- Footer Text Bar -->
                         <div class="card-footer-text" id="cardFooterBack">
-                            <span> UBS LOAN MANAGEMENT SYSTEM </span>
+                            <span> {{ strtoupper($gs->site_name ?? 'Pncbd') }} LOAN MANAGEMENT SYSTEM </span>
                         </div>
                     </div>
                 </div>

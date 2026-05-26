@@ -47,6 +47,8 @@ class Generalsetting extends Model
         'gtm_status',
         'analytics_id',
         'analytics_status',
+        'cert_signature',
+        'approved_seal',
     ];
 
     /**

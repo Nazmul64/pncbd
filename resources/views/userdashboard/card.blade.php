@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>সদস্য পরিচয় কার্ড - {{ $gs->site_name ?? 'UBS' }}</title>
+    <title>সদস্য পরিচয় কার্ড - {{ $gs->site_name ?? 'Pncbd' }}</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
@@ -446,7 +446,7 @@
                 <!-- Card Header -->
                 <div class="card-header-section">
                     <div>
-                        <div class="card-system-title">UBS Loan Management System</div>
+                        <div class="card-system-title">Pncbd Loan Management System</div>
                         <div class="card-subtitle">সদস্য পরিচয়পত্র</div>
                     </div>
                     <div class="card-chip">
@@ -533,7 +533,7 @@
 
             html2canvas(card, options).then(canvas => {
                 const link = document.createElement('a');
-                link.download = 'UBS_Member_Card_{{ auth()->user()->id }}.png';
+                link.download = 'Pncbd_Member_Card_{{ auth()->user()->id }}.png';
                 link.href = canvas.toDataURL('image/png');
                 link.click();
             });

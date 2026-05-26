@@ -6,7 +6,7 @@
 {{-- External libraries & Fonts                                  --}}
 {{-- ────────────────────────────────────────────────────────── --}}
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&family=Noto+Serif+Bengali:wght@400;600;700&family=Outfit:wght@400;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&family=Noto+Serif+Bengali:wght@400;600;700&family=Outfit:wght@400;600;700;800&family=Great+Vibes&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 
 <style>
@@ -118,9 +118,11 @@
     font-family: 'Hind Siliguri', 'Noto Serif Bengali', serif;
 }
 
-/* Outer parchment */
+/* Outer parchment with authentic security paper fibers */
 .deed-doc {
-    background: #fdf8f0;
+    background-color: #fdf8f0;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='500' height='500' viewBox='0 0 500 500'%3E%3Cpath d='M 30,40 Q 45,45 40,60' stroke='%23b22222' stroke-width='0.7' fill='none' opacity='0.28' /%3E%3Cpath d='M 150,310 Q 135,330 160,335' stroke='%23b22222' stroke-width='0.7' fill='none' opacity='0.26' /%3E%3Cpath d='M 310,80 Q 325,75 320,100' stroke='%23b22222' stroke-width='0.7' fill='none' opacity='0.28' /%3E%3Cpath d='M 410,250 Q 395,265 420,275' stroke='%23b22222' stroke-width='0.7' fill='none' opacity='0.26' /%3E%3Cpath d='M 100,190 Q 115,185 110,205' stroke='%23b22222' stroke-width='0.7' fill='none' opacity='0.28' /%3E%3Cpath d='M 260,410 Q 245,425 270,435' stroke='%23b22222' stroke-width='0.7' fill='none' opacity='0.26' /%3E%3Cpath d='M 70,160 Q 85,170 80,185' stroke='%23b22222' stroke-width='0.7' fill='none' opacity='0.26' /%3E%3Cpath d='M 200,350 Q 185,365 210,370' stroke='%23b22222' stroke-width='0.7' fill='none' opacity='0.26' /%3E%3Cpath d='M 350,100 Q 365,95 360,110' stroke='%23b22222' stroke-width='0.7' fill='none' opacity='0.28' /%3E%3Cpath d='M 450,300 Q 435,315 460,320' stroke='%23b22222' stroke-width='0.7' fill='none' opacity='0.26' /%3E%3Cpath d='M 20,220 Q 35,225 30,240' stroke='%23b22222' stroke-width='0.7' fill='none' opacity='0.28' /%3E%3Cpath d='M 130,430 Q 115,445 140,450' stroke='%23b22222' stroke-width='0.7' fill='none' opacity='0.26' /%3E%3Cpath d='M 290,140 Q 305,135 300,150' stroke='%23b22222' stroke-width='0.7' fill='none' opacity='0.28' /%3E%3Cpath d='M 380,380 Q 365,395 390,400' stroke='%23b22222' stroke-width='0.7' fill='none' opacity='0.26' /%3E%3Cpath d='M 90,70 Q 105,65 100,80' stroke='%23b22222' stroke-width='0.7' fill='none' opacity='0.28' /%3E%3Cpath d='M 230,270 Q 215,285 240,290' stroke='%23b22222' stroke-width='0.7' fill='none' opacity='0.26' /%3E%3Cpath d='M 340,460 Q 325,475 350,480' stroke='%23b22222' stroke-width='0.7' fill='none' opacity='0.28' /%3E%3Cpath d='M 440,190 Q 425,205 450,210' stroke='%23b22222' stroke-width='0.7' fill='none' opacity='0.26' /%3E%3Cpath d='M 80,310 Q 95,305 90,325' stroke='%23b22222' stroke-width='0.7' fill='none' opacity='0.28' /%3E%3Cpath d='M 220,110 Q 235,115 230,130' stroke='%23b22222' stroke-width='0.7' fill='none' opacity='0.26' /%3E%3Cpath d='M 85,130 Q 72,150 98,158' stroke='%231f75fe' stroke-width='0.7' fill='none' opacity='0.28' /%3E%3Cpath d='M 235,50 Q 248,65 228,82' stroke='%231f75fe' stroke-width='0.7' fill='none' opacity='0.26' /%3E%3Cpath d='M 175,390 Q 162,410 188,418' stroke='%231f75fe' stroke-width='0.7' fill='none' opacity='0.28' /%3E%3Cpath d='M 355,180 Q 372,195 362,212' stroke='%231f75fe' stroke-width='0.7' fill='none' opacity='0.26' /%3E%3Cpath d='M 455,70 Q 442,90 468,98' stroke='%231f75fe' stroke-width='0.7' fill='none' opacity='0.28' /%3E%3Cpath d='M 285,270 Q 302,265 298,290' stroke='%231f75fe' stroke-width='0.7' fill='none' opacity='0.26' /%3E%3Cpath d='M 110,40 Q 125,50 120,65' stroke='%231f75fe' stroke-width='0.7' fill='none' opacity='0.26' /%3E%3Cpath d='M 250,320 Q 235,335 260,340' stroke='%231f75fe' stroke-width='0.7' fill='none' opacity='0.26' /%3E%3Cpath d='M 390,160 Q 405,155 400,170' stroke='%231f75fe' stroke-width='0.7' fill='none' opacity='0.28' /%3E%3Cpath d='M 20,280 Q 5,295 30,300' stroke='%231f75fe' stroke-width='0.7' fill='none' opacity='0.26' /%3E%3Cpath d='M 95,400 Q 82,420 108,428' stroke='%231f75fe' stroke-width='0.7' fill='none' opacity='0.28' /%3E%3Cpath d='M 245,210 Q 258,225 238,242' stroke='%231f75fe' stroke-width='0.7' fill='none' opacity='0.26' /%3E%3Cpath d='M 185,90 Q 172,110 198,118' stroke='%231f75fe' stroke-width='0.7' fill='none' opacity='0.28' /%3E%3Cpath d='M 365,360 Q 382,375 372,392' stroke='%231f75fe' stroke-width='0.7' fill='none' opacity='0.26' /%3E%3Cpath d='M 465,250 Q 452,270 478,278' stroke='%231f75fe' stroke-width='0.7' fill='none' opacity='0.28' /%3E%3Cpath d='M 295,450 Q 312,445 308,470' stroke='%231f75fe' stroke-width='0.7' fill='none' opacity='0.26' /%3E%3Cpath d='M 120,220 Q 135,230 130,245' stroke='%231f75fe' stroke-width='0.7' fill='none' opacity='0.28' /%3E%3Cpath d='M 270,130 Q 255,145 280,150' stroke='%231f75fe' stroke-width='0.7' fill='none' opacity='0.26' /%3E%3Cpath d='M 410,40 Q 425,35 420,50' stroke='%231f75fe' stroke-width='0.7' fill='none' opacity='0.28' /%3E%3Cpath d='M 40,460 Q 25,475 50,480' stroke='%231f75fe' stroke-width='0.7' fill='none' opacity='0.26' /%3E%3Cpath d='M 55,250 Q 72,245 68,270' stroke='%2300a86b' stroke-width='0.7' fill='none' opacity='0.26' /%3E%3Cpath d='M 265,170 Q 252,190 278,198' stroke='%2300a86b' stroke-width='0.7' fill='none' opacity='0.28' /%3E%3Cpath d='M 155,90 Q 172,105 162,122' stroke='%2300a86b' stroke-width='0.7' fill='none' opacity='0.26' /%3E%3Cpath d='M 405,390 Q 392,410 418,418' stroke='%2300a86b' stroke-width='0.7' fill='none' opacity='0.28' /%3E%3Cpath d='M 375,300 Q 388,315 368,332' stroke='%2300a86b' stroke-width='0.7' fill='none' opacity='0.26' /%3E%3Cpath d='M 75,420 Q 62,440 88,448' stroke='%2300a86b' stroke-width='0.7' fill='none' opacity='0.28' /%3E%3Cpath d='M 140,230 Q 155,225 150,240' stroke='%2300a86b' stroke-width='0.7' fill='none' opacity='0.26' /%3E%3Cpath d='M 300,380 Q 285,395 310,400' stroke='%2300a86b' stroke-width='0.7' fill='none' opacity='0.26' /%3E%3Cpath d='M 430,130 Q 445,125 440,140' stroke='%2300a86b' stroke-width='0.7' fill='none' opacity='0.28' /%3E%3Cpath d='M 190,180 Q 175,195 200,200' stroke='%2300a86b' stroke-width='0.7' fill='none' opacity='0.26' /%3E%3Cpath d='M 65,80 Q 82,75 78,100' stroke='%2300a86b' stroke-width='0.7' fill='none' opacity='0.28' /%3E%3Cpath d='M 275,330 Q 262,350 288,358' stroke='%2300a86b' stroke-width='0.7' fill='none' opacity='0.28' /%3E%3Cpath d='M 165,470 Q 182,485 172,500' stroke='%2300a86b' stroke-width='0.7' fill='none' opacity='0.26' /%3E%3Cpath d='M 415,220 Q 402,240 428,248' stroke='%2300a86b' stroke-width='0.7' fill='none' opacity='0.28' /%3E%3Cpath d='M 385,60 Q 398,75 378,92' stroke='%2300a86b' stroke-width='0.7' fill='none' opacity='0.26' /%3E%3Cpath d='M 85,320 Q 72,340 98,348' stroke='%2300a86b' stroke-width='0.7' fill='none' opacity='0.28' /%3E%3Cpath d='M 150,150 Q 165,145 160,160' stroke='%2300a86b' stroke-width='0.7' fill='none' opacity='0.26' /%3E%3Cpath d='M 310,270 Q 295,285 320,290' stroke='%2300a86b' stroke-width='0.7' fill='none' opacity='0.26' /%3E%3Cpath d='M 440,350 Q 455,345 450,360' stroke='%2300a86b' stroke-width='0.7' fill='none' opacity='0.28' /%3E%3Cpath d='M 200,430 Q 185,445 210,450' stroke='%2300a86b' stroke-width='0.7' fill='none' opacity='0.26' /%3E%3C/svg%3E");
+    background-repeat: repeat;
     border: 2px solid #b8a76c;
     border-radius: 4px;
     padding: 0;
@@ -128,6 +130,12 @@
     overflow: hidden;
     box-shadow: 0 8px 30px rgba(0,0,0,.12), inset 0 0 80px rgba(184,167,108,.05);
     transition: transform 0.25s ease, box-shadow 0.25s ease;
+    width: 100%;
+    max-width: 800px;
+    margin: 0 auto;
+    min-height: 1050px;
+    display: flex;
+    flex-direction: column;
 }
 .deed-doc:hover {
     transform: translateY(-2px);
@@ -243,6 +251,7 @@
     overflow: hidden;
     box-shadow: 0 0 0 2px #40916c, 0 4px 12px rgba(0,0,0,.3);
     flex-shrink: 0;
+    aspect-ratio: 1 / 1;
 }
 .stamp-logo-circle img { width: 100%; height: 100%; object-fit: contain; padding: 6px; }
 .stamp-logo-circle .stamp-logo-text {
@@ -265,8 +274,11 @@
 
 /* ── Body of deed ────────────────────────────────────────── */
 .deed-body {
-    padding: 28px 24px 32px;
+    padding: 35px 30px 40px;
     position: relative;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
 }
 
 /* Details row (logo + table) */
@@ -276,27 +288,21 @@
     align-items: flex-start;
     margin-bottom: 12px;
     padding-bottom: 10px;
-    border-bottom: 1.5px dashed #c8a96a;
 }
 
 /* Details table */
 .deed-info-table { flex: 1; }
-.deed-info-row { display: flex; align-items: flex-start; gap: 6px; margin-bottom: 3px; font-size: 13px; }
-.deed-info-label { font-weight: 700; color: #475569; min-width: 140px; flex-shrink: 0; }
-.deed-info-val   { font-weight: 600; color: #0f172a; }
-.deed-info-val.blue  { color: #1d4ed8; }
-.deed-info-val.orange{ color: #c2410c; }
+.deed-info-row { display: flex; align-items: flex-start; gap: 6px; margin-bottom: 3.5px; font-size: 13.5px; }
+.deed-info-label { font-weight: 700; color: #000; min-width: 140px; flex-shrink: 0; }
+.deed-info-val   { font-weight: 600; color: #000; }
 
 /* Stamp photo (top-right of body) */
 .deed-stamp-photo {
     width: 90px; height: 110px;
-    border: 1.5px dashed #94a3b8;
-    border-radius: 6px;
     display: flex; align-items: center; justify-content: center;
-    overflow: hidden; background: #f8fafc; flex-shrink: 0;
+    overflow: hidden; flex-shrink: 0;
 }
-.deed-stamp-photo img { width: 100%; height: 100%; object-fit: cover; }
-.deed-stamp-photo-label { font-size: 10px; font-weight: 700; color: #94a3b8; text-transform: uppercase; text-align: center; }
+.deed-stamp-photo img { width: 100%; height: 100%; object-fit: contain; }
 
 /* Section heading */
 .deed-section-title {
@@ -329,8 +335,8 @@
     padding: 0 10px;
 }
 .deed-sig-box { text-align: center; display: flex; flex-direction: column; align-items: center; }
-.deed-sig-img  { height: 38px; display: flex; align-items: flex-end; justify-content: center; margin-bottom: 4px; }
-.deed-sig-img img { max-height: 38px; max-width: 140px; object-fit: contain; }
+.deed-sig-img  { height: 50px; display: flex; align-items: flex-end; justify-content: center; margin-bottom: 4px; }
+.deed-sig-img img { max-height: 50px; max-width: 140px; object-fit: contain; }
 .deed-sig-line  { border-top: 1.5px solid #64748b; width: 160px; margin-bottom: 4px; }
 .deed-sig-label { font-size: 12px; font-weight: 700; color: #475569; }
 
@@ -508,48 +514,51 @@
                             {{-- Info table --}}
                             <div class="deed-info-table">
                                 
-                                {{-- Brand Logo (Brand Identity inside marked blue oval) --}}
-                                <div style="margin-bottom: 22px; text-align: left; display: block;">
-                                    @if(!empty($siteLogo))
-                                        <img src="{{ $siteLogo }}" alt="{{ $siteName ?? 'Logo' }}" style="max-height: 48px; max-width: 170px; object-fit: contain;">
-                                    @else
-                                        <span style="font-size: 20px; font-weight: 800; color: #1b4332; font-family: 'Hind Siliguri', sans-serif; letter-spacing: 0.5px;">{{ $siteName ?? 'Pncbd' }}</span>
+                                {{-- Blue Circular PNCBD Seal replaced with dynamic Site Logo --}}
+                                @php
+                                    $gs = \App\Models\Generalsetting::getSettings();
+                                @endphp
+                                <div style="width: 75px; height: 75px; display: flex; align-items: center; justify-content: start; overflow: hidden; border-radius: 8px; flex-shrink: 0; aspect-ratio: 1 / 1; margin-bottom: 18px;">
+                                    @if($gs->header_logo && file_exists(public_path($gs->header_logo)))
+                                        <img src="{{ asset($gs->header_logo) }}?v={{ time() }}" alt="Site Logo" style="max-width: 75px; max-height: 75px; object-fit: contain; display: block;">
+                                    @elseif(file_exists(public_path('uploads/onomodon/ubs_seal.png')))
+                                        <img src="{{ asset('uploads/onomodon/ubs_seal.png') }}?v={{ time() }}" alt="Pncbd Seal" style="max-width: 75px; max-height: 75px; object-fit: contain; display: block;">
                                     @endif
                                 </div>
+
                                 <div class="deed-info-row">
                                     <span class="deed-info-label">ঋণগ্রহীতার নাম:</span>
-                                    <span class="deed-info-val" id="prevStampName">—</span>
+                                    <span class="deed-info-val" id="prevStampName">--</span>
                                 </div>
                                 <div class="deed-info-row">
                                     <span class="deed-info-label">এনআইডি নম্বর:</span>
-                                    <span class="deed-info-val" id="prevStampNid">—</span>
+                                    <span class="deed-info-val" id="prevStampNid">--</span>
                                 </div>
                                 <div class="deed-info-row">
                                     <span class="deed-info-label">পিতার নাম:</span>
-                                    <span class="deed-info-val" id="prevStampFather">—</span>
+                                    <span class="deed-info-val" id="prevStampFather">--</span>
                                 </div>
                                 <div class="deed-info-row">
                                     <span class="deed-info-label">ঠিকানা:</span>
-                                    <span class="deed-info-val" id="prevStampAddress">—</span>
+                                    <span class="deed-info-val" id="prevStampAddress">--</span>
                                 </div>
                                 <div class="deed-info-row">
                                     <span class="deed-info-label">ঋণের পরিমাণ:</span>
-                                    <span class="deed-info-val blue" id="prevStampAmount">৫০,০০০</span>&nbsp;টাকা
+                                    <span class="deed-info-val" id="prevStampAmount">--</span>&nbsp;টাকা
                                 </div>
                                 <div class="deed-info-row">
                                     <span class="deed-info-label">ঋণের মেয়াদ:</span>
-                                    <span class="deed-info-val" id="prevStampTenure">১২</span>&nbsp;মাস
+                                    <span class="deed-info-val" id="prevStampTenure">--</span>&nbsp;মাস
                                 </div>
                                 <div class="deed-info-row">
                                     <span class="deed-info-label">মাসিক কিস্তি:</span>
-                                    <span class="deed-info-val orange" id="prevStampEMI">৪,২৬৬.৬৭</span>&nbsp;টাকা
+                                    <span class="deed-info-val" id="prevStampEMI">--</span>&nbsp;টাকা
                                 </div>
                             </div>
 
                             {{-- Stamp photo (top right) --}}
                             <div class="deed-stamp-photo" id="stampPhotoContainer">
-                                <img id="prevStampPhoto" src="#" alt="স্ট্যাম্প" style="display:none;">
-                                <span class="deed-stamp-photo-label" id="prevStampPhotoPlaceholder">স্ট্যাম্প</span>
+                                <img id="prevStampPhoto" src="#" alt="স্ট্যাম্প" style="max-width: 100%; max-height: 100%; object-fit: contain; display: block;">
                             </div>
                         </div>
 
@@ -558,31 +567,38 @@
 
                         {{-- Paragraphs --}}
                         <p class="deed-para">
-                            আমি <strong id="deedBodyName">—</strong>, পিতা - <strong id="deedBodyFather">—</strong>, গ্রাম - <strong id="deedBodyAddress">—</strong>। আমি {{ $siteName ?? 'Pncbd' }} ব্যাংকের পক্ষ থেকে <strong id="deedBodyAmount">৫০,০০০</strong> টাকা ঋণগ্রহণে সম্মত হয়েছি, যার মেয়াদকাল <strong id="deedBodyTenure">১২</strong> মাস। প্রতিমাসে নির্ধারিত কিস্তি <strong id="deedBodyEMI">৪,২৬৬.৬৭</strong> টাকা করে ঋণের কিস্তি প্রদানের ক্ষেত্রে আমাকে প্রতি মাসের এক তারিখ থেকে দশ তারিখের মধ্যে নির্ধারিত অনলাইন পদ্ধতির মাধ্যমে কিস্তি জমা দিতে হবে। কোনো কারণে কিস্তি প্রদানে বিলম্ব হলে তা ব্যাংক কর্তৃপক্ষকে অবিলম্বে জানাতে হবে এবং ব্যাংকের নির্দেশনা অনুযায়ী বকেয়া পরিশোধ করতে হবে। এই শর্ত লঙ্ঘন করা হলে ব্যাংক প্রয়োজনীয় আইনানুগ ব্যবস্থা নিতে পারবে।
+                            আমি <strong id="deedBodyName">--</strong>, পিতা - <strong id="deedBodyFather">--</strong>, গ্রাম - <strong id="deedBodyAddress">--</strong>। আমি Pncbd এর পক্ষ থেকে <strong id="deedBodyAmount">--</strong> টাকা ঋণগ্রহণে সম্মত হয়েছি, যার মেয়াদকাল <strong id="deedBodyTenure">--</strong> মাস। প্রতিমাসে নির্ধারিত কিস্তি <strong id="deedBodyEMI">--</strong> টাকা করে ঋণের কিস্তি প্রদানের ক্ষেত্রে আমাকে প্রতি মাসের এক তারিখ থেকে দশ তারিখের মধ্যে নির্ধারিত online পদ্ধতির মাধ্যমে কিস্তি জমা দিতে হবে। কোনো কারণে কিস্তি প্রদানে বিলম্ব হলে তা ব্যাংক কর্তৃপক্ষকে অবিলম্বে জানাতে হবে এবং ব্যাংকের নির্দেশনা অনুযায়ী বকেয়া পরিশোধ করতে হবে। এই শর্ত লঙ্ঘন করা হলে ব্যাংক প্রয়োজনীয় আইনানুগ ব্যবস্থা নিতে পারবে।
                         </p>
 
                         <p class="deed-para">
-                            {{ $siteName ?? 'Pncbd' }} ব্যাংক আমার প্রদত্ত তথ্য, আর্থিক অবস্থা এবং ঋণ গ্রহণের যোগ্যতা যাচাই করে এই ঋণ অনুমোদন করেছে। আমি দৃঢ়ভাবে প্রতিশ্রুতি দিচ্ছি যে ব্যাংকের দেওয়া সব শর্ত ও নিয়মাবলী আমি যথাযথভাবে পালন করব। আমার পক্ষ থেকে দেওয়া তথ্য যদি পরবর্তীতে ভুল প্রমাণিত হয় বা আমি চুক্তি ভঙ্গ করি, তবে ব্যাংক আইনি ব্যবস্থা গ্রহণ করতে সম্পূর্ণ স্বাধীন থাকবে।
+                            Pncbd আমার প্রদত্ত তথ্য, আর্থিক অবস্থা এবং ঋণ গ্রহণের যোগ্যতা যাচাই করে এই ঋণ অনুমোদন করেছে। আমি দৃঢ়ভাবে প্রতিশ্রুতি দিচ্ছি যে ব্যাংকের দেওয়া সব শর্ত ও নিয়মাবলী আমি যথাযথভাবে পালন করব। আমার পক্ষ থেকে দেওয়া তথ্য যদি পরবর্তীতে ভুল প্রমাণিত হয় বা আমি চুক্তি ভঙ্গ করি, তবে ব্যাংক আইনি ব্যবস্থা গ্রহণ করতে সম্পূর্ণ স্বাধীন থাকবে।
                         </p>
 
-                        {{-- Signatures --}}
-                        <div class="deed-sig-row">
-                            {{-- Bank authority sig --}}
-                            <div class="deed-sig-box">
-                                <div class="deed-sig-img">
-                                    {{-- placeholder space --}}
+                        {{-- Signatures and footer wrapped to push them to the bottom --}}
+                        <div style="margin-top: auto; padding-top: 30px;">
+                            {{-- Signatures --}}
+                            <div class="deed-sig-row" style="margin-top: 0;">
+                                {{-- Bank authority sig (handwritten - left) --}}
+                                <div class="deed-sig-box">
+                                    <div class="deed-sig-img">
+                                        <img id="prevStampSignature" src="#" alt="স্বাক্ষর" style="display:none;">
+                                    </div>
+                                    <div class="deed-sig-line"></div>
+                                    <div class="deed-sig-label">ব্যাংক কর্তৃপক্ষের স্বাক্ষর</div>
                                 </div>
-                                <div class="deed-sig-line"></div>
-                                <div class="deed-sig-label">ব্যাংক কর্তৃপক্ষের স্বাক্ষর</div>
-                            </div>
 
-                            {{-- Borrower sig (uploaded) --}}
-                            <div class="deed-sig-box">
-                                <div class="deed-sig-img">
-                                    <img id="prevStampSignature" src="#" alt="স্বাক্ষর" style="display:none;">
+                                {{-- Borrower sig (boxed "Authorized Signature" - right) --}}
+                                <div class="deed-sig-box">
+                                    <div class="deed-sig-img" style="height: auto; margin-bottom: 2px;">
+                                        <div style="border: 1px solid #cbd5e1; border-radius: 6px; padding: 4px 10px; background: #fff; display: inline-block; text-align: center; width: 135px; box-shadow: 0 2px 5px rgba(0,0,0,0.02);">
+                                            <div style="font-family: 'Great Vibes', cursive; font-size: 24px; color: #1e3a8a; font-weight: bold; line-height: 1; margin-bottom: 2px; -webkit-user-select:none; user-select:none;">Hope</div>
+                                            <div style="border-top: 1px solid #cbd5e1; margin: 3px 0;"></div>
+                                            <div style="font-size: 8px; font-weight: 700; color: #64748b; text-transform: uppercase; letter-spacing: 0.3px;">Authorized Signature</div>
+                                        </div>
+                                    </div>
+                                    <div class="deed-sig-line" style="margin-top: 4px;"></div>
+                                    <div class="deed-sig-label">ঋণগ্রহীতার স্বাক্ষর</div>
                                 </div>
-                                <div class="deed-sig-line"></div>
-                                <div class="deed-sig-label">ঋণগ্রহীতার স্বাক্ষর</div>
                             </div>
                         </div>
 
@@ -655,10 +671,10 @@
 
     /* ── Live preview update ────────────────────────────── */
     function updateStampPreview() {
-        const name    = document.getElementById('stampFormName').value    || '—';
-        const nid     = document.getElementById('stampFormNid').value     || '—';
-        const father  = document.getElementById('stampFormFather').value  || '—';
-        const address = document.getElementById('stampFormAddress').value || '—';
+        const name    = document.getElementById('stampFormName').value    || '--';
+        const nid     = document.getElementById('stampFormNid').value     || '--';
+        const father  = document.getElementById('stampFormFather').value  || '--';
+        const address = document.getElementById('stampFormAddress').value || '--';
         const amount  = parseFloat(document.getElementById('stampFormAmount').value) || 0;
         const tenure  = parseFloat(document.getElementById('stampFormTenure').value) || 0;
         const emiRaw  = document.getElementById('stampFormEMI').value || '0';
@@ -668,8 +684,8 @@
             fEMI = toBangla(parseFloat(emiRaw).toLocaleString('en-IN', {minimumFractionDigits:2, maximumFractionDigits:2}));
         } else { fEMI = toBangla(emiRaw); }
 
-        const fAmount = amount > 0 ? toBangla(amount.toLocaleString('en-IN')) : '০';
-        const fTenure = tenure > 0 ? toBangla(tenure.toString()) : '০';
+        const fAmount = amount > 0 ? toBangla(amount.toLocaleString('en-IN')) : '--';
+        const fTenure = tenure > 0 ? toBangla(tenure.toString()) : '--';
         const fNid    = toBangla(nid);
 
         document.getElementById('prevStampName').textContent    = name;
@@ -728,11 +744,11 @@
             <meta charset="UTF-8">
             <title>ঋণ চুক্তিপত্র</title>
             <link rel="preconnect" href="https://fonts.googleapis.com">
-            <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&family=Noto+Serif+Bengali:wght@400;600;700&display=swap" rel="stylesheet">
+            <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&family=Noto+Serif+Bengali:wght@400;600;700&family=Great+Vibes&display=swap" rel="stylesheet">
             <style>
                 *{box-sizing:border-box; margin:0; padding:0;}
                 body{font-family:'Hind Siliguri',serif; background:#fff; padding:18px; -webkit-print-color-adjust:exact; print-color-adjust:exact;}
-                .deed-doc{background:#fdf8f0; border:2px solid #b8a76c; border-radius:4px; overflow:hidden; box-shadow:none;}
+                .deed-doc{background-color:#fdf8f0; background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='500' height='500' viewBox='0 0 500 500'%3E%3Cpath d='M 30,40 Q 45,45 40,60' stroke='%23b22222' stroke-width='0.7' fill='none' opacity='0.28' /%3E%3Cpath d='M 150,310 Q 135,330 160,335' stroke='%23b22222' stroke-width='0.7' fill='none' opacity='0.26' /%3E%3Cpath d='M 310,80 Q 325,75 320,100' stroke='%23b22222' stroke-width='0.7' fill='none' opacity='0.28' /%3E%3Cpath d='M 410,250 Q 395,265 420,275' stroke='%23b22222' stroke-width='0.7' fill='none' opacity='0.26' /%3E%3Cpath d='M 100,190 Q 115,185 110,205' stroke='%23b22222' stroke-width='0.7' fill='none' opacity='0.28' /%3E%3Cpath d='M 260,410 Q 245,425 270,435' stroke='%23b22222' stroke-width='0.7' fill='none' opacity='0.26' /%3E%3Cpath d='M 70,160 Q 85,170 80,185' stroke='%23b22222' stroke-width='0.7' fill='none' opacity='0.26' /%3E%3Cpath d='M 200,350 Q 185,365 210,370' stroke='%23b22222' stroke-width='0.7' fill='none' opacity='0.26' /%3E%3Cpath d='M 350,100 Q 365,95 360,110' stroke='%23b22222' stroke-width='0.7' fill='none' opacity='0.28' /%3E%3Cpath d='M 450,300 Q 435,315 460,320' stroke='%23b22222' stroke-width='0.7' fill='none' opacity='0.26' /%3E%3Cpath d='M 20,220 Q 35,225 30,240' stroke='%23b22222' stroke-width='0.7' fill='none' opacity='0.28' /%3E%3Cpath d='M 130,430 Q 115,445 140,450' stroke='%23b22222' stroke-width='0.7' fill='none' opacity='0.26' /%3E%3Cpath d='M 290,140 Q 305,135 300,150' stroke='%23b22222' stroke-width='0.7' fill='none' opacity='0.28' /%3E%3Cpath d='M 380,380 Q 365,395 390,400' stroke='%23b22222' stroke-width='0.7' fill='none' opacity='0.26' /%3E%3Cpath d='M 90,70 Q 105,65 100,80' stroke='%23b22222' stroke-width='0.7' fill='none' opacity='0.28' /%3E%3Cpath d='M 230,270 Q 215,285 240,290' stroke='%23b22222' stroke-width='0.7' fill='none' opacity='0.26' /%3E%3Cpath d='M 340,460 Q 325,475 350,480' stroke='%23b22222' stroke-width='0.7' fill='none' opacity='0.28' /%3E%3Cpath d='M 440,190 Q 425,205 450,210' stroke='%23b22222' stroke-width='0.7' fill='none' opacity='0.26' /%3E%3Cpath d='M 80,310 Q 95,305 90,325' stroke='%23b22222' stroke-width='0.7' fill='none' opacity='0.28' /%3E%3Cpath d='M 220,110 Q 235,115 230,130' stroke='%23b22222' stroke-width='0.7' fill='none' opacity='0.26' /%3E%3Cpath d='M 85,130 Q 72,150 98,158' stroke='%231f75fe' stroke-width='0.7' fill='none' opacity='0.28' /%3E%3Cpath d='M 235,50 Q 248,65 228,82' stroke='%231f75fe' stroke-width='0.7' fill='none' opacity='0.26' /%3E%3Cpath d='M 175,390 Q 162,410 188,418' stroke='%231f75fe' stroke-width='0.7' fill='none' opacity='0.28' /%3E%3Cpath d='M 355,180 Q 372,195 362,212' stroke='%231f75fe' stroke-width='0.7' fill='none' opacity='0.26' /%3E%3Cpath d='M 455,70 Q 442,90 468,98' stroke='%231f75fe' stroke-width='0.7' fill='none' opacity='0.28' /%3E%3Cpath d='M 285,270 Q 302,265 298,290' stroke='%231f75fe' stroke-width='0.7' fill='none' opacity='0.26' /%3E%3Cpath d='M 110,40 Q 125,50 120,65' stroke='%231f75fe' stroke-width='0.7' fill='none' opacity='0.26' /%3E%3Cpath d='M 250,320 Q 235,335 260,340' stroke='%231f75fe' stroke-width='0.7' fill='none' opacity='0.26' /%3E%3Cpath d='M 390,160 Q 405,155 400,170' stroke='%231f75fe' stroke-width='0.7' fill='none' opacity='0.28' /%3E%3Cpath d='M 20,280 Q 5,295 30,300' stroke='%231f75fe' stroke-width='0.7' fill='none' opacity='0.26' /%3E%3Cpath d='M 95,400 Q 82,420 108,428' stroke='%231f75fe' stroke-width='0.7' fill='none' opacity='0.28' /%3E%3Cpath d='M 245,210 Q 258,225 238,242' stroke='%231f75fe' stroke-width='0.7' fill='none' opacity='0.26' /%3E%3Cpath d='M 185,90 Q 172,110 198,118' stroke='%231f75fe' stroke-width='0.7' fill='none' opacity='0.28' /%3E%3Cpath d='M 365,360 Q 382,375 372,392' stroke='%231f75fe' stroke-width='0.7' fill='none' opacity='0.26' /%3E%3Cpath d='M 465,250 Q 452,270 478,278' stroke='%231f75fe' stroke-width='0.7' fill='none' opacity='0.28' /%3E%3Cpath d='M 295,450 Q 312,445 308,470' stroke='%231f75fe' stroke-width='0.7' fill='none' opacity='0.26' /%3E%3Cpath d='M 120,220 Q 135,230 130,245' stroke='%231f75fe' stroke-width='0.7' fill='none' opacity='0.28' /%3E%3Cpath d='M 270,130 Q 255,145 280,150' stroke='%231f75fe' stroke-width='0.7' fill='none' opacity='0.26' /%3E%3Cpath d='M 410,40 Q 425,35 420,50' stroke='%231f75fe' stroke-width='0.7' fill='none' opacity='0.28' /%3E%3Cpath d='M 40,460 Q 25,475 50,480' stroke='%231f75fe' stroke-width='0.7' fill='none' opacity='0.26' /%3E%3Cpath d='M 55,250 Q 72,245 68,270' stroke='%2300a86b' stroke-width='0.7' fill='none' opacity='0.26' /%3E%3Cpath d='M 265,170 Q 252,190 278,198' stroke='%2300a86b' stroke-width='0.7' fill='none' opacity='0.28' /%3E%3Cpath d='M 155,90 Q 172,105 162,122' stroke='%2300a86b' stroke-width='0.7' fill='none' opacity='0.26' /%3E%3Cpath d='M 405,390 Q 392,410 418,418' stroke='%2300a86b' stroke-width='0.7' fill='none' opacity='0.28' /%3E%3Cpath d='M 375,300 Q 388,315 368,332' stroke='%2300a86b' stroke-width='0.7' fill='none' opacity='0.26' /%3E%3Cpath d='M 75,420 Q 62,440 88,448' stroke='%2300a86b' stroke-width='0.7' fill='none' opacity='0.28' /%3E%3Cpath d='M 140,230 Q 155,225 150,240' stroke='%2300a86b' stroke-width='0.7' fill='none' opacity='0.26' /%3E%3Cpath d='M 300,380 Q 285,395 310,400' stroke='%2300a86b' stroke-width='0.7' fill='none' opacity='0.26' /%3E%3Cpath d='M 430,130 Q 445,125 440,140' stroke='%2300a86b' stroke-width='0.7' fill='none' opacity='0.28' /%3E%3Cpath d='M 190,180 Q 175,195 200,200' stroke='%2300a86b' stroke-width='0.7' fill='none' opacity='0.26' /%3E%3Cpath d='M 65,80 Q 82,75 78,100' stroke='%2300a86b' stroke-width='0.7' fill='none' opacity='0.28' /%3E%3Cpath d='M 275,330 Q 262,350 288,358' stroke='%2300a86b' stroke-width='0.7' fill='none' opacity='0.28' /%3E%3Cpath d='M 165,470 Q 182,485 172,500' stroke='%2300a86b' stroke-width='0.7' fill='none' opacity='0.26' /%3E%3Cpath d='M 415,220 Q 402,240 428,248' stroke='%2300a86b' stroke-width='0.7' fill='none' opacity='0.28' /%3E%3Cpath d='M 385,60 Q 398,75 378,92' stroke='%2300a86b' stroke-width='0.7' fill='none' opacity='0.26' /%3E%3Cpath d='M 85,320 Q 72,340 98,348' stroke='%2300a86b' stroke-width='0.7' fill='none' opacity='0.28' /%3E%3Cpath d='M 150,150 Q 165,145 160,160' stroke='%2300a86b' stroke-width='0.7' fill='none' opacity='0.26' /%3E%3Cpath d='M 310,270 Q 295,285 320,290' stroke='%2300a86b' stroke-width='0.7' fill='none' opacity='0.26' /%3E%3Cpath d='M 440,350 Q 455,345 450,360' stroke='%2300a86b' stroke-width='0.7' fill='none' opacity='0.28' /%3E%3Cpath d='M 200,430 Q 185,445 210,450' stroke='%2300a86b' stroke-width='0.7' fill='none' opacity='0.26' /%3E%3C/svg%3E\"); border:2px solid #b8a76c; border-radius:4px; overflow:hidden; box-shadow:none; width:100%; max-width:800px; margin:0 auto; min-height:1000px; display:flex; flex-direction:column;}
                 .stamp-official-header{background:linear-gradient(180deg,#2d6a4f 0%,#1b4332 50%,#2d6a4f 100%); position:relative;}
                 .stamp-border-row{height:10px; background:repeating-linear-gradient(90deg,#40916c 0px,#40916c 8px,#1b4332 8px,#1b4332 16px,#52b788 16px,#52b788 20px,#1b4332 20px,#1b4332 28px);}
                 .stamp-header-inner{display:flex; align-items:center; justify-content:space-between; padding:10px 20px; gap:10px;}
@@ -741,29 +757,26 @@
                 .stamp-denom-sub{font-size:10px; color:#95d5b2; font-weight:600; margin-top:2px;}
                 .stamp-center-emblem{flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:6px;}
                 .stamp-govt-title{font-size:20px; font-weight:700; color:#d8f3dc; text-align:center; text-shadow:0 1px 4px rgba(0,0,0,.4);}
-                .stamp-logo-circle{width:64px; height:64px; border-radius:50%; background:radial-gradient(circle,#fff 60%,#d8f3dc 100%); border:3px solid #74c69d; display:flex; align-items:center; justify-content:center; overflow:hidden; box-shadow:0 0 0 2px #40916c;}
+                .stamp-logo-circle{width:64px; height:64px; border-radius:50%; background:radial-gradient(circle,#fff 60%,#d8f3dc 100%); border:3px solid #74c69d; display:flex; align-items:center; justify-content:center; overflow:hidden; box-shadow:0 0 0 2px #40916c; flex-shrink:0; aspect-ratio:1/1;}
                 .stamp-logo-circle img{width:100%; height:100%; object-fit:contain; padding:6px;}
                 .stamp-logo-text{font-size:11px; font-weight:800; color:#1b4332; text-align:center;}
                 .stamp-header-footer{background:linear-gradient(90deg,#1b4332,#2d6a4f,#1b4332); text-align:center; padding:6px 20px; font-size:15px; font-weight:700; color:#d8f3dc; letter-spacing:1px; border-top:1px solid #40916c;}
-                .deed-body{padding:18px 24px 18px; position:relative;}
-                .deed-details-row{display:flex; gap:20px; align-items:flex-start; margin-bottom:12px; padding-bottom:10px; border-bottom:1.5px dashed #c8a96a;}
+                .deed-body{padding:35px 30px 40px; position:relative; flex:1; display:flex; flex-direction:column;}
+                .deed-details-row{display:flex; gap:20px; align-items:flex-start; margin-bottom:12px; padding-bottom:10px;}
                 .deed-download-overlay { display: none !important; }
                 .deed-info-table{flex:1;}
-                .deed-info-row{display:flex; align-items:flex-start; gap:6px; margin-bottom:3px; font-size:13px;}
-                .deed-info-label{font-weight:700; color:#475569; min-width:140px; flex-shrink:0;}
-                .deed-info-val{font-weight:600; color:#0f172a;}
-                .deed-info-val.blue{color:#1d4ed8;}
-                .deed-info-val.orange{color:#c2410c;}
-                .deed-stamp-photo{width:90px; height:110px; border:1.5px dashed #94a3b8; border-radius:6px; display:flex; align-items:center; justify-content:center; overflow:hidden; background:#f8fafc; flex-shrink:0;}
-                .deed-stamp-photo img{width:100%; height:100%; object-fit:cover;}
-                .deed-stamp-photo-label{font-size:10px; font-weight:700; color:#94a3b8; text-transform:uppercase; text-align:center;}
+                .deed-info-row{display:flex; align-items:flex-start; gap:6px; margin-bottom:3.5px; font-size:13.5px;}
+                .deed-info-label{font-weight:700; color:#000; min-width:140px; flex-shrink:0;}
+                .deed-info-val{font-weight:600; color:#000;}
+                .deed-stamp-photo{width:90px; height:110px; display:flex; align-items:center; justify-content:center; overflow:hidden; flex-shrink:0;}
+                .deed-stamp-photo img{width:100%; height:100%; object-fit:contain;}
                 .deed-section-title{text-align:center; font-size:15px; font-weight:700; color:#1b4332; margin-bottom:8px;}
                 .deed-section-title::before,.deed-section-title::after{content:'——'; color:#b8a76c; margin:0 8px;}
                 .deed-para{font-size:13px; line-height:1.55; color:#374151; text-align:justify; margin-bottom:6px;}
                 .deed-sig-row{display:flex; justify-content:space-between; align-items:flex-end; margin-top:30px; padding:0 10px;}
                 .deed-sig-box{text-align:center; display:flex; flex-direction:column; align-items:center;}
-                .deed-sig-img{height:38px; display:flex; align-items:flex-end; justify-content:center; margin-bottom:4px;}
-                .deed-sig-img img{max-height:38px; max-width:140px; object-fit:contain;}
+                .deed-sig-img{height:50px; display:flex; align-items:flex-end; justify-content:center; margin-bottom:4px;}
+                .deed-sig-img img{max-height:50px; max-width:140px; object-fit:contain;}
                 .deed-sig-line{border-top:1.5px solid #64748b; width:160px; margin-bottom:4px;}
                 .deed-sig-label{font-size:12px; font-weight:700; color:#475569;}
                 .deed-footer-note{margin-top:14px; border-top:1px solid #e5d9b6; padding-top:10px; text-align:center; font-size:12px; color:#6b7280; font-weight:600;}

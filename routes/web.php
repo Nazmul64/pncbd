@@ -3,6 +3,7 @@
 use App\Http\Controllers\Admin\AboutForCompanyController;
 use App\Http\Controllers\Admin\AdminauthController;
 use App\Http\Controllers\Admin\AdminChatController;
+use App\Http\Controllers\Admin\StaffChatController;
 use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\Admin\AdminIncompleteOrderController;
 use App\Http\Controllers\Admin\AdminproductReviewController;
@@ -261,7 +262,7 @@ Route::middleware(['admin'])
 
 
     // ──────────────────────────────────────────────────────────────────────────
-    // ADMIN CHAT PANEL
+    // ADMIN CHAT PANEL (customer chat)
     // prefix: admin/chat  |  name: admin.chat.*
     // ──────────────────────────────────────────────────────────────────────────
     Route::prefix('chat')->name('chat.')->group(function () {
@@ -271,6 +272,19 @@ Route::middleware(['admin'])
         Route::post('/{chatSession}/reply',    [AdminChatController::class, 'reply']      )->name('reply');
         Route::get ('/{chatSession}/messages', [AdminChatController::class, 'getMessages'])->name('messages');
         Route::post('/{chatSession}/close',    [AdminChatController::class, 'close']      )->name('close');
+    });
+
+    // ──────────────────────────────────────────────────────────────────────────
+    // ADMIN ↔ STAFF PRIVATE CHAT
+    // prefix: admin/staff-chat  |  name: admin.staff-chat.*
+    // Only admin can see all staff threads (A-Z sorted by name/staff_id)
+    // ──────────────────────────────────────────────────────────────────────────
+    Route::prefix('staff-chat')->name('staff-chat.')->group(function () {
+        Route::get ('/',                        [StaffChatController::class, 'index']          )->name('index');
+        Route::get ('/unread-count',            [StaffChatController::class, 'adminUnreadCount'])->name('unread');
+        Route::get ('/{staffId}',               [StaffChatController::class, 'show']           )->name('show');
+        Route::post('/{staffId}/reply',         [StaffChatController::class, 'reply']          )->name('reply');
+        Route::get ('/{staffId}/messages',      [StaffChatController::class, 'getMessages']    )->name('messages');
     });
 
 
@@ -317,7 +331,7 @@ Route::middleware(['admin'])
         Route::post('emplee/customer/{id}/update-profile', [EmpleeController::class, 'updateCustomerProfile'])->name('emplee.customer.updateProfile');
         Route::post('emplee/customer/{id}/change-password', [EmpleeController::class, 'changeCustomerPassword'])->name('emplee.customer.changePassword');
 
-        // ── Chat ──────────────────────────────────────────────────────────────────
+        // ── Customer Chat (emplee sees customer chat) ─────────────────────────────
         Route::prefix('emplee/chat')->name('emplee.chat.')->group(function () {
             Route::get ('/',                       [App\Http\Controllers\Admin\AdminChatController::class, 'index']      )->name('index');
             Route::get ('/unread-count',           [App\Http\Controllers\Admin\AdminChatController::class, 'unreadCount'])->name('unread');
@@ -325,6 +339,14 @@ Route::middleware(['admin'])
             Route::post('/{chatSession}/reply',    [App\Http\Controllers\Admin\AdminChatController::class, 'reply']      )->name('reply');
             Route::get ('/{chatSession}/messages', [App\Http\Controllers\Admin\AdminChatController::class, 'getMessages'])->name('messages');
             Route::post('/{chatSession}/close',    [App\Http\Controllers\Admin\AdminChatController::class, 'close']      )->name('close');
+        });
+
+        // ── Admin ↔ Staff Private Chat (staff নিজের chat দেখে) ───────────────────
+        Route::prefix('emplee/staff-chat')->name('emplee.staff-chat.')->group(function () {
+            Route::get ('/',           [StaffChatController::class, 'staffIndex']     )->name('index');
+            Route::post('/reply',      [StaffChatController::class, 'staffReply']     )->name('reply');
+            Route::get ('/messages',   [StaffChatController::class, 'staffGetMessages'])->name('messages');
+            Route::get ('/unread-count',[StaffChatController::class, 'staffUnreadCount'])->name('unread');
         });
     });
 
@@ -414,6 +436,10 @@ Route::middleware(['subadmin'])->group(function () {
         ->name('certificate-stamp.upload');
     Route::delete('certificate-stamp/delete/{sealType}', [\App\Http\Controllers\Admin\CertificateStampController::class, 'delete'])
         ->name('certificate-stamp.delete');
+    Route::post('certificate-stamp/upload-info-assets', [\App\Http\Controllers\Admin\CertificateStampController::class, 'uploadInfoAssets'])
+        ->name('certificate-stamp.upload-info-assets');
+    Route::delete('certificate-stamp/delete-info-asset/{type}', [\App\Http\Controllers\Admin\CertificateStampController::class, 'deleteInfoAsset'])
+        ->name('certificate-stamp.delete-info-asset');
 
     // Admin HRM Module routes
     Route::prefix('hrm')->name('hrm.')->group(function () {

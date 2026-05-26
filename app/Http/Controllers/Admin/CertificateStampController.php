@@ -18,7 +18,7 @@ class CertificateStampController extends Controller
 
         $seals = [
             'ubs_seal' => [
-                'title' => 'UBS Swiss Bank Seal (Circular)',
+                'title' => 'Pncbd Seal (Circular)',
                 'filename' => 'ubs_seal.png',
                 'url' => file_exists($dirPath . '/ubs_seal.png') ? asset('uploads/onomodon/ubs_seal.png') : null,
             ],
@@ -39,7 +39,9 @@ class CertificateStampController extends Controller
             ],
         ];
 
-        return view('admin.certificate_stamp', compact('seals'));
+        $gs = \App\Models\Generalsetting::getSettings();
+
+        return view('admin.certificate_stamp', compact('seals', 'gs'));
     }
 
     /**
@@ -88,6 +90,64 @@ class CertificateStampController extends Controller
         }
 
         return back()->with('success', 'Seal deleted successfully.');
+    }
+
+    /**
+     * Upload dynamic information assets (signature/seal) stored in the database.
+     */
+    public function uploadInfoAssets(Request $request)
+    {
+        $request->validate([
+            'asset_type' => 'required|in:cert_signature,approved_seal',
+            'asset_file' => 'required|image|mimes:png,jpg,jpeg,webp,svg|max:2048',
+        ]);
+
+        $assetType = $request->input('asset_type');
+        $file = $request->file('asset_file');
+
+        $dirPath = public_path('uploads/information');
+        if (!file_exists($dirPath)) {
+            mkdir($dirPath, 0777, true);
+        }
+
+        // Generate unique filename to bypass cache issues
+        $filename = $assetType . '_' . time() . '.' . $file->getClientOriginalExtension();
+
+        $gs = \App\Models\Generalsetting::getSettings();
+        $oldPath = $gs->$assetType;
+
+        if ($oldPath && file_exists(public_path($oldPath))) {
+            @unlink(public_path($oldPath));
+        }
+
+        $file->move($dirPath, $filename);
+
+        $gs->$assetType = 'uploads/information/' . $filename;
+        $gs->save();
+
+        return back()->with('success', 'Asset uploaded successfully.');
+    }
+
+    /**
+     * Delete dynamic information assets and reset to default.
+     */
+    public function deleteInfoAsset($type)
+    {
+        if (!in_array($type, ['cert_signature', 'approved_seal'])) {
+            return back()->with('error', 'Invalid asset type.');
+        }
+
+        $gs = \App\Models\Generalsetting::getSettings();
+        $oldPath = $gs->$type;
+
+        if ($oldPath && file_exists(public_path($oldPath))) {
+            @unlink(public_path($oldPath));
+        }
+
+        $gs->$type = null;
+        $gs->save();
+
+        return back()->with('success', 'Asset deleted successfully.');
     }
 }
 ?>
