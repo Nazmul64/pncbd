@@ -505,7 +505,7 @@
                 </div>
                 <div class="stat-info">
                     <div class="stat-label">মোট ব্যালেন্স</div>
-                    <div class="stat-value">৳{{ number_format($loans->where('status', 'approved')->sum('amount'), 2) }}</div>
+                    <div class="stat-value">৳{{ number_format(auth()->user()->balance, 2) }}</div>
                 </div>
             </div>
 

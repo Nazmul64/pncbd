@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 use App\Models\Bank;
 use App\Models\Loan;
+use App\Models\WithdrawPaymentNumber;
 use Illuminate\Support\Facades\Auth;
 
 class LoanController extends Controller
@@ -194,6 +195,30 @@ class LoanController extends Controller
     }
 
     /**
+     * Redirect to the details of the active/latest loan for the authenticated customer.
+     */
+    public function activeLoanDetails()
+    {
+        $loan = Loan::where('user_id', Auth::id())->latest()->first();
+        if ($loan) {
+            return redirect()->route('loan.details', $loan->id);
+        }
+        return redirect()->route('customer.dashboard')->with('error', 'আপনার কোনো ঋণ আবেদন নেই। দয়া করে আগে ঋণের আবেদন করুন।');
+    }
+
+    /**
+     * Show customer bank details page based on their active/latest loan.
+     */
+    public function bankDetails()
+    {
+        $loan = Loan::where('user_id', Auth::id())->latest()->first();
+        if (!$loan) {
+            return redirect()->route('customer.dashboard')->with('error', 'আপনার কোনো ব্যাংক বা ঋণের তথ্য পাওয়া যায়নি।');
+        }
+        return view('loan.bank_details', compact('loan'));
+    }
+
+    /**
      * Show customer-side loan details (payment guide, administrative message, and screenshot upload)
      */
     public function details($id)
@@ -202,7 +227,11 @@ class LoanController extends Controller
         if ($loan->user_id !== Auth::id()) {
             abort(403);
         }
-        return view('loan.details', compact('loan'));
+
+        // Admin প্যানেল থেকে সেটআপ করা active পেমেন্ট নম্বরগুলো
+        $paymentNumbers = WithdrawPaymentNumber::active()->get();
+
+        return view('loan.details', compact('loan', 'paymentNumbers'));
     }
 
     /**

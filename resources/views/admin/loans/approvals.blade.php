@@ -136,6 +136,11 @@
                                         </span>
                                     </td>
                                     <td class="pe-4 text-end">
+                                        @if($loan->screenshot)
+                                            <button type="button" class="btn btn-sm btn-outline-success rounded-pill px-3 fw-bold me-2" onclick="showScreenshotModal('{{ asset($loan->screenshot) }}', '{{ $loan->id }}')">
+                                                <i class="bi bi-image me-1"></i> স্ক্রিনশট
+                                            </button>
+                                        @endif
                                         <a href="{{ route('admin.loans.show', $loan->id) }}" class="btn btn-sm btn-outline-success rounded-pill px-3 fw-bold">
                                             বিস্তারিত <i class="bi bi-arrow-right ms-1"></i>
                                         </a>
@@ -165,4 +170,30 @@
         </div>
     </div>
 </div>
+<!-- Screenshot Modal -->
+<div class="modal fade" id="adminScreenshotModal" tabindex="-1" aria-labelledby="adminScreenshotModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content" style="border-radius: 16px; overflow: hidden; border: none; box-shadow: 0 10px 30px rgba(0,0,0,0.15);">
+            <div class="modal-header bg-dark text-white border-0 py-3">
+                <h5 class="modal-title fw-bold" id="adminScreenshotModalLabel"><i class="bi bi-receipt me-2 text-success"></i>পেমেন্ট স্লিপ স্ক্রিনশট</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body p-4 text-center bg-light">
+                <img id="modalScreenshotImage" src="" alt="Payment Receipt" class="img-fluid rounded-3 border shadow-sm" style="max-height: 70vh; object-fit: contain; max-width: 100%;">
+            </div>
+            <div class="modal-footer border-0 bg-white py-3">
+                <button type="button" class="btn btn-secondary rounded-pill px-4" data-bs-dismiss="modal">বন্ধ করুন</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function showScreenshotModal(url, loanId) {
+        document.getElementById('modalScreenshotImage').src = url;
+        document.getElementById('adminScreenshotModalLabel').innerHTML = '<i class="bi bi-receipt me-2 text-success"></i>পেমেন্ট স্লিপ স্ক্রিনশট (আবেদন #' + loanId + ')';
+        var myModal = new bootstrap.Modal(document.getElementById('adminScreenshotModal'));
+        myModal.show();
+    }
+</script>
 @endsection

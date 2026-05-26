@@ -23,7 +23,7 @@ class User extends Authenticatable
         'phone', 'photo', 'address',
         'store_name', 'store_slug', 'store_description', 'store_logo',
         'tax_id', 'bank_name', 'bank_account_name', 'bank_account_number',
-        'mobile_banking_number', 'status',
+        'mobile_banking_number', 'status', 'balance', 'withdraw_pin',
     ];
 
     protected $hidden = ['password', 'remember_token'];

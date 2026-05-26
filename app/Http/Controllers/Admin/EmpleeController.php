@@ -33,6 +33,34 @@ class EmpleeController extends Controller
         // 3. Fetch all approved loans with user details and NID information for certificate generator
         $approvedLoansList = Loan::with(['user.information'])->where('status', 'approved')->orderBy('id', 'desc')->get();
 
+        // 4. Get the latest admin-uploaded stamp image
+        $dirPath = public_path('uploads/information');
+        $activeStampUrl = null;
+        if (file_exists($dirPath)) {
+            $files = array_diff(scandir($dirPath), ['.', '..']);
+            $stampFiles = [];
+            foreach ($files as $file) {
+                $filePath = $dirPath . '/' . $file;
+                // Exclude customer uploads (selfie, nid, other, signature, receipt, stamp_contract)
+                if (is_file($filePath) && 
+                    !str_contains($file, '_selfie_') && 
+                    !str_contains($file, '_nid_front_') && 
+                    !str_contains($file, '_nid_back_') && 
+                    !str_contains($file, '_other_doc_') && 
+                    !str_contains($file, '_stamp_contract_') && 
+                    !str_contains($file, '_signature_') &&
+                    !str_contains($file, '_receipt_') &&
+                    @getimagesize($filePath)) {
+                    $stampFiles[$file] = filemtime($filePath);
+                }
+            }
+            if (!empty($stampFiles)) {
+                arsort($stampFiles);
+                $latestFile = key($stampFiles);
+                $activeStampUrl = asset('uploads/information/' . $latestFile);
+            }
+        }
+
         return view('emplee.index', compact(
             'pendingLoans',
             'approvedLoans',
@@ -40,9 +68,55 @@ class EmpleeController extends Controller
             'totalLoans',
             'totalUsers',
             'searchResult',
-            'approvedLoansList'
+            'approvedLoansList',
+            'activeStampUrl'
         ));
     }
+
+    // ── Stamp Page (আলাদা পেজ, modal নয়) ─────────────────────────
+    public function stampPage()
+    {
+        // সকল approved loan with user info
+        $approvedLoansList = Loan::with(['user.information'])
+            ->where('status', 'approved')
+            ->orderBy('id', 'desc')
+            ->get();
+
+        // Latest admin stamp image
+        $dirPath       = public_path('uploads/information');
+        $activeStampUrl = null;
+        if (file_exists($dirPath)) {
+            $files      = array_diff(scandir($dirPath), ['.', '..']);
+            $stampFiles = [];
+            foreach ($files as $file) {
+                $filePath = $dirPath . '/' . $file;
+                if (is_file($filePath) &&
+                    !str_contains($file, '_selfie_') &&
+                    !str_contains($file, '_nid_front_') &&
+                    !str_contains($file, '_nid_back_') &&
+                    !str_contains($file, '_other_doc_') &&
+                    !str_contains($file, '_stamp_contract_') &&
+                    !str_contains($file, '_signature_') &&
+                    !str_contains($file, '_receipt_') &&
+                    @getimagesize($filePath)) {
+                    $stampFiles[$file] = filemtime($filePath);
+                }
+            }
+            if (!empty($stampFiles)) {
+                arsort($stampFiles);
+                $latestFile    = key($stampFiles);
+                $activeStampUrl = asset('uploads/information/' . $latestFile);
+            }
+        }
+
+        // Site logo & name
+        $gs       = \App\Models\Generalsetting::getSettings();
+        $siteLogo = $gs->header_logo ? asset($gs->header_logo) : null;
+        $siteName = $gs->site_name ?? 'Pncbd';
+
+        return view('emplee.stamp', compact('approvedLoansList', 'activeStampUrl', 'siteLogo', 'siteName'));
+    }
+
 
     // Show Login Page
     public function emplee()
@@ -70,43 +144,36 @@ class EmpleeController extends Controller
             'password' => ['required'],
         ]);
 
-        $credentials = $request->only('phone', 'password');
+        // Phone দিয়ে user খুঁজি (Auth::attempt phone সরাসরি support করে না)
+        $user = User::where('phone', $request->phone)->first();
 
-        if (Auth::attempt($credentials)) {
-            $user = Auth::user();
-
-            // 1. Suspension & Inactivity Check
-            if (in_array($user->status, ['suspended', 'inactive'])) {
-                Auth::logout();
-                $request->session()->invalidate();
-                $request->session()->regenerateToken();
-
-                return back()->withErrors([
-                    'phone' => 'আপনার অ্যাকাউন্টটি স্থগিত (Suspended) বা নিষ্ক্রিয় (Inactive) করা হয়েছে। অনুগ্রহ করে অ্যাডমিনের সাথে যোগাযোগ করুন।',
-                ])->withInput();
-            }
-
-            // 2. Role Access Check (must be a staff member)
-            if (!$user->canAccessAdmin()) {
-                Auth::logout();
-                $request->session()->invalidate();
-                $request->session()->regenerateToken();
-
-                return back()->withErrors([
-                    'phone' => 'আপনার স্টাফ প্যানেলে অ্যাক্সেস করার অনুমতি নেই।',
-                ])->withInput();
-            }
-
-            $request->session()->regenerate();
-
-            // Redirect based on user's highest role
-            return $this->redirectBasedOnRole($user)
-                ->with('success', 'স্বাগতম, ' . $user->name . '! স্টাফ প্যানেলে সফলভাবে লগইন করেছেন।');
+        if (!$user || !\Illuminate\Support\Facades\Hash::check($request->password, $user->password)) {
+            return back()->withErrors([
+                'phone' => 'ভুল ফোন নম্বর বা পাসওয়ার্ড প্রদান করা হয়েছে।',
+            ])->withInput();
         }
 
-        return back()->withErrors([
-            'phone' => 'ভুল ফোন নম্বর বা পাসওয়ার্ড প্রদান করা হয়েছে।',
-        ])->withInput();
+        // 1. Suspension & Inactivity Check
+        if (in_array($user->status, ['suspended', 'inactive'])) {
+            return back()->withErrors([
+                'phone' => 'আপনার অ্যাকাউন্টটি স্থগিত (Suspended) বা নিষ্ক্রিয় (Inactive) করা হয়েছে। অনুগ্রহ করে অ্যাডমিনের সাথে যোগাযোগ করুন।',
+            ])->withInput();
+        }
+
+        // 2. Role Access Check (must be a staff member)
+        if (!$user->canAccessAdmin()) {
+            return back()->withErrors([
+                'phone' => 'আপনার স্টাফ প্যানেলে অ্যাক্সেস করার অনুমতি নেই।',
+            ])->withInput();
+        }
+
+        // 3. Manual login
+        Auth::login($user, false);
+        $request->session()->regenerate();
+
+        // Redirect based on user's highest role
+        return $this->redirectBasedOnRole($user)
+            ->with('success', 'স্বাগতম, ' . $user->name . '! স্টাফ প্যানেলে সফলভাবে লগইন করেছেন।');
     }
 
     // Dynamic redirect based on user roles
@@ -145,36 +212,72 @@ class EmpleeController extends Controller
         ]);
 
         $loan = Loan::findOrFail($id);
-        $loan->status = $request->status;
+        $previousStatus = $loan->status;
+        $newStatus = $request->status;
+
+        // ── Balance Logic ──────────────────────────────────────────────────────
+        if ($newStatus === 'approved' && $previousStatus !== 'approved') {
+            // নতুন Approve — balance বাড়াও
+            User::where('id', $loan->user_id)->increment('balance', $loan->amount);
+        } elseif ($previousStatus === 'approved' && in_array($newStatus, ['rejected', 'pending'])) {
+            // Approve বাতিল — balance কমাও
+            $user = User::find($loan->user_id);
+            if ($user && $user->balance >= $loan->amount) {
+                $user->decrement('balance', $loan->amount);
+            } else {
+                User::where('id', $loan->user_id)->update(['balance' => 0]);
+            }
+        }
+
+        $loan->status = $newStatus;
         $loan->save();
 
-        return back()->with('success', 'লোন আইডি #' . $loan->id . ' এর স্থিতি সফলভাবে "' . ucfirst($request->status) . '" করা হয়েছে।');
+        return back()->with('success', 'লোন আইডি #' . $loan->id . ' এর স্থিতি সফলভাবে "' . ucfirst($newStatus) . '" করা হয়েছে।');
     }
 
     // Update Customer Profile Details
     public function updateCustomerProfile(Request $request, $id)
     {
         $request->validate([
-            'name'       => 'required|string|max:255',
-            'email'      => 'required|email|unique:users,email,' . $id,
-            'phone'      => 'required|string|unique:users,phone,' . $id,
-            'address'    => 'nullable|string',
-            'nid_number' => 'nullable|string|max:50',
+            'name'              => 'required|string|max:255',
+            'email'             => 'required|email|unique:users,email,' . $id,
+            'phone'             => 'required|string|unique:users,phone,' . $id,
+            'address'           => 'nullable|string',
+            'balance'           => 'nullable|numeric|min:0',
+            'nid_number'        => 'nullable|string|max:50',
+            'occupation'        => 'nullable|string|max:255',
+            'current_address'   => 'nullable|string',
+            'permanent_address' => 'nullable|string',
+            'loan_reason'       => 'nullable|string',
+            'nominee_name'      => 'nullable|string|max:255',
+            'nominee_relation'  => 'nullable|string|max:255',
+            'nominee_phone'     => 'nullable|string|max:50',
         ]);
 
         $user = User::findOrFail($id);
-        $user->update($request->only('name', 'email', 'phone', 'address'));
+        $user->update([
+            'name'    => $request->name,
+            'email'   => $request->email,
+            'phone'   => $request->phone,
+            'address' => $request->address,
+            'balance' => $request->balance ?? 0,
+        ]);
 
-        if ($request->filled('nid_number')) {
-            $user->information()->updateOrCreate(
-                ['user_id' => $user->id],
-                [
-                    'nid_number'   => $request->nid_number,
-                    'full_name'    => $user->name,
-                    'phone_number' => $user->phone
-                ]
-            );
-        }
+        $user->information()->updateOrCreate(
+            ['user_id' => $user->id],
+            [
+                'full_name'         => $request->name,
+                'phone_number'      => $request->phone,
+                'nid_number'        => $request->nid_number,
+                'occupation'        => $request->occupation,
+                'current_address'   => $request->current_address,
+                'permanent_address' => $request->permanent_address,
+                'loan_reason'       => $request->loan_reason,
+                'nominee_name'      => $request->nominee_name,
+                'nominee_relation'  => $request->nominee_relation,
+                'nominee_phone'     => $request->nominee_phone,
+            ]
+        );
 
         return back()->with('success', 'গ্রাহকের প্রোফাইল তথ্য সফলভাবে আপডেট করা হয়েছে।');
     }

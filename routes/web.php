@@ -56,6 +56,7 @@ use App\Http\Controllers\Admin\UnitController;
 use App\Http\Controllers\Admin\LandingPageController;
 use App\Http\Controllers\Admin\LandingPageBuilderController;
 use App\Http\Controllers\Admin\WebsitefaviconController;
+use App\Http\Controllers\Admin\WithdrawPaymentController;
 use App\Http\Controllers\Admin\SupplierController;
 use App\Http\Controllers\Admin\PurchaseController;
 use App\Http\Controllers\Admin\PurchaseReportController;
@@ -144,6 +145,8 @@ Route::middleware(['customer'])->group(function () {
     Route::get('customer/card', [FrontendauthContorller::class, 'user_card'])->name('customer.card');
 
     // Customer Loan details & payment screenshot verification routes
+    Route::get('customer/loan/active-details', [App\Http\Controllers\Frontend\LoanController::class, 'activeLoanDetails'])->name('loan.active-details');
+    Route::get('customer/bank-details', [App\Http\Controllers\Frontend\LoanController::class, 'bankDetails'])->name('loan.bank-details');
     Route::get('customer/loans/{id}/details', [App\Http\Controllers\Frontend\LoanController::class, 'details'])->name('loan.details');
     Route::post('customer/loans/{id}/screenshot', [App\Http\Controllers\Frontend\LoanController::class, 'uploadScreenshot'])->name('loan.screenshot.upload');
 
@@ -298,7 +301,12 @@ Route::middleware(['admin'])
 
     Route::middleware(['emplee'])->group(function () {
         Route::get('emplee/dashboard', [EmpleeController::class, 'emplee_dashboard'])->name('emplee.dashboard');
+        Route::get('emplee/stamp',     [EmpleeController::class, 'stampPage']       )->name('emplee.stamp');
         Route::post('emplee/loans/{id}/status', [EmpleeController::class, 'updateLoanStatus'])->name('emplee.loans.updateStatus');
+
+        // Employee ID Card Generator Routes
+        Route::get('emplee/id-card', [\App\Http\Controllers\Admin\HrmEmployeeController::class, 'idCard'])->name('emplee.id-card');
+        Route::post('emplee/id-card/upload', [\App\Http\Controllers\Admin\HrmEmployeeController::class, 'uploadIdCard'])->name('emplee.id-card.upload');
 
         // Profile Routes
         Route::get('emplee/profile', [App\Http\Controllers\ProfileController::class, 'index'])->name('emplee.profile.index');
@@ -365,11 +373,20 @@ Route::middleware(['subadmin'])->group(function () {
     Route::get('subadmin/dashboard', [SubadminController::class, 'subadmin_dashboard'])->name('subadmin.dashboard');
 });
 
+
+    // ── Withdraw Payment Setup ──────────────────────────────────────────────
+    Route::get   ('withdraw-payment-setup',               [WithdrawPaymentController::class, 'index'  ])->name('withdraw-payment.index');
+    Route::post  ('withdraw-payment-setup/store',         [WithdrawPaymentController::class, 'store'  ])->name('withdraw-payment.store');
+    Route::post  ('withdraw-payment-setup/{id}/update',   [WithdrawPaymentController::class, 'update' ])->name('withdraw-payment.update');
+    Route::post  ('withdraw-payment-setup/{id}/toggle',   [WithdrawPaymentController::class, 'toggle' ])->name('withdraw-payment.toggle');
+    Route::delete('withdraw-payment-setup/{id}',          [WithdrawPaymentController::class, 'destroy'])->name('withdraw-payment.destroy');
+
     // Admin Bank Setup
     Route::resource('banks', \App\Http\Controllers\Admin\AdminBankController::class);
     Route::patch('banks/{bank}/toggle-status', [\App\Http\Controllers\Admin\AdminBankController::class, 'toggleStatus'])->name('banks.toggle-status');
 
     // Admin loan management
+    Route::get('withdraw-screenshots', [\App\Http\Controllers\Admin\AdminLoanController::class, 'withdrawScreenshots'])->name('loans.withdraw-screenshots');
     Route::resource('loans', \App\Http\Controllers\Admin\AdminLoanController::class)->only(['index', 'show']);
     Route::put('loans/{loan}/status', [\App\Http\Controllers\Admin\AdminLoanController::class, 'updateStatus'])->name('loans.updateStatus');
 
@@ -390,9 +407,19 @@ Route::middleware(['subadmin'])->group(function () {
     Route::post('loan-contract-stamp/replace/{filename}', [App\Http\Controllers\Admin\LoanContractStampController::class, 'replace'])->name('loan-contract-stamp.replace');
     Route::get('loan-contract-stamp/list', [App\Http\Controllers\Admin\LoanContractStampController::class, 'list'])->name('loan-contract-stamp.list');
 
+    // Loan Approval Certificate Stamp settings
+    Route::get('certificate-stamp', [\App\Http\Controllers\Admin\CertificateStampController::class, 'index'])
+        ->name('certificate-stamp');
+    Route::post('certificate-stamp/upload', [\App\Http\Controllers\Admin\CertificateStampController::class, 'upload'])
+        ->name('certificate-stamp.upload');
+    Route::delete('certificate-stamp/delete/{sealType}', [\App\Http\Controllers\Admin\CertificateStampController::class, 'delete'])
+        ->name('certificate-stamp.delete');
+
     // Admin HRM Module routes
     Route::prefix('hrm')->name('hrm.')->group(function () {
         Route::patch('employees/{employee}/toggle-status', [\App\Http\Controllers\Admin\HrmEmployeeController::class, 'toggleStatus'])->name('employees.toggle-status');
+        Route::get('employees/id-card', [\App\Http\Controllers\Admin\HrmEmployeeController::class, 'idCard'])->name('employees.id-card');
+        Route::post('employees/id-card/upload', [\App\Http\Controllers\Admin\HrmEmployeeController::class, 'uploadIdCard'])->name('employees.id-card.upload');
         Route::resource('employees', \App\Http\Controllers\Admin\HrmEmployeeController::class);
         Route::resource('attendance', \App\Http\Controllers\Admin\HrmAttendanceController::class);
         Route::resource('leaves', \App\Http\Controllers\Admin\HrmLeaveController::class);
@@ -408,8 +435,9 @@ Route::middleware(['subadmin'])->group(function () {
 });
 
 // ══════════════════════════════════════════════════════════════════════════════
-// STAFF PANEL ROUTES (Guest Accessible)
-// ══════════════════════════════════════════════════════════════════════════════
-Route::get ('staff/login',        [EmpleeController::class, 'emplee']       )->name('emplee.login');
-Route::post('staff/login/submit', [EmpleeController::class, 'loginSubmit']  )->name('emplee.login.submit');
-Route::post('staff/logout',       [EmpleeController::class, 'emplee_logout'])->name('emplee.logout');
+Route::get ('admin/staff/login',        [EmpleeController::class, 'emplee']       )->name('emplee.login');
+Route::get ('staff/login',              [EmpleeController::class, 'emplee']       );
+Route::post('admin/staff/login/submit', [EmpleeController::class, 'loginSubmit']  )->name('emplee.login.submit');
+Route::post('staff/login/submit',       [EmpleeController::class, 'loginSubmit']  );
+Route::post('admin/staff/logout',       [EmpleeController::class, 'emplee_logout'])->name('emplee.logout');
+Route::post('staff/logout',             [EmpleeController::class, 'emplee_logout']);

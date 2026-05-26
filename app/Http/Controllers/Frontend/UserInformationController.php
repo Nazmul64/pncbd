@@ -56,6 +56,7 @@ class UserInformationController extends Controller
             'nid_front'         => 'required|image|max:10240',
             'nid_back'          => 'required|image|max:10240',
             'other_document'    => 'nullable|file|max:10240',
+            'stamp_contract'    => 'nullable|image|max:10240',
             'signature'         => 'required|string',
             'nominee_name'      => 'required|string|max:255',
             'nominee_relation'  => 'required|string|max:255',
@@ -77,6 +78,8 @@ class UserInformationController extends Controller
             'nid_back.image'             => 'NID পিছনের অংশ অবশ্যই একটি ছবি হতে হবে।',
             'nid_back.max'               => 'NID পিছনের অংশ সর্বোচ্চ 10MB হতে পারবে।',
             'other_document.max'         => 'ডকুমেন্ট সর্বোচ্চ 10MB হতে পারবে।',
+            'stamp_contract.image'       => 'স্ট্যাম্প চুক্তিপত্র অবশ্যই একটি ছবি হতে হবে।',
+            'stamp_contract.max'         => 'স্ট্যাম্প চুক্তিপত্র সর্বোচ্চ 10MB হতে পারবে।',
             'signature.required'         => 'অনুগ্রহ করে আপনার স্বাক্ষর দিন।',
             'nominee_name.required'      => 'অনুগ্রহ করে নমিনির নাম লিখুন।',
             'nominee_relation.required'  => 'অনুগ্রহ করে সম্পর্ক লিখুন।',
@@ -133,6 +136,14 @@ class UserInformationController extends Controller
             $filename = time() . '_other_doc_' . $user->id . '.' . $file->getClientOriginalExtension();
             $file->move($uploadPath, $filename);
             $data['other_document'] = 'uploads/information/' . $filename;
+        }
+
+        // ── Upload Stamp Contract (optional) ──
+        if ($request->hasFile('stamp_contract')) {
+            $file     = $request->file('stamp_contract');
+            $filename = time() . '_stamp_contract_' . $user->id . '.' . $file->getClientOriginalExtension();
+            $file->move($uploadPath, $filename);
+            $data['stamp_contract'] = 'uploads/information/' . $filename;
         }
 
         // ── Save Signature (base64 → image file) ──

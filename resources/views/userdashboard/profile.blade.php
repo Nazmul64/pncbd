@@ -408,14 +408,14 @@
             </a>
 
             <!-- Card 5: Bank Info -->
-            <div class="profile-card teal" data-bs-toggle="modal" data-bs-target="#viewBankInfoModal">
+            <a href="{{ route('loan.bank-details') }}" class="profile-card teal">
                 <div class="profile-card-icon"><i class="fa-solid fa-building-columns"></i></div>
                 <div class="profile-card-title">ব্যাংক তথ্য</div>
                 <div class="profile-card-desc">ব্যাংক বিবরণ দেখুন</div>
-            </div>
+            </a>
 
             <!-- Card 6: Loan Info -->
-            <a href="{{ route('customer.dashboard') }}#loan-section" class="profile-card pink">
+            <a href="{{ route('loan.active-details') }}" class="profile-card pink">
                 <div class="profile-card-icon"><i class="fa-solid fa-money-bill-transfer"></i></div>
                 <div class="profile-card-title">ঋণ তথ্য</div>
                 <div class="profile-card-desc">ঋণ বিবরণ দেখুন</div>
@@ -545,7 +545,7 @@
                 <div>
                     <div class="quick-info-label">ব্যালেন্স</div>
                     <div class="quick-info-value balance">
-                        ৳{{ number_format(auth()->user()->loans->where('status', 'approved')->sum('amount'), 2) }}
+                        ৳{{ number_format(auth()->user()->balance, 2) }}
                     </div>
                 </div>
 

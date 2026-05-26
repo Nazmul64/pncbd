@@ -25,7 +25,7 @@ class GeneralsettingController extends Controller
     {
         $request->validate([
             'logo_type' => 'required|in:header_logo,footer_logo,invoice_logo',
-            'logo'      => 'required|mimes:jpg,jpeg,png,gif,svg,webp|max:5120',
+            'logo'      => 'required|mimes:jpg,jpeg,png,gif,svg,webp|max:10240',
         ]);
 
         $setting  = Generalsetting::getSettings();

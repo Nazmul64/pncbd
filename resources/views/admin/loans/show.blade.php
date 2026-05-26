@@ -24,27 +24,27 @@
                         <span class="badge bg-success text-white rounded-pill px-4 py-2 fs-6 fw-bold border border-success border-opacity-25 shadow-sm">
                             <i class="fa-solid fa-check-circle me-1"></i> অনুমোদিত (Approved)
                         </span>
-                        @if(file_exists(public_path('uploads/loan-stamps/stamp.png')))
-    <div class="mt-3 text-center">
-        <a href="#" data-bs-toggle="modal" data-bs-target="#stampModal">
-            <img src="{{ asset('uploads/loan-stamps/stamp.png') }}" alt="Loan Stamp" class="img-fluid" style="max-height:200px; border:2px solid #fff; border-radius:8px; cursor:pointer; transition: transform 0.3s;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'"/>
-        </a>
-    </div>
-    <!-- Stamp Modal -->
-    <div class="modal fade" id="stampModal" tabindex="-1" aria-labelledby="stampModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered modal-lg">
-            <div class="modal-content bg-dark text-white" style="border-radius:12px; overflow:hidden;">
-                <div class="modal-header border-0">
-                    <h5 class="modal-title" id="stampModalLabel">ঋণ চুক্তিপত্র স্ট্যাম্প</h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body p-0 text-center" style="background: linear-gradient(135deg, #ff7e5f, #feb47b);">
-                    <img src="{{ asset('uploads/loan-stamps/stamp.png') }}" alt="Loan Stamp" class="img-fluid" style="max-width:100%; max-height:80vh;"/>
-                </div>
-            </div>
-        </div>
-    </div>
-@endif                        </div>
+                        @if($activeStampUrl)
+                            <div class="mt-3 text-center">
+                                <a href="#" data-bs-toggle="modal" data-bs-target="#stampModal">
+                                    <img src="{{ $activeStampUrl }}" alt="Loan Stamp" class="img-fluid" style="max-height:200px; border:2px solid #fff; border-radius:8px; cursor:pointer; transition: transform 0.3s;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'"/>
+                                </a>
+                            </div>
+                            <!-- Stamp Modal -->
+                            <div class="modal fade" id="stampModal" tabindex="-1" aria-labelledby="stampModalLabel" aria-hidden="true">
+                                <div class="modal-dialog modal-dialog-centered modal-lg">
+                                    <div class="modal-content bg-dark text-white" style="border-radius:12px; overflow:hidden;">
+                                        <div class="modal-header border-0">
+                                            <h5 class="modal-title" id="stampModalLabel">ঋণ চুক্তিপত্র স্ট্যাম্প</h5>
+                                            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                                        </div>
+                                        <div class="modal-body p-0 text-center" style="background: #f8fafc;">
+                                            <img src="{{ $activeStampUrl }}" alt="Loan Stamp" class="img-fluid" style="max-width:100%; max-height:80vh; padding: 20px; object-fit: contain;"/>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        @endif                        </div>
                     @else
                         <span class="badge bg-danger text-white rounded-pill px-4 py-2 fs-6 fw-bold border border-danger border-opacity-25 shadow-sm">
                             <i class="fa-solid fa-circle-xmark me-1"></i> প্রত্যাখ্যাত (Rejected)

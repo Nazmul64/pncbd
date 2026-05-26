@@ -9,8 +9,8 @@ use Illuminate\Database\Seeder;
 class RoleSeeder extends Seeder
 {
     /**
-     * প্রতিটি role-এর জন্য কোন group-এর permission দেওয়া হবে সেটা এখানে define।
-     * Super Admin ও Admin — সব পায়, তাই আলাদা handle।
+     * প্রতিটি role-এর জন্য কোন permissions দেওয়া হবে তা নির্ধারণ করা হয়েছে।
+     * ই-কমার্স সম্পূর্ণ বাদ দিয়ে শুধুমাত্র একটিভ অ্যাডমিন সাইডবার এবং HRM সেকশন রাখা হয়েছে।
      */
     private array $roleConfig = [
         [
@@ -18,70 +18,86 @@ class RoleSeeder extends Seeder
             'name'        => 'Super Admin',
             'description' => 'সর্বোচ্চ ক্ষমতা — সব পারমিশন আছে',
             'is_default'  => false,
-            'all'         => true, // সব permission
+            'all'         => true, // সব permission পাবে
         ],
         [
             'slug'        => 'admin',
             'name'        => 'Admin',
-            'description' => 'প্রশাসক — প্রায় সব পারমিশন আছে',
+            'description' => 'প্রশাসক — পূর্ণ সিস্টেম অ্যাক্সেস',
             'is_default'  => false,
             'all'         => true,
         ],
         [
             'slug'        => 'sub-admin',
             'name'        => 'Sub Admin',
-            'description' => 'সীমিত অ্যাডমিন অ্যাক্সেস',
+            'description' => 'সীমিত অ্যাডমিন অ্যাক্সেস — লোন ও HRM সিস্টেম',
             'is_default'  => false,
             'slugs'       => [
                 'view-dashboard',
-                'view-products', 'create-products', 'edit-products',
-                'view-orders', 'edit-orders',
-                'view-categories', 'create-categories', 'edit-categories',
+                'view-profile',
+                'view-chat',
+                'manage-chat',
+                'manage-bank-check-approvals',
+                'manage-loan-applications',
+                'manage-loan-approvals',
+                'manage-loans',
+                'view-withdraw-screenshots',
+                'manage-loan-contracts',
+                'manage-certificate-stamps',
+                'manage-banks',
+                'manage-withdraw-payments',
+                'view-documentation',
+                'manage-id-cards',
+                'view-employees',
+                'create-employees',
+                'edit-employees',
+                'manage-attendance',
+                'manage-leaves',
+                'manage-payroll',
+                'manage-expenses',
+                'manage-salary-advance',
                 'view-users',
-                'view-reports', 'export-reports',
             ],
         ],
         [
             'slug'        => 'manager',
             'name'        => 'Manager',
-            'description' => 'পণ্য, অর্ডার, ক্যাটাগরি ম্যানেজ করতে পারে',
+            'description' => 'ম্যানেজার — চ্যাট এবং HRM পরিচালনা',
             'is_default'  => false,
             'slugs'       => [
                 'view-dashboard',
-            ],
-        ],
-        [
-            'slug'        => 'seller',
-            'name'        => 'Seller',
-            'description' => 'নিজের পণ্য ও অর্ডার ম্যানেজ করতে পারে',
-            'is_default'  => false,
-            'slugs'       => [
-                'view-dashboard',
-                'view-products', 'create-products', 'edit-products',
-                'view-orders', 'process-orders',
-                'view-categories',
-                'view-reports',
+                'view-profile',
+                'view-chat',
+                'manage-chat',
+                'view-employees',
+                'manage-attendance',
+                'manage-expenses',
+                'manage-salary-advance',
             ],
         ],
         [
             'slug'        => 'employee',
             'name'        => 'Employee',
-            'description' => 'কর্মচারী — সীমিত ড্যাশবোর্ড অ্যাক্সেস',
+            'description' => 'স্টাফ কর্মচারী — সীমিত স্টাফ ড্যাশবোর্ড অ্যাক্সেস',
             'is_default'  => false,
             'slugs'       => [
                 'view-dashboard',
+                'view-profile',
             ],
+        ],
+        [
+            'slug'        => 'seller',
+            'name'        => 'Seller',
+            'description' => 'সেলার — কোনো অ্যাডমিন প্যানেল অ্যাক্সেস নেই',
+            'is_default'  => false,
+            'slugs'       => [],
         ],
         [
             'slug'        => 'customer',
             'name'        => 'Customer',
-            'description' => 'সাধারণ গ্রাহক — পণ্য দেখা ও অর্ডার করা',
-            'is_default'  => true, // নতুন user পেলে এই role পাবে
-            'slugs'       => [
-                'view-products',
-                'view-categories',
-                'create-orders', 'view-orders',
-            ],
+            'description' => 'গ্রাহক — কোনো অ্যাডমিন প্যানেল অ্যাক্সেস নেই',
+            'is_default'  => true,
+            'slugs'       => [],
         ],
     ];
 
@@ -103,11 +119,11 @@ class RoleSeeder extends Seeder
             if ($config['all'] ?? false) {
                 $role->permissions()->sync($allPermissionIds);
             } else {
-                $ids = Permission::whereIn('slug', $config['slugs'])->pluck('id');
+                $ids = Permission::whereIn('slug', $config['slugs'] ?? [])->pluck('id');
                 $role->permissions()->sync($ids);
             }
         }
 
-        $this->command->info('✅ Roles: ' . Role::count() . ' টি তৈরি হয়েছে।');
+        $this->command->info('✅ Roles: ' . Role::count() . ' টি তৈরি এবং পারমিশন অ্যাসাইন করা হয়েছে।');
     }
 }

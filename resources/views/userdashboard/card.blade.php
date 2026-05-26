@@ -493,7 +493,7 @@
 
                     <div class="card-footer-item text-end">
                         <span class="card-footer-label">ব্যালেন্স</span>
-                        <span class="card-footer-value balance">৳{{ number_format(auth()->user()->loans->where('status', 'approved')->sum('amount'), 0) }}</span>
+                        <span class="card-footer-value balance">৳{{ number_format(auth()->user()->balance, 0) }}</span>
                     </div>
                 </div>
 

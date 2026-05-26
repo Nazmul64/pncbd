@@ -263,23 +263,66 @@
 
                         <div class="form-group-grid">
                             <div class="form-group">
-                                <label class="form-label">NID Number <span class="required">*</span></label>
-                                <input type="text" name="nid_number" value="{{ old('nid_number') }}" placeholder="Enter national identification number..." class="hrm-input" required>
+                                <label class="form-label">Email Address / ইমেইল</label>
+                                <input type="email" name="email" value="{{ old('email') }}" placeholder="Enter email address..." class="hrm-input">
                             </div>
                             <div class="form-group">
-                                <label class="form-label">Monthly Base Salary <span class="required">*</span></label>
-                                <input type="number" name="salary" value="{{ old('salary') }}" placeholder="Enter base monthly salary (৳)..." class="hrm-input" min="0" required>
+                                <label class="form-label">Designation / পদবী</label>
+                                <input type="text" name="designation" value="{{ old('designation') }}" placeholder="e.g. Field Agent, Manager..." class="hrm-input">
                             </div>
                         </div>
 
                         <div class="form-group-grid">
                             <div class="form-group">
+                                <label class="form-label">Join Date / যোগদানের তারিখ</label>
+                                <input type="date" name="join_date" value="{{ old('join_date') }}" class="hrm-input">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Expire Date / মেয়াদ উত্তীর্ণের তারিখ</label>
+                                <input type="date" name="expire_date" value="{{ old('expire_date') }}" class="hrm-input">
+                            </div>
+                        </div>
+
+                        <div class="form-group-grid">
+                            <div class="form-group">
+                                <label class="form-label">NID Number <span class="required">*</span></label>
+                                <input type="text" name="nid_number" value="{{ old('nid_number') }}" placeholder="Enter national identification number..." class="hrm-input" required>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Blood Group / রক্তের গ্রুপ</label>
+                                <select name="blood_group" class="hrm-input">
+                                    <option value="">Select Blood Group...</option>
+                                    <option value="A+" {{ old('blood_group') == 'A+' ? 'selected' : '' }}>A+</option>
+                                    <option value="A-" {{ old('blood_group') == 'A-' ? 'selected' : '' }}>A-</option>
+                                    <option value="B+" {{ old('blood_group') == 'B+' ? 'selected' : '' }}>B+</option>
+                                    <option value="B-" {{ old('blood_group') == 'B-' ? 'selected' : '' }}>B-</option>
+                                    <option value="AB+" {{ old('blood_group') == 'AB+' ? 'selected' : '' }}>AB+</option>
+                                    <option value="AB-" {{ old('blood_group') == 'AB-' ? 'selected' : '' }}>AB-</option>
+                                    <option value="O+" {{ old('blood_group') == 'O+' ? 'selected' : '' }}>O+</option>
+                                    <option value="O-" {{ old('blood_group') == 'O-' ? 'selected' : '' }}>O-</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="form-group-grid">
+                            <div class="form-group">
+                                <label class="form-label">Monthly Base Salary <span class="required">*</span></label>
+                                <input type="number" name="salary" value="{{ old('salary') }}" placeholder="Enter base monthly salary (৳)..." class="hrm-input" min="0" required>
+                            </div>
+                            <div class="form-group">
                                 <label class="form-label">District</label>
                                 <input type="text" name="district" value="{{ old('district') }}" placeholder="e.g. Dhaka" class="hrm-input">
                             </div>
+                        </div>
+
+                        <div class="form-group-grid">
                             <div class="form-group">
                                 <label class="form-label">Thana</label>
                                 <input type="text" name="thana" value="{{ old('thana') }}" placeholder="e.g. Mirpur" class="hrm-input">
+                            </div>
+                            <div class="form-group" style="opacity: 0; pointer-events: none;">
+                                <label class="form-label">Placeholder</label>
+                                <input type="text" class="hrm-input" disabled>
                             </div>
                         </div>
 

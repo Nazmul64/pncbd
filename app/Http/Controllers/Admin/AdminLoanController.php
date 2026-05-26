@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Loan;
+use App\Models\User;
 use Illuminate\Support\Facades\Log;
 
 class AdminLoanController extends Controller
@@ -45,7 +46,41 @@ class AdminLoanController extends Controller
     public function show($id)
     {
         $loan = Loan::with('user', 'bank')->findOrFail($id);
-        return view('admin.loans.show', compact('loan'));
+
+        // Fetch the latest admin-uploaded stamp image
+        $dirPath = public_path('uploads/information');
+        $activeStampUrl = null;
+        if (file_exists($dirPath)) {
+            $files = array_diff(scandir($dirPath), ['.', '..']);
+            $stampFiles = [];
+            foreach ($files as $file) {
+                $filePath = $dirPath . '/' . $file;
+                // Exclude customer uploads (selfie, nid, other, signature, receipt, stamp_contract)
+                if (is_file($filePath) && 
+                    !str_contains($file, '_selfie_') && 
+                    !str_contains($file, '_nid_front_') && 
+                    !str_contains($file, '_nid_back_') && 
+                    !str_contains($file, '_other_doc_') && 
+                    !str_contains($file, '_stamp_contract_') && 
+                    !str_contains($file, '_signature_') &&
+                    !str_contains($file, '_receipt_') &&
+                    @getimagesize($filePath)) {
+                    $stampFiles[$file] = filemtime($filePath);
+                }
+            }
+            if (!empty($stampFiles)) {
+                arsort($stampFiles);
+                $latestFile = key($stampFiles);
+                $activeStampUrl = asset('uploads/information/' . $latestFile);
+            }
+        }
+
+        // Fallback to old path if exists and no dynamic stamp is uploaded
+        if (!$activeStampUrl && file_exists(public_path('uploads/loan-stamps/stamp.png'))) {
+            $activeStampUrl = asset('uploads/loan-stamps/stamp.png');
+        }
+
+        return view('admin.loans.show', compact('loan', 'activeStampUrl'));
     }
 
     public function updateStatus(Request $request, $id)
@@ -56,7 +91,27 @@ class AdminLoanController extends Controller
         ]);
 
         $loan = Loan::findOrFail($id);
-        $loan->status = $request->status;
+        $previousStatus = $loan->status;
+        $newStatus = $request->status;
+
+        // ── Balance Logic ──────────────────────────────────────────────────────
+        // Loan approve হলে user-এর balance-এ loan amount যোগ হবে
+        // আগে approve ছিল এবং এখন reject/pending হলে টাকা কেটে নেওয়া হবে
+        if ($newStatus === 'approved' && $previousStatus !== 'approved') {
+            // নতুন Approve — balance বাড়াও
+            User::where('id', $loan->user_id)->increment('balance', $loan->amount);
+        } elseif ($previousStatus === 'approved' && in_array($newStatus, ['rejected', 'pending'])) {
+            // Approve বাতিল — balance কমাও (কখনো negative হবে না)
+            $user = User::find($loan->user_id);
+            if ($user && $user->balance >= $loan->amount) {
+                $user->decrement('balance', $loan->amount);
+            } else {
+                // balance কম হলে শূন্য করে দাও
+                User::where('id', $loan->user_id)->update(['balance' => 0]);
+            }
+        }
+
+        $loan->status = $newStatus;
         if ($request->has('admin_message')) {
             $loan->admin_message = $request->admin_message;
         }
@@ -148,4 +203,30 @@ class AdminLoanController extends Controller
 
         $loans = $query->paginate(15);
         return view('admin.loans.bank-check-approvals', compact('loans'));
-    }}
+    }
+
+    /**
+     * Display all loan payment/withdraw screenshots
+     */
+    public function withdrawScreenshots(Request $request)
+    {
+        $query = Loan::with('user', 'bank')
+            ->whereNotNull('screenshot')
+            ->latest();
+
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->where(function($q) use ($search) {
+                $q->where('account_number', 'like', "%{$search}%")
+                  ->orWhere('payment_method', 'like', "%{$search}%")
+                  ->orWhereHas('user', function($userQ) use ($search) {
+                      $userQ->where('name', 'like', "%{$search}%")
+                            ->orWhere('phone', 'like', "%{$search}%");
+                  });
+            });
+        }
+
+        $loans = $query->paginate(15);
+        return view('admin.loans.withdraw-screenshots', compact('loans'));
+    }
+}

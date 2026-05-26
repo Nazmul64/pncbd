@@ -484,7 +484,7 @@
 
                         <div class="input-group-custom">
                             <label for="bank_id">ব্যাংকের নাম *</label>
-                            <select name="bank_id" id="bank_id" class="form-control-custom" required>
+                            <select name="bank_id" id="bank_id" class="form-control-custom">
                                 <option value="">-- ব্যাংক নির্বাচন করুন --</option>
                                 @forelse($banks as $bank)
                                     <option value="{{ $bank->id }}" {{ old('bank_id', $sessionData['bank_id'] ?? '') == $bank->id ? 'selected' : '' }}>
@@ -525,6 +525,7 @@
             const bankFields = document.getElementById('bank-fields');
             const mobileLabel = document.getElementById('mobile-label');
             const mobileInput = document.getElementById('mobile_number');
+            const bankIdSelect = document.getElementById('bank_id');
 
             function updateFields(method) {
                 if (method === 'bank') {
@@ -532,10 +533,12 @@
                     bankFields.classList.remove('d-none');
                     // prevent browser validation errors on mobile field if bank is selected
                     mobileInput.required = false;
+                    if (bankIdSelect) bankIdSelect.required = true;
                 } else {
                     bankFields.classList.add('d-none');
                     mobileFields.classList.remove('d-none');
                     mobileInput.required = true;
+                    if (bankIdSelect) bankIdSelect.required = false;
                     if (method === 'bikash') {
                         mobileLabel.innerText = 'বিকাশ নম্বর *';
                         mobileInput.placeholder = 'বিকাশ নম্বর লিখুন';

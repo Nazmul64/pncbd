@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\HrmEmployee;
+use App\Models\Generalsetting;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\File;
 
@@ -67,23 +68,28 @@ class HrmEmployeeController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'name' => ['required', 'string', 'max:255'],
-            'phone' => ['required', 'string', 'max:20'],
-            'nid_number' => ['required', 'string', 'max:50'],
-            'salary' => ['required', 'numeric', 'min:0'],
-            'employee_image' => ['nullable', 'image', 'mimes:jpeg,png,jpg,gif,webp', 'max:2048'],
-            'nid_image' => ['nullable', 'image', 'mimes:jpeg,png,jpg,gif,webp', 'max:2048'],
-            'father_name' => ['nullable', 'string', 'max:255'],
-            'father_phone' => ['nullable', 'string', 'max:20'],
-            'father_nid_image' => ['nullable', 'image', 'mimes:jpeg,png,jpg,gif,webp', 'max:2048'],
-            'mother_name' => ['nullable', 'string', 'max:255'],
-            'mother_phone' => ['nullable', 'string', 'max:20'],
-            'mother_nid_number' => ['nullable', 'string', 'max:50'],
-            'mother_nid_image' => ['nullable', 'image', 'mimes:jpeg,png,jpg,gif,webp', 'max:2048'],
-            'parents_image' => ['nullable', 'image', 'mimes:jpeg,png,jpg,gif,webp', 'max:2048'],
-            'address' => ['nullable', 'string'],
-            'district' => ['nullable', 'string', 'max:100'],
-            'thana' => ['nullable', 'string', 'max:100'],
+            'name'            => ['required', 'string', 'max:255'],
+            'designation'     => ['nullable', 'string', 'max:100'],
+            'phone'           => ['required', 'string', 'max:20'],
+            'nid_number'      => ['required', 'string', 'max:50'],
+            'salary'          => ['required', 'numeric', 'min:0'],
+            'join_date'       => ['nullable', 'date'],
+            'email'           => ['nullable', 'email', 'max:255'],
+            'blood_group'     => ['nullable', 'string', 'max:10'],
+            'expire_date'     => ['nullable', 'date'],
+            'employee_image'  => ['nullable', 'image', 'mimes:jpeg,png,jpg,gif,webp', 'max:2048'],
+            'nid_image'       => ['nullable', 'image', 'mimes:jpeg,png,jpg,gif,webp', 'max:2048'],
+            'father_name'     => ['nullable', 'string', 'max:255'],
+            'father_phone'    => ['nullable', 'string', 'max:20'],
+            'father_nid_image'=> ['nullable', 'image', 'mimes:jpeg,png,jpg,gif,webp', 'max:2048'],
+            'mother_name'     => ['nullable', 'string', 'max:255'],
+            'mother_phone'    => ['nullable', 'string', 'max:20'],
+            'mother_nid_number'=> ['nullable', 'string', 'max:50'],
+            'mother_nid_image'=> ['nullable', 'image', 'mimes:jpeg,png,jpg,gif,webp', 'max:2048'],
+            'parents_image'   => ['nullable', 'image', 'mimes:jpeg,png,jpg,gif,webp', 'max:2048'],
+            'address'         => ['nullable', 'string'],
+            'district'        => ['nullable', 'string', 'max:100'],
+            'thana'           => ['nullable', 'string', 'max:100'],
         ]);
 
         $data = $request->except(['employee_image', 'nid_image', 'father_nid_image', 'mother_nid_image', 'parents_image']);
@@ -124,24 +130,29 @@ class HrmEmployeeController extends Controller
         $employee = HrmEmployee::findOrFail($id);
 
         $request->validate([
-            'name' => ['required', 'string', 'max:255'],
-            'phone' => ['required', 'string', 'max:20'],
-            'nid_number' => ['required', 'string', 'max:50'],
-            'salary' => ['required', 'numeric', 'min:0'],
-            'employee_image' => ['nullable', 'image', 'mimes:jpeg,png,jpg,gif,webp', 'max:2048'],
-            'nid_image' => ['nullable', 'image', 'mimes:jpeg,png,jpg,gif,webp', 'max:2048'],
-            'father_name' => ['nullable', 'string', 'max:255'],
-            'father_phone' => ['nullable', 'string', 'max:20'],
-            'father_nid_image' => ['nullable', 'image', 'mimes:jpeg,png,jpg,gif,webp', 'max:2048'],
-            'mother_name' => ['nullable', 'string', 'max:255'],
-            'mother_phone' => ['nullable', 'string', 'max:20'],
-            'mother_nid_number' => ['nullable', 'string', 'max:50'],
-            'mother_nid_image' => ['nullable', 'image', 'mimes:jpeg,png,jpg,gif,webp', 'max:2048'],
-            'parents_image' => ['nullable', 'image', 'mimes:jpeg,png,jpg,gif,webp', 'max:2048'],
-            'address' => ['nullable', 'string'],
-            'district' => ['nullable', 'string', 'max:100'],
-            'thana' => ['nullable', 'string', 'max:100'],
-            'status' => ['required', 'in:active,inactive'],
+            'name'            => ['required', 'string', 'max:255'],
+            'designation'     => ['nullable', 'string', 'max:100'],
+            'phone'           => ['required', 'string', 'max:20'],
+            'nid_number'      => ['required', 'string', 'max:50'],
+            'salary'          => ['required', 'numeric', 'min:0'],
+            'join_date'       => ['nullable', 'date'],
+            'email'           => ['nullable', 'email', 'max:255'],
+            'blood_group'     => ['nullable', 'string', 'max:10'],
+            'expire_date'     => ['nullable', 'date'],
+            'employee_image'  => ['nullable', 'image', 'mimes:jpeg,png,jpg,gif,webp', 'max:2048'],
+            'nid_image'       => ['nullable', 'image', 'mimes:jpeg,png,jpg,gif,webp', 'max:2048'],
+            'father_name'     => ['nullable', 'string', 'max:255'],
+            'father_phone'    => ['nullable', 'string', 'max:20'],
+            'father_nid_image'=> ['nullable', 'image', 'mimes:jpeg,png,jpg,gif,webp', 'max:2048'],
+            'mother_name'     => ['nullable', 'string', 'max:255'],
+            'mother_phone'    => ['nullable', 'string', 'max:20'],
+            'mother_nid_number'=> ['nullable', 'string', 'max:50'],
+            'mother_nid_image'=> ['nullable', 'image', 'mimes:jpeg,png,jpg,gif,webp', 'max:2048'],
+            'parents_image'   => ['nullable', 'image', 'mimes:jpeg,png,jpg,gif,webp', 'max:2048'],
+            'address'         => ['nullable', 'string'],
+            'district'        => ['nullable', 'string', 'max:100'],
+            'thana'           => ['nullable', 'string', 'max:100'],
+            'status'          => ['required', 'in:active,inactive'],
         ]);
 
         $data = $request->except(['employee_image', 'nid_image', 'father_nid_image', 'mother_nid_image', 'parents_image']);
@@ -204,6 +215,80 @@ class HrmEmployeeController extends Controller
 
         return redirect()->route('admin.hrm.employees.index')
             ->with('success', 'Employee deleted successfully!');
+    }
+
+    /**
+     * ID Card generator page — shows all employees for selection.
+     */
+    public function idCard()
+    {
+        $employees = HrmEmployee::orderBy('name')->get();
+        $gs = Generalsetting::getSettings();
+        return view('admin.hrm.employees.id_card', compact('employees', 'gs'));
+    }
+
+    /**
+     * Upload and save generated ID cards to the server under uploads/employeecard/
+     */
+    public function uploadIdCard(Request $request)
+    {
+        $request->validate([
+            'employee_id' => 'required|exists:hrm_employees,id',
+            'side'        => 'required|in:front,back',
+            'image'       => 'required|string', // Base64 data URI
+        ]);
+
+        $employee = HrmEmployee::findOrFail($request->employee_id);
+        $side = $request->side;
+
+        // Decode Base64 image data
+        $imgData = $request->image;
+        if (preg_match('/^data:image\/(\w+);base64,/', $imgData, $type)) {
+            $imgData = substr($imgData, strpos($imgData, ',') + 1);
+            $type = strtolower($type[1]); // png, jpg, etc
+
+            if (!in_array($type, ['png', 'jpg', 'jpeg', 'gif', 'webp'])) {
+                return response()->json(['success' => false, 'message' => 'Invalid image format'], 400);
+            }
+
+            $imgData = base64_decode($imgData);
+            if ($imgData === false) {
+                return response()->json(['success' => false, 'message' => 'Base64 decode failed'], 400);
+            }
+        } else {
+            return response()->json(['success' => false, 'message' => 'Invalid image data URI'], 400);
+        }
+
+        // Ensure directory exists in public folder
+        $dirPath = public_path('uploads/employeecard');
+        if (!\File::isDirectory($dirPath)) {
+            \File::makeDirectory($dirPath, 0777, true, true);
+        }
+
+        $filename = 'id_card_' . $side . '_' . $employee->id . '_' . uniqid() . '.' . $type;
+        $filePath = $dirPath . '/' . $filename;
+        
+        // Delete old card if exists
+        $oldPathField = 'id_card_' . $side;
+        if ($employee->{$oldPathField} && \File::exists(public_path($employee->{$oldPathField}))) {
+            \File::delete(public_path($employee->{$oldPathField}));
+        }
+
+        // Save new file
+        \File::put($filePath, $imgData);
+
+        // Update database path
+        $dbPath = 'uploads/employeecard/' . $filename;
+        $employee->update([
+            $oldPathField => $dbPath
+        ]);
+
+        return response()->json([
+            'success' => true,
+            'path'    => asset($dbPath),
+            'db_path' => $dbPath,
+            'message' => ucfirst($side) . ' ID card uploaded successfully!'
+        ]);
     }
 
     /**

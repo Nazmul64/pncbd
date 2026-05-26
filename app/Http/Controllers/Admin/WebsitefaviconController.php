@@ -22,16 +22,18 @@ class WebsitefaviconController extends Controller
      * ────────────────────────────────────────── */
     public function uploadLogo(Request $request)
     {
+        // Validate the incoming file: must be an image, allowed extensions, and max 5MB (5120KB)
         $request->validate([
             'logo' => [
                 'required',
                 'file',
-
+                'image',
+                'max:5120', // size in kilobytes (5 MB)
                 function ($attribute, $value, $fail) {
                     $allowed = ['jpg', 'jpeg', 'png', 'gif', 'svg', 'webp', 'ico'];
-                    $ext     = strtolower($value->getClientOriginalExtension());
-                    if (! in_array($ext, $allowed)) {
-                        $fail('Only jpg, jpeg, png, gif, svg, webp, ico files are allowed (Max 5MB).');
+                    $ext = strtolower($value->getClientOriginalExtension());
+                    if (!in_array($ext, $allowed)) {
+                        $fail('Only jpg, jpeg, png, gif, svg, webp, ico files are allowed (Max 5 MB).');
                     }
                 },
             ],
@@ -39,7 +41,7 @@ class WebsitefaviconController extends Controller
 
         $setting = Websitefavicon::getSettings();
 
-        // পুরনো file delete
+        // Delete old logo if it exists
         if ($setting->favicon_logo) {
             $oldPath = public_path($setting->favicon_logo);
             if (file_exists($oldPath)) {
@@ -47,20 +49,22 @@ class WebsitefaviconController extends Controller
             }
         }
 
-        // নতুন file save
+        // Ensure upload directory exists
         $uploadDir = public_path('uploads/websitefavicon');
-        if (! is_dir($uploadDir)) {
+        if (!is_dir($uploadDir)) {
             mkdir($uploadDir, 0755, true);
         }
 
-        $file     = $request->file('logo');
+        // Store the new file
+        $file = $request->file('logo');
         $filename = time() . '_favicon.' . strtolower($file->getClientOriginalExtension());
         $file->move($uploadDir, $filename);
 
+        // Save path in the database
         $setting->favicon_logo = 'uploads/websitefavicon/' . $filename;
         $setting->save();
 
-        return back()->with('success', 'Favicon updated successfully!');
+        return back()->with('success', 'Logo uploaded and saved successfully!');
     }
 
     /* ──────────────────────────────────────────
@@ -79,7 +83,7 @@ class WebsitefaviconController extends Controller
             $setting->save();
         }
 
-        return back()->with('success', 'Favicon removed successfully.');
+        return back()->with('success', 'Logo removed successfully.');
     }
 
     // Resource stubs — সব admin.websitefavicon.index এ redirect করে

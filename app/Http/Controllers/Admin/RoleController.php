@@ -20,7 +20,10 @@ class RoleController extends Controller
     public function create()
     {
         $users = User::orderBy('name')->get();
-        $roles = Role::where('is_active', true)->orderBy('name')->get();
+        // Seller ও Customer role দেখাবে না — শুধু Staff roles
+        $roles = Role::where('is_active', true)
+            ->whereNotIn('slug', ['seller', 'customer'])
+            ->orderBy('name')->get();
 
         return view('admin.roles.create', compact('users', 'roles'));
     }
@@ -52,7 +55,10 @@ class RoleController extends Controller
         $user = User::findOrFail($id);
         
         $users = User::orderBy('name')->get();
-        $roles = Role::where('is_active', true)->orderBy('name')->get();
+        // Seller ও Customer role দেখাবে না — শুধু Staff roles
+        $roles = Role::where('is_active', true)
+            ->whereNotIn('slug', ['seller', 'customer'])
+            ->orderBy('name')->get();
         $userRoles = $user->roles->pluck('id')->toArray();
 
         return view('admin.roles.edit', compact('user', 'users', 'roles', 'userRoles'));

@@ -40,6 +40,9 @@
 <a href="{{ route('admin.emplee.profile.index') }}" class="sb-item {{ $profileActive ? 'active' : '' }}">
     <span class="sb-left"><i class="fas fa-user-circle sb-ico"></i> My Profile</span>
 </a>
+<a href="{{ route('admin.emplee.id-card') }}" class="sb-item {{ request()->routeIs('admin.emplee.id-card') ? 'active' : '' }}">
+    <span class="sb-left"><i class="fas fa-id-card sb-ico" style="color: #3b82f6;"></i> আইডি কার্ড ক্রিয়েট</span>
+</a>
 @endif
 
 <div class="sb-sep"></div>

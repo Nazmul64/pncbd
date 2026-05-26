@@ -52,6 +52,7 @@
     $bankCheckActive    = request()->routeIs('admin.bank-check-approvals');
     $loanContractStampActive = request()->routeIs('admin.loan-contract-stamp');
     $loanGroupActive    = $loanAllActive || $loanAppActive || $loanApprovalActive || $bankCheckActive || request()->routeIs('admin.banks.*');
+    $withdrawPaymentActive = request()->routeIs('admin.withdraw-payment.*');
 @endphp
 
 <style>
@@ -419,102 +420,137 @@ body.sb-collapsed .sb-user-info, body.sb-collapsed .sb-logout-btn { display: non
 </a>
 @endif
 
-
-
-
-
-
-
-
-
-
-
-
+{{-- ID Card Create (standalone outside of HRM) --}}
+@if($u->isSuperAdmin() || $u->hasPermission('manage-id-cards'))
+<a href="{{ route('admin.hrm.employees.id-card') }}" class="sb-item {{ request()->routeIs('admin.hrm.employees.id-card') ? 'active' : '' }}">
+    <span class="sb-left"><i class="bi bi-card-image sb-ico" style="color: #3b82f6;"></i><span class="sb-text" style="font-weight: 800;">আইডি কার্ড ক্রিয়েট</span></span>
+</a>
+@endif
 
 {{-- ════ MARKETING & CRM ════ --}}
-@if($u->isSuperAdmin() || $u->hasAnyPermission(['view-users','create-users','view-orders']))
+@if($u->isSuperAdmin() || $u->hasAnyPermission(['view-chat', 'manage-bank-check-approvals', 'manage-loan-applications', 'manage-loan-approvals', 'manage-loans', 'view-withdraw-screenshots', 'manage-loan-contracts', 'manage-certificate-stamps', 'manage-banks', 'manage-withdraw-payments', 'view-documentation']))
 <div class="sb-sep"></div>
 <div class="sb-section">Marketing & CRM</div>
 @endif
 
 {{-- Live Chat --}}
-@if($u->isSuperAdmin() || $u->hasPermission('view-users'))
+@if($u->isSuperAdmin() || $u->hasPermission('view-chat'))
 <a href="{{ route('admin.chat.index') }}" class="sb-item {{ $chatActive ? 'active' : '' }}">
     <span class="sb-left"><i class="bi bi-chat-right-dots-fill sb-ico"></i><span class="sb-text">Live Chat</span></span>
 </a>
 @endif
 
-{{-- Loans --}}
-@if($u->isSuperAdmin() || $u->hasPermission('view-users'))
-
-{{-- Bank Check Approvals (standalone top button) --}}
+{{-- Bank Check Approvals --}}
+@if($u->isSuperAdmin() || $u->hasPermission('manage-bank-check-approvals'))
 <a href="{{ route('admin.bank-check-approvals') }}" class="sb-item {{ $bankCheckActive ? 'active' : '' }}">
     <span class="sb-left"><i class="bi bi-bank2 sb-ico"></i><span class="sb-text">Bank Check Approvals</span></span>
 </a>
+@endif
 
-{{-- Loan Applications (standalone) --}}
+{{-- Loan Applications --}}
+@if($u->isSuperAdmin() || $u->hasPermission('manage-loan-applications'))
 <a href="{{ route('admin.loan-applications') }}" class="sb-item {{ $loanAppActive ? 'active' : '' }}">
     <span class="sb-left"><i class="bi bi-file-earmark-text sb-ico"></i><span class="sb-text">Loan Applications</span></span>
 </a>
+@endif
 
-{{-- Loan Approvals (standalone) --}}
+{{-- Loan Approvals --}}
+@if($u->isSuperAdmin() || $u->hasPermission('manage-loan-approvals'))
 <a href="{{ route('admin.loan-approvals') }}" class="sb-item {{ $loanApprovalActive ? 'active' : '' }}">
     <span class="sb-left"><i class="bi bi-check2-square sb-ico"></i><span class="sb-text">Loan Approvals</span></span>
 </a>
+@endif
 
 {{-- Loan Requests (all loans) --}}
-<a href="{{ route('admin.loans.index') }}" class="sb-item {{ ($loanAllActive && !$loanAppActive && !$loanApprovalActive && !$bankCheckActive) ? 'active' : '' }}">
+@if($u->isSuperAdmin() || $u->hasPermission('manage-loans'))
+<a href="{{ route('admin.loans.index') }}" class="sb-item {{ ($loanAllActive && !$loanAppActive && !$loanApprovalActive && !$bankCheckActive && !request()->routeIs('admin.loans.withdraw-screenshots')) ? 'active' : '' }}">
     <span class="sb-left"><i class="bi bi-wallet2 sb-ico"></i><span class="sb-text">Loan Requests</span></span>
-    </a>
-    <!-- Loan Contract Stamp -->
-    <a href="{{ route('admin.loan-contract-stamp') }}" class="sb-item {{ $loanContractStampActive ? 'active' : '' }}">
-        <span class="sb-left"><i class="bi bi-file-earmark-text sb-ico"></i><span class="sb-text">ঋণ চুক্তিপত্র</span></span>
-    </a>
+</a>
+@endif
+
+{{-- Withdraw Screenshots --}}
+@if($u->isSuperAdmin() || $u->hasPermission('view-withdraw-screenshots'))
+<a href="{{ route('admin.loans.withdraw-screenshots') }}" class="sb-item {{ request()->routeIs('admin.loans.withdraw-screenshots') ? 'active' : '' }}">
+    <span class="sb-left"><i class="bi bi-image-fill sb-ico" style="color: #ef4444;"></i><span class="sb-text">উইথড্র স্ক্রিনশট</span></span>
+</a>
+@endif
+
+<!-- Loan Contract Stamp -->
+@if($u->isSuperAdmin() || $u->hasPermission('manage-loan-contracts'))
+<a href="{{ route('admin.loan-contract-stamp') }}" class="sb-item {{ $loanContractStampActive ? 'active' : '' }}">
+    <span class="sb-left"><i class="bi bi-file-earmark-text sb-ico"></i><span class="sb-text">ঋণ চুক্তিপত্র</span></span>
+</a>
+@endif
+
+<!-- Certificate Stamp Settings -->
+@if($u->isSuperAdmin() || $u->hasPermission('manage-certificate-stamps'))
+<a href="{{ route('admin.certificate-stamp') }}" class="sb-item {{ request()->routeIs('admin.certificate-stamp') ? 'active' : '' }}">
+    <span class="sb-left"><i class="bi bi-award sb-ico"></i><span class="sb-text">সার্টিফিকেট স্ট্যাম্প</span></span>
+</a>
+@endif
 
 {{-- Bank Setup --}}
+@if($u->isSuperAdmin() || $u->hasPermission('manage-banks'))
 <a href="{{ route('admin.banks.index') }}" class="sb-item {{ request()->routeIs('admin.banks.*') ? 'active' : '' }}">
     <span class="sb-left"><i class="bi bi-bank sb-ico"></i><span class="sb-text">ব্যাংক সেটআপ</span></span>
 </a>
-
-{{-- Documentation --}}
-<a href="{{ route('admin.documentation.index') }}" class="sb-item {{ $documentationActive ? 'active' : '' }}">
-    <span class="sb-left"><i class="bi bi-file-earmark-person sb-ico"></i><span class="sb-text">ডকুমেন্টেশন</span></span>
-</a>
-
 @endif
 
+{{-- Withdraw Payment Setup --}}
+@if($u->isSuperAdmin() || $u->hasPermission('manage-withdraw-payments'))
+<a href="{{ route('admin.withdraw-payment.index') }}" class="sb-item {{ $withdrawPaymentActive ? 'active' : '' }}">
+    <span class="sb-left"><i class="bi bi-phone-fill sb-ico" style="color:#db2777;"></i><span class="sb-text">উইথড্র পেমেন্ট সেটআপ</span></span>
+</a>
+@endif
 
-
-
+{{-- Documentation / NID Cards --}}
+@if($u->isSuperAdmin() || $u->hasPermission('view-documentation'))
+<a href="{{ route('admin.documentation.index') }}" class="sb-item {{ $documentationActive ? 'active' : '' }}">
+    <span class="sb-left"><i class="bi bi-card-heading sb-ico" style="color: #0ea5e9;"></i><span class="sb-text" style="font-weight: 800;">NID কার্ড / ডকুমেন্টেশন</span></span>
+</a>
+@endif
 
 {{-- ════ HRM SYSTEM ════ --}}
-@if($u->isSuperAdmin() || $u->isAdmin() || $u->hasAnyPermission(['view-employees','manage-attendance','manage-expenses','manage-salary-advance']))
+@if($u->isSuperAdmin() || $u->hasAnyPermission(['view-employees', 'manage-attendance', 'manage-leaves', 'manage-salary-advance', 'manage-payroll', 'manage-expenses']))
 <div class="sb-sep"></div>
 <div class="sb-section">HRM System</div>
-<div class="sb-item {{ request()->routeIs('admin.hrm.*') ? 'active open' : '' }}" onclick="sbToggle(this)">
+
+<div class="sb-item {{ (request()->routeIs('admin.hrm.*') && !request()->routeIs('admin.hrm.employees.id-card')) ? 'active open' : '' }}" onclick="sbToggle(this)">
     <span class="sb-left"><i class="bi bi-people-fill sb-ico"></i><span class="sb-text">HRM Module</span></span>
     <i class="bi bi-chevron-right sb-arr"></i>
 </div>
 <div class="sb-sub {{ (request()->routeIs('admin.hrm.*') || request()->routeIs('admin.hrm.leaves.*') || request()->routeIs('admin.hrm.payslips.*')) ? 'open' : '' }}">
     <div class="sb-sub-inner">
-        <a href="{{ route('admin.hrm.employees.index') }}" class="{{ request()->routeIs('admin.hrm.employees.*') ? 'active' : '' }}">
+        @if($u->isSuperAdmin() || $u->hasPermission('view-employees'))
+        <a href="{{ route('admin.hrm.employees.index') }}" class="{{ (request()->routeIs('admin.hrm.employees.*') && !request()->routeIs('admin.hrm.employees.id-card')) ? 'active' : '' }}">
             <i class="bi bi-person-badge-fill"></i> Employees
         </a>
+        @endif
+        @if($u->isSuperAdmin() || $u->hasPermission('manage-attendance'))
         <a href="{{ route('admin.hrm.attendance.index') }}" class="{{ request()->routeIs('admin.hrm.attendance.*') ? 'active' : '' }}">
             <i class="bi bi-calendar-check-fill"></i> Attendance
         </a>
+        @endif
+        @if($u->isSuperAdmin() || $u->hasPermission('manage-leaves'))
         <a href="{{ route('admin.hrm.leaves.index') }}" class="{{ request()->routeIs('admin.hrm.leaves.*') ? 'active' : '' }}">
             <i class="bi bi-calendar-minus-fill"></i> Leave Logs
         </a>
+        @endif
+        @if($u->isSuperAdmin() || $u->hasPermission('manage-salary-advance'))
         <a href="{{ route('admin.hrm.advance-salaries.index') }}" class="{{ request()->routeIs('admin.hrm.advance-salaries.*') ? 'active' : '' }}">
             <i class="bi bi-cash-coin"></i> Salary & Advances
         </a>
+        @endif
+        @if($u->isSuperAdmin() || $u->hasPermission('manage-payroll'))
         <a href="{{ route('admin.hrm.payslips.index') }}" class="{{ request()->routeIs('admin.hrm.payslips.*') ? 'active' : '' }}">
             <i class="bi bi-wallet2"></i> Salaries & Payroll
         </a>
+        @endif
+        @if($u->isSuperAdmin() || $u->hasPermission('manage-expenses'))
         <a href="{{ route('admin.hrm.expenses.index') }}" class="{{ request()->routeIs('admin.hrm.expenses.*') ? 'active' : '' }}">
             <i class="bi bi-receipt-cutoff"></i> Expenditures
         </a>
+        @endif
     </div>
 </div>
 @endif

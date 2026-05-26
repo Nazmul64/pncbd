@@ -24,6 +24,7 @@ class UserInformation extends Model
         'nid_front',
         'nid_back',
         'other_document',
+        'stamp_contract',
         'signature',
         'nominee_name',
         'nominee_relation',

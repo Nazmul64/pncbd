@@ -445,11 +445,16 @@ input:checked + .status-slider:before {
             <h1>Employees Directory</h1>
             <p>Manage employee records, files, parent details, and monthly base pay rates.</p>
         </div>
-        @if(auth()->user()->isSuperAdmin() || auth()->user()->hasPermission('create-employees'))
-            <a href="{{ route('admin.hrm.employees.create') }}" class="hrm-btn-primary">
-                <i class="bi bi-person-plus-fill"></i> Add New Employee
+        <div style="display: flex; gap: 10px; flex-wrap: wrap; align-items: center;">
+            <a href="{{ route('admin.hrm.employees.id-card') }}" style="background: linear-gradient(135deg,#1e40af,#3b82f6); color: #fff; font-weight: 700; font-size: 14px; padding: 12px 20px; border-radius: 12px; border: none; display: inline-flex; align-items: center; gap: 8px; box-shadow: 0 4px 14px rgba(59,130,246,0.3); transition: all 0.2s; text-decoration: none;" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform=''">
+                <i class="bi bi-person-badge-fill"></i> আইডি কার্ড জেনারেটর
             </a>
-        @endif
+            @if(auth()->user()->isSuperAdmin() || auth()->user()->hasPermission('create-employees'))
+                <a href="{{ route('admin.hrm.employees.create') }}" class="hrm-btn-primary">
+                    <i class="bi bi-person-plus-fill"></i> Add New Employee
+                </a>
+            @endif
+        </div>
     </div>
 
     {{-- STATS GRID --}}
@@ -557,7 +562,12 @@ input:checked + .status-slider:before {
                                 @endif
                             </td>
                             <td style="text-align: right;">
-                                <div style="display: inline-flex; gap: 8px;">
+                                <div style="display: inline-flex; gap: 8px; flex-wrap: wrap; justify-content: flex-end;">
+                                    {{-- ID Card Button --}}
+                                    <a href="{{ route('admin.hrm.employees.id-card') }}?emp={{ $employee->id }}"
+                                       style="background: linear-gradient(135deg,#1e40af,#3b82f6); color: #fff; border: none; padding: 5px 11px; border-radius: 8px; font-size: 12px; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; gap: 5px; text-decoration: none; transition: all 0.2s;">
+                                        <i class="bi bi-person-badge-fill"></i> ID Card
+                                    </a>
                                     <button type="button" class="btn btn-sm btn-outline-primary show-details-btn" data-employee="{{ json_encode($employee) }}" style="border-radius: 8px; font-weight: 600; padding: 6px 12px;">
                                         <i class="bi bi-eye"></i> Details
                                     </button>

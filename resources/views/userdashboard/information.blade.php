@@ -825,6 +825,24 @@
                         <div class="file-hint"><i class="fas fa-info-circle"></i> ঐচ্ছিক</div>
                         @error('other_document')<div class="invalid-feedback">{{ $message }}</div>@enderror
                     </div>
+
+                    <!-- Stamp Contract -->
+                    <div class="col-md-6">
+                        <label class="field-label">
+                            <i class="fas fa-file-contract text-primary"></i> স্ট্যাম্প চুক্তিপত্র <span class="badge-optional">ঐচ্ছিক</span>
+                        </label>
+                        <div class="file-upload-zone" id="stampContractZone">
+                            <input type="file" name="stamp_contract" accept="image/*" onchange="handleFileSelect(this, 'stamp_contract')">
+                            <div class="file-placeholder" id="stamp_contract_placeholder">
+                                <i class="fas fa-cloud-upload-alt"></i>
+                                <span>ছবি আপলোড করুন</span>
+                            </div>
+                            <div class="file-info" id="stamp_contract_info"></div>
+                        </div>
+                        <div class="file-preview" id="stamp_contract_preview"><img src="" alt="Preview"></div>
+                        <div class="file-hint"><i class="fas fa-info-circle"></i> ঐচ্ছিক (সর্বোচ্চ ফাইল সাইজ: 10MB)</div>
+                        @error('stamp_contract')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                    </div>
                 </div>
             </div>
 

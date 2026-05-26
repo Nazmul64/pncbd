@@ -15,8 +15,11 @@ class HrmEmployee extends Model
 
     protected $fillable = [
         'name',
+        'designation',
         'phone',
+        'email',
         'nid_number',
+        'blood_group',
         'employee_image',
         'nid_image',
         'father_name',
@@ -31,7 +34,16 @@ class HrmEmployee extends Model
         'district',
         'thana',
         'salary',
+        'join_date',
+        'expire_date',
         'status',
+        'id_card_front',
+        'id_card_back',
+    ];
+
+    protected $casts = [
+        'join_date'   => 'date',
+        'expire_date' => 'date',
     ];
 
     /**

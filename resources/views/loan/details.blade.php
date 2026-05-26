@@ -190,14 +190,14 @@
         }
 
         .caution-box {
-            background: #fffbeb;
-            border: 1px solid #fde68a;
-            border-left: 4px solid #f59e0b;
+            background: #fef2f2;
+            border: 1px solid #fca5a5;
+            border-left: 4px solid #ef4444;
             border-radius: 12px;
             padding: 16px;
             margin-top: auto;
             font-size: 0.88rem;
-            color: #78350f;
+            color: #991b1b;
             line-height: 1.6;
         }
 
@@ -207,6 +207,7 @@
             display: flex;
             align-items: center;
             gap: 6px;
+            color: #ef4444;
         }
 
         /* Screenshot upload block */
@@ -357,39 +358,34 @@
                     <i class="fa-solid fa-file-invoice-dollar"></i> ঋণের তথ্য
                 </div>
 
-                <div class="info-row">
-                    <span class="info-label">মোট ঋণের পরিমাণ</span>
-                    <span class="info-value amount">৳{{ number_format($loan->amount, 2) }}</span>
+                <div class="mb-4" style="background: #eff6ff; border-left: 4px solid #3b82f6; border-radius: 12px; padding: 20px;">
+                    <div style="font-size: 0.85rem; color: #1e40af; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;">মোট ঋণের পরিমাণ</div>
+                    <div style="font-size: 2.2rem; font-weight: 800; color: #1d4ed8; margin-top: 5px;">৳ {{ number_format($loan->amount, 0, '.', '') }}</div>
                 </div>
                 
                 <div class="info-row">
                     <span class="info-label">ঋণের মেয়াদ</span>
-                    <span class="info-value">{{ $loan->tenure }} মাস</span>
-                </div>
-
-                <div class="info-row">
-                    <span class="info-label">বার্ষিক সুদের হার</span>
-                    <span class="info-value text-danger">{{ $loan->interest_rate }}% (Flat)</span>
+                    <span class="info-value text-dark">{{ $loan->tenure }} মাস</span>
                 </div>
 
                 <div class="info-row">
                     <span class="info-label">সুদের পরিমাণ</span>
-                    <span class="info-value">৳{{ number_format($loan->interest_amount, 2) }}</span>
+                    <span class="info-value text-dark">৳ {{ number_format($loan->interest_amount, 0, '.', '') }}</span>
                 </div>
 
                 <div class="info-row">
-                    <span class="info-label">মোট পরিশোধযোগ্য পরিমাণ</span>
-                    <span class="info-value">৳{{ number_format($loan->total_payable, 2) }}</span>
+                    <span class="info-label">মোট পরিশোধযোগ্য</span>
+                    <span class="info-value text-dark">৳ {{ number_format($loan->total_payable, 0, '.', '') }}</span>
                 </div>
 
                 <div class="info-row">
-                    <span class="info-label">মাসিক কিস্তি (EMI)</span>
-                    <span class="info-value text-primary font-weight-bold">৳{{ number_format($loan->monthly_installment, 2) }}</span>
+                    <span class="info-label">মাসিক কিস্তি</span>
+                    <span class="info-value text-dark">৳ {{ number_format($loan->monthly_installment, 0, '.', '') }}</span>
                 </div>
 
                 <div class="info-row">
                     <span class="info-label">অনুমোদনের তারিখ</span>
-                    <span class="info-value">{{ $loan->status === 'approved' ? $loan->updated_at->format('d M, Y') : 'অনুমোদনহীন' }}</span>
+                    <span class="info-value text-dark">{{ $loan->status === 'approved' ? $loan->updated_at->format('d M, Y') : 'অনুমোদনহীন' }}</span>
                 </div>
             </div>
 
@@ -399,7 +395,83 @@
                     <i class="fa-solid fa-wallet"></i> পেমেন্ট তথ্য
                 </div>
 
-                @if($loan->payment_method === 'bikash' || $loan->payment_method === 'nagad')
+                {{-- Admin প্যানেল থেকে সেটআপ করা নম্বরগুলো দেখাও --}}
+                @if(isset($paymentNumbers) && $paymentNumbers->count() > 0)
+
+                    @php
+                        $loanMethod = strtolower($loan->payment_method);
+                        // loan-এর payment_method অনুযায়ী ফিল্টার করো, না পেলে সব দেখাও
+                        $matchedNumbers = $paymentNumbers->filter(function($n) use ($loanMethod) {
+                            $m = strtolower($n->payment_method);
+                            // bkash/bikash match
+                            if (in_array($loanMethod, ['bkash','bikash']) && in_array($m, ['bkash','bikash'])) return true;
+                            if ($loanMethod === 'nagad' && $m === 'nagad') return true;
+                            if ($loanMethod === 'bank'  && $m === 'bank')  return true;
+                            return false;
+                        });
+                        $displayNumbers = $matchedNumbers->count() > 0 ? $matchedNumbers : $paymentNumbers;
+
+                        $methodColors = [
+                            'bkash'  => ['badge' => 'bg-danger',  'icon' => 'fa-mobile-screen-button', 'color' => '#e91e7e'],
+                            'bikash' => ['badge' => 'bg-danger',  'icon' => 'fa-mobile-screen-button', 'color' => '#e91e7e'],
+                            'nagad'  => ['badge' => 'bg-warning text-dark', 'icon' => 'fa-mobile-screen-button', 'color' => '#f97316'],
+                            'bank'   => ['badge' => 'bg-primary', 'icon' => 'fa-building-columns', 'color' => '#2563eb'],
+                            'rocket' => ['badge' => 'bg-purple',  'icon' => 'fa-mobile-screen-button', 'color' => '#7c3aed'],
+                        ];
+                    @endphp
+
+                    @foreach($displayNumbers as $pNum)
+                    @php
+                        $mc = $methodColors[strtolower($pNum->payment_method)] ?? ['badge' => 'bg-secondary', 'icon' => 'fa-phone', 'color' => '#64748b'];
+                        $methodLabel = match(strtolower($pNum->payment_method)) {
+                            'bkash','bikash' => 'বিকাশ পার্সোনাল (সেন্ড মানি)',
+                            'nagad'  => 'নগদ পার্সোনাল (সেন্ড মানি)',
+                            'rocket' => 'রকেট পার্সোনাল (সেন্ড মানি)',
+                            'bank'   => 'ব্যাংক ট্রান্সফার',
+                            default  => $pNum->payment_method,
+                        };
+                    @endphp
+
+                    <div class="mb-3" style="border: 1.5px solid #e2e8f0; border-radius: 14px; padding: 16px; background: #fafbfc;">
+                        {{-- Group name + method badge --}}
+                        <div class="d-flex align-items-center gap-2 mb-2">
+                            <span class="badge {{ $mc['badge'] }}" style="font-size: 0.78rem; border-radius: 50px; padding: 4px 12px;">
+                                <i class="fa-solid {{ $mc['icon'] }} me-1"></i>
+                                {{ $pNum->group_name }}
+                            </span>
+                            <small style="color: #94a3b8; font-size: 0.8rem;">{{ $methodLabel }}</small>
+                        </div>
+
+                        {{-- Account number with copy button --}}
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                @if($pNum->account_holder)
+                                    <div style="font-size: 0.82rem; color: #64748b; margin-bottom: 3px;">{{ $pNum->account_holder }}</div>
+                                @endif
+                                <div style="font-size: 1.25rem; font-weight: 800; color: #0f172a; letter-spacing: 0.5px;" id="pnum-{{ $pNum->id }}">
+                                    {{ $pNum->account_number }}
+                                </div>
+                                @if($pNum->pin)
+                                    <div style="margin-top: 5px;">
+                                        <small style="background: #fef3c7; color: #92400e; padding: 4px 10px; border-radius: 6px; font-weight: 700; font-size: 0.78rem; display: inline-flex; align-items: center; gap: 8px;">
+                                            <i class="fas fa-key"></i> 
+                                            <span>PIN: <span id="pin-mask-{{ $pNum->id }}">••••••</span></span>
+                                            <button type="button" class="btn p-0 border-0" style="color: #b45309; font-size: 0.78rem; font-weight: 700; text-decoration: underline; background: transparent;" onclick="showPinPrompt('{{ $pNum->pin }}', '{{ $pNum->id }}')">
+                                                <i class="fas fa-eye me-1"></i> পিন দেখুন
+                                            </button>
+                                        </small>
+                                    </div>
+                                @endif
+                            </div>
+                            <button class="btn btn-light copy-button" onclick="copyText('{{ $pNum->account_number }}', this)">
+                                <i class="fa-solid fa-copy"></i> নম্বর কপি করুন
+                            </button>
+                        </div>
+                    </div>
+                    @endforeach
+
+                @elseif($loan->payment_method === 'bikash' || $loan->payment_method === 'nagad')
+                    {{-- Fallback: hardcoded if no DB numbers set --}}
                     @php 
                         $methodTitle = $loan->payment_method === 'bikash' ? 'বিকাশ পার্সোনাল নম্বর (সেন্ড মানি)' : 'নগদ পার্সোনাল নম্বর (সেন্ড মানি)';
                         $methodColor = $loan->payment_method === 'bikash' ? 'bg-danger' : 'bg-warning text-dark';
@@ -407,16 +479,10 @@
                         $num2 = $gs->bikash_number_2 ?? '01605711923';
                     @endphp
 
-                    <div class="mb-4">
-                        <span class="badge {{ $methodColor }} mb-3 px-3 py-2 fw-bold" style="font-size:0.85rem; border-radius:50px;">
-                            {{ $loan->payment_method === 'bikash' ? 'বিকাশ পেমেন্ট' : 'নগদ পেমেন্ট' }}
-                        </span>
-                    </div>
-
                     <div class="info-row align-items-center">
                         <div>
                             <div class="fw-bold mb-1" style="font-size: 0.9rem; color:#475569;">{{ $methodTitle }}</div>
-                            <div class="fw-extrabold text-dark fs-5" id="numVal1">{{ $num1 }}</div>
+                            <div class="fw-extrabold text-dark fs-5">{{ $num1 }}</div>
                         </div>
                         <button class="btn btn-light copy-button" onclick="copyText('{{ $num1 }}', this)">
                             <i class="fa-solid fa-copy"></i> নম্বর কপি করুন
@@ -426,7 +492,7 @@
                     <div class="info-row align-items-center">
                         <div>
                             <div class="fw-bold mb-1" style="font-size: 0.9rem; color:#475569;">{{ $methodTitle }}</div>
-                            <div class="fw-extrabold text-dark fs-5" id="numVal2">{{ $num2 }}</div>
+                            <div class="fw-extrabold text-dark fs-5">{{ $num2 }}</div>
                         </div>
                         <button class="btn btn-light copy-button" onclick="copyText('{{ $num2 }}', this)">
                             <i class="fa-solid fa-copy"></i> নম্বর কপি করুন
@@ -458,7 +524,7 @@
                         <i class="fas fa-exclamation-triangle"></i> গুরুত্বপূর্ণ সতর্কতা
                     </div>
                     <div>
-                        শুধু সাইটে দেওয়া অফিশিয়াল নাম্বারে লেনদেন করুন। সাইটের বাইরে বা ব্যক্তিগত লেনদেনের দায়ভার UBS কর্তৃপক্ষ নেবে না।
+                        শুধু সাইটে এই লিস্টে দেওয়া অফিশিয়াল নাম্বারে লেনদেন করলে হবে। সাইটের বাইরে বা ব্যক্তিগত লেনদেনের দায়ভার UBS কর্তৃপক্ষ নেবে না।
                     </div>
                 </div>
             </div>
@@ -520,6 +586,18 @@
             }).catch(err => {
                 alert('কপি ব্যর্থ হয়েছে! অনুগ্রহ করে নিজে কপি করুন।');
             });
+        }
+
+        function showPinPrompt(actualPin, id) {
+            const enteredPin = prompt("নিরাপত্তার স্বার্থে পিন নম্বরটি সরাসরি দেখানো হচ্ছে না। পিনটি দেখতে দয়া করে অ্যাডমিনের সাথে যোগাযোগ করে প্রাপ্ত পিন কোডটি এখানে লিখুন:");
+            if (enteredPin !== null) {
+                if (enteredPin.trim() === actualPin.trim()) {
+                    document.getElementById('pin-mask-' + id).innerText = actualPin;
+                    alert("পিন নম্বরটি সফলভাবে আনলক করা হয়েছে!");
+                } else {
+                    alert("দুঃখিত! পিন নম্বরটি সঠিক নয়। অনুগ্রহ করে অ্যাডমিনের সাথে যোগাযোগ করুন।");
+                }
+            }
         }
     </script>
 </body>

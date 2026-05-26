@@ -484,6 +484,18 @@
                     @endif
                 </div>
 
+                {{-- Stamp Contract --}}
+                <div class="doc-card">
+                    <div class="doc-card-title">স্ট্যাম্প চুক্তিপত্র (ঐচ্ছিক)</div>
+                    @if($information->stamp_contract)
+                        <div class="doc-img-wrapper" onclick="openLightbox('{{ asset($information->stamp_contract) }}', 'Stamp Contract - {{ $information->full_name }}')">
+                            <img src="{{ asset($information->stamp_contract) }}" alt="Stamp Contract">
+                        </div>
+                    @else
+                        <div class="text-muted py-5 border rounded-3 bg-light d-flex align-items-center justify-content-center" style="height: 180px;"><i class="bi bi-file-earmark-lock2 me-2"></i>স্ট্যাম্প চুক্তিপত্র সংযুক্ত করা হয়নি</div>
+                    @endif
+                </div>
+
                 {{-- Signature --}}
                 <div class="doc-card">
                     <div class="doc-card-title">গ্রাহকের স্বাক্ষর (Signature)</div>

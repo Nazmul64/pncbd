@@ -2,7 +2,7 @@
     $navUser = auth()->user();
     $navName = $navUser->information->full_name ?? $navUser->name ?? 'সদস্য';
     $navPhone = $navUser->information->phone_number ?? $navUser->phone;
-    $navBalance = \App\Models\Loan::where('user_id', $navUser->id)->where('status', 'approved')->sum('amount');
+    $navBalance = $navUser->balance;
     $navInitial = mb_substr($navName, 0, 1);
     $activeRoute = $activeRoute ?? null;
     $siteName = $gs->site_name ?? 'PNCBD';
@@ -251,7 +251,7 @@
                         </a>
                     </li>
                     <li>
-                        <a class="dropdown-item" href="{{ route('customer.dashboard') }}#loan-section">
+                        <a class="dropdown-item" href="{{ route('loan.active-details') }}">
                             <i class="fas fa-file-invoice-dollar"></i> ঋণের তথ্য
                         </a>
                     </li>

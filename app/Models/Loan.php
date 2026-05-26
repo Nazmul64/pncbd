@@ -23,6 +23,12 @@ class Loan extends Model
         'total_payable',
         'monthly_installment',
         'status',
+        'admin_message',
+        'screenshot',
+        'admin_fee',
+        'staff_name',
+        'staff_phone',
+        'signature_image',
     ];
 
     /**
